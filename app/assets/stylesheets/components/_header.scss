@@ -1,0 +1,6 @@
+.Header {
+	background: $header-bg-color;
+	.inner {
+		@include outer-container();
+	}
+}

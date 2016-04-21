@@ -1,0 +1,7 @@
+$icons: sprite-map("icons/*.png", $layout: smart);
+
+.icon {
+	background: $icons;
+	position: relative;
+	display: inline-block;
+}

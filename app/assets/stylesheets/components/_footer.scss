@@ -1,0 +1,6 @@
+.Footer {
+	background: $footer-bg-color;
+	.inner {
+		@include outer-container();
+	}
+}
