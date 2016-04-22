@@ -2,7 +2,7 @@ var router = require('express').Router(),
     fs = require('fs'),
     mongoose = require('mongoose'),
     User = mongoose.model('User'),
-    Project = mongoose.model('Project'),
+    HighScore = mongoose.model('HighScore'),
     path = require('path'),
     _ = require('lodash');
 
@@ -12,7 +12,7 @@ module.exports = (api) => {
     console.log ( "endpoint: post /login", req.body );
     var newObj = new User(req.body);
     newObj.saveAsync()
-      .then( savedObj  => User.populate(savedObj, {path:"projects"} ))
+      .then( savedObj  => User.populate(savedObj, {path:"highscores"} ))
       .then( populatedObj => {
         console.log ( "USER ", populatedObj )
         res.json( populatedObj ) 
@@ -24,33 +24,9 @@ module.exports = (api) => {
       .then( object  => res.json( object ) )
   });
 
-
-  router.get('/projects', (req, res) =>{
-    console.log ( "get projects" );
-    //User.find({ "projects": { "id": req.body.UserId } })
-    // User.find()
-    //   .then((found) => res.json(found.projects); );
-  });
-
-
-
-  
-
-  // // POST { projectObj } /api/projects/ 
-  // api.post('/api/projects', (req,res,next) => {
-
-  //   Promise.all[Project.create(newthing), Contractor.update( 'projects', '$push: addtoContractor' )].then(() => res.json)
-
-  //   Project.find({ Contractors: req.Contractor._id}).then()
-
-  // })
-
-
   router.delete( '/:id', (req, res, next) => {
     User.findByIdAndRemoveAsync(req.params.id).then( ( newUser ) => res.json( newUser ) );
   });
-
-  
 
   router.get('/:id', (req, res) =>
     User.findById(req.params.id)

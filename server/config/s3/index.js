@@ -27,5 +27,5 @@ module.exports = (api) => {
         (val) => typeof obj[val] === 'string' && obj[val].indexOf('//s3') > -1,
         obj,dest);
 
-    api.renameS3 = (project, newName) => renameS3(project, newName);
+    api.renameS3 = (highsore, newName) => renameS3(highsore, newName);
 };

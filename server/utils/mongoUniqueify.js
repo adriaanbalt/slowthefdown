@@ -27,9 +27,9 @@ function uniqueInMongoCheck(model, props, testVal, returnUnique, counter, cb) {
     queryObj[props[0]] += counter; // add counter to first prop in "props" array, if "returnUnique" is true this is how we achieve a unique value (function is run recursively until this counter makes this prop unique)
 
     model.findOneAsync(queryObj)
-        .then((project) => !returnUnique ? (testVal.unique = !project, cb(null, testVal)) : // if "returnUnique" is false just return boolean indicating whether or not a project with specified parameters was found
-            project ? //if "returnUnique" is true use counter to make unique and return that
-            uniqueInMongoCheck(model, props, testVal, !counter ? 2 : counter + 1, cb) : //recurse if projectName already exists
+        .then((highscore) => !returnUnique ? (testVal.unique = !highscore, cb(null, testVal)) : // if "returnUnique" is false just return boolean indicating whether or not a highscore with specified parameters was found
+            highscore ? //if "returnUnique" is true use counter to make unique and return that
+            uniqueInMongoCheck(model, props, testVal, !counter ? 2 : counter + 1, cb) : //recurse if highscoreName already exists
             cb(null, typeof testVal === 'object' ?
                 (testVal[props[0]] += counter, testVal) :
                 testVal + counter))

@@ -6,9 +6,9 @@ const router = express.Router();
 
 // routes
 const userRoutes = require('./user')(router);
-const projectRoutes = require('./project')(router);
-const roomRoutes = require('./room')(router);
-// const taskRoutes = require('./task')(router);
+const highscoreRoutes = require('./highscore')(router);
+// const roomRoutes = require('./room')(router);
+// const taskRoutes = require('	./task')(router);
 // const skillRoutes = require('./skill')(router);
 // const productRoutes = require('./product')(router);
 // const materialRoutes = require('./material')(router);
