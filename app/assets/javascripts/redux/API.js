@@ -36,14 +36,14 @@ export default {
 				return Promise.all([
         			Promise.resolve(res),
 					this.get({
-						route: `/api/project`
+						route: `/api/highscore`
 					})
 				]);
 			})
-			.then(([user, projects]) => {
+			.then(([user, HighScores]) => {
 				return dispatch(ActionCreator.login({
 					user:user, 
-					projects:projects
+					HighScores:HighScores
 				}))
 			})
 			.catch( err => console.log(err));
@@ -55,56 +55,56 @@ export default {
 			.catch( err => console.log(err));;
 	},
 
-	addProject( newProject ) {
-		console.log ( 'newProject', newProject );
+	addHighScore( newHighScore ) {
+		console.log ( 'newHighScore', newHighScore );
 		return dispatch => 
 			this.post({
-					route: '/api/project',
-					body: newProject
+					route: '/api/highscore',
+					body: newHighScore
 				})
-				.then( res => dispatch(ActionCreator.addProject(res)))
+				.then( res => dispatch(ActionCreator.addHighScore(res)))
 				.catch( err => console.log(err));
 	},
 
-	updateProject(project) {
-		const index = project.editIndex;
+	updateHighScore(HighScore) {
+		const index = HighScore.editIndex;
 		return dispatch => 
 			this.put({
-					route: `/api/project/${project.editId}`,
+					route: `/api/highscore/${HighScore.editId}`,
 					body: {
-						title: project.title,
-						body: project.body,
+						title: HighScore.title,
+						body: HighScore.body,
 						createdDate: new Date()
 					}
 				})
 				.then(res =>
-					dispatch(ActionCreator.updateProject({
+					dispatch(ActionCreator.updateHighScore({
 						index: index,
 						post: res
 					})))
 				.catch( err => console.log(err));
 	},
 
-	deleteProject(_id) {
+	deleteHighScore(_id) {
 		return dispatch => 
-			this.del(`/api/project/${_id}`)
-				.then(res => dispatch(ActionCreator.deleteProject(_id)))
+			this.del(`/api/highscore/${_id}`)
+				.then(res => dispatch(ActionCreator.deleteHighScore(_id)))
 				.catch( (err) => console.log(err) );
 	},
 
-	getProjectById(_id) {
+	getHighScoreById(_id) {
 		return dispatch => 
-			this.get(`/api/project/${_id}`)
+			this.get(`/api/highscore/${_id}`)
 				.then(res =>  { 
-					return dispatch(ActionCreator.getProjectById( res ))
+					return dispatch(ActionCreator.getHighScoreById( res ))
 				})
 				.catch( (err) => console.log(err) );
 	},
 
-	getAllProjects() {
+	getAllHighScores() {
 		return dispatch => 
-			this.get({ route:`/api/project` })
-				.then( (res) => dispatch(ActionCreator.getAllProjects(res)))
+			this.get({ route:`/api/highscore` })
+				.then( (res) => dispatch(ActionCreator.getAllHighScores(res)))
 				.catch( (err) => console.log(err) );
 	},
 

@@ -14,8 +14,7 @@ export default {
 	constants : {
 		ROOT_PATH: "/",
 		API_VERSION: "v1",
-		TRANSLATE_DEFAULT_TEXT: "TRANSLATE",
-		unit: "feet"
+		TRANSLATE_DEFAULT_TEXT: "TRANSLATE"
 	},
 
 	getLocaleUrl () {

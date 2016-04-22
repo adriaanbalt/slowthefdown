@@ -2,14 +2,13 @@
 
 import React, {Component} from 'react';
 import {Link} from 'react-router';
-import {injectIntl, FormattedMessage} from 'react-intl';
 
-import Element from '../../lib/Element';
+import UI from '../../lib/UI';
 
-export default injectIntl(class NavigationSearch extends Element {
+export default class NavigationSearch extends UI {
 
 	render(){
 		return(<div></div>);
 	}
 
-});
+};

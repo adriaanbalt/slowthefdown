@@ -3,12 +3,11 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import Element from '../../lib/Element';
+import UI from '../../lib/UI';
 import NavigationDesktop from './NavigationDesktop';
 import NavigationMobile from './NavigationMobile';
-import Login from '../Login';
 
-class Navigation extends Element {
+class Navigation extends UI {
 
 	render() {
 		return (
@@ -20,7 +19,6 @@ class Navigation extends Element {
 					||
 					<NavigationDesktop />
 				}
-				<Login />
 			</div>
 		);
 	}

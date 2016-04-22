@@ -4,5 +4,5 @@
 
 import { Component } from 'react';
 
-export default class Element extends Component {
+export default class UI extends Component {
 }
