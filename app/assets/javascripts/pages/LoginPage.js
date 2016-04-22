@@ -15,16 +15,16 @@ class LoginPage extends UI {
     let email = this.refs.email.refs.input && this.refs.email.refs.input.value;
     let password = this.refs.password.refs.input && this.refs.password.refs.input.value;
     this.props.dispatch(
-      API.login(_.merge( { email: email, password: password }, _.omit(this.props.user, ['email','password']) ))
+      // API.login(_.merge( { email: email, password: password }, _.omit(this.props.user, ['email','password']) ))
       // API.login(email, password)
     );
   }
 
   logout(e) {
     e.preventDefault();
-    this.props.dispatch(
-      API.logout()
-    );
+    // this.props.dispatch(
+    //   API.logout()
+    // );
   }
 
   render () {

@@ -23,7 +23,7 @@ class App extends Component {
 
 	componentWillMount () {
 		// initialize user with their locale data
-		this.props.dispatch(API.authenticate());
+		// this.props.dispatch(API.authenticate());
 
 		// listen for updates on passing viewport threshold
 		window.addEventListener('orientationchange', this.updateViewport, false);

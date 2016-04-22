@@ -67,6 +67,13 @@ export default {
       type: ActionTypes.GET_ALL_HIGHSCORES,
         obj
     };
+  },
+  
+  updateAnimation(obj) {
+    return {
+      type: ActionTypes.UPDATE_ANIMATION,
+        obj
+    };
   }
 
 };

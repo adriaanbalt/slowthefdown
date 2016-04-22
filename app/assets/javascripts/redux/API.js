@@ -108,26 +108,6 @@ export default {
 				.catch( (err) => console.log(err) );
 	},
 
-	updateRoom( newRoom ) {
-		return dispatch => 
-			this.put({
-					route:`/api/room/${ newRoom._id }`,
-					body: newRoom
-				})
-				.then( (res) => dispatch(ActionCreator.updateRoom(res)))
-				.catch( (err) => console.log(err) );
-	},
-
-	addRoom( newRoom ) {
-		return dispatch => 
-			this.post({
-					route:`/api/room`,
-					body: newRoom
-				})
-				.then( (res) => dispatch(ActionCreator.addRoom(res)))
-				.catch( (err) => console.log(err) );
-	},
-
 	make(o){
 		o.route = o.route || [];
 		o.params = o.params || [];

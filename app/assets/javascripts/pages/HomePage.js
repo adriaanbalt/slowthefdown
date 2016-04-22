@@ -7,7 +7,7 @@ import ReactPIXI from 'react-pixi';
 import PIXI from 'pixi.js';
 
 import UI from '../lib/UI';
-import F from '../components/F';
+import Fsprite from '../components/Fsprite';
 import API from '../redux/API';
 
 class HomePage extends UI {
@@ -28,9 +28,9 @@ class HomePage extends UI {
     let DisplayObjectContainer = React.createFactory(ReactPIXI.DisplayObjectContainer);
     console.log ( "Render HomePage" )
       return Stage(
-        {width: window.innerWidth, height: window.innerHeight, backgroundcolor: 0xa08080, interactive:true},
+        {width: window.innerWidth, height: window.innerHeight, backgroundcolor: 0xFFFFFF, interactive:true},
         // children components are the buttons and the dynamic sprites
-        React.createElement(F, {key:'gui'}),
+        React.createElement(Fsprite, {key:'gui'}),
       );
   }
 
