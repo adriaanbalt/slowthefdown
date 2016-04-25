@@ -45,7 +45,7 @@ import Terms from './pages/TermsPage';
 // our client-side state with it here
 // const store = configureStore(window.__INITIAL_STATE__ || { user: null, posts: []});
 const store = configureStore();
-
+//<DevTools />
 render((
     <Provider store={store}>
         <div>
@@ -57,7 +57,6 @@ render((
                     <Route name="termsandconditions" path={`${ pathJoin( Config.constants.ROOT_PATH, `/terms-and-conditions` )}`} component={ Terms } />
         		</Route>
             </Router>
-            <DevTools />
         </div>
     </Provider>
 ), document.getElementById('App') );
