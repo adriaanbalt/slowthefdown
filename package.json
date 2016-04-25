@@ -35,6 +35,8 @@
     "redux-devtools-log-monitor": "^1.0.5",
     "redux-thunk": "^2.0.1",
 
+    "pixi.js": "^3.0.9",
+
     "alt": "^0.17.1",
     "abbrev": "^1.0.7",
     "alt": "^0.17.1",
