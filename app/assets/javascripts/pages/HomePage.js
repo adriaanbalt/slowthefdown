@@ -3,53 +3,50 @@
 import React, { PropTypes } from 'react';
 import cx from 'classnames';
 import { connect } from 'react-redux';
-import THREE from 'three';
+import PIXI from 'pixi.js';
 
 import UI from '../lib/UI';
-import Scene from '../components/Scene';
-import Cube from '../components/Cube';
 import API from '../redux/API';
+import ScenePixi from '../components/ScenePixi.js';
+import Texture from '../components/Texture.js';
+import Kaleidoscope from '../components/Kaleidoscope.js';
+import Ftext from '../components/Ftext.js';
 
 class HomePage extends UI {
 
-  componentWillMount( ){
+  constructor ( ){
+    super();
+    this.scene = new ScenePixi();
+    this.renderSize = 800;
+    this.textCanvas = new PIXI.Container();
+    this.canvas = new PIXI.Container();
 
-    let s = new Scene();
+    this.highscoreText = new PIXI.Text(
+      'Highscore:', 
+      { 
+        font : '50px Arial', 
+        fill : 0xFFFFFF
+      }
+    );
 
-    // create a dim ambient light
-    let ambientLight = new THREE.AmbientLight( 0xFFFFFF );
-    s.add( ambientLight );
+    this.textCanvas.addChild( this.highscoreText );
 
-    // and a brighter point light slightly off center
-    let pointLight = new THREE.PointLight( 0xffffff );
-    pointLight.position.set( -10, 50, 20 );
-    s.add( pointLight );
-
-    // define a standardized material for all Cubes to share
-    let mat = new THREE.MeshPhongMaterial({
-      color: this.getRandomColor()
-      // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
-      shininess: 1
-    });
-    let size = 10;
-    let geo = new THREE.BoxGeometry( size, size, size );
-
-    let f = new Cube( geo , mat );
-
-    s.add( f );  
-
-    console.log ( 'componentWillMount', f, s);
+    this.texture = new Texture( this.scene, this.canvas, this.renderSize )
+    this.kaleido = new Kaleidoscope( this.scene, this.canvas, this.renderSize );
+    this.Ftext = new Ftext( this.scene, this.renderSize, this.overFn, (hs) => this.outFn(hs) );
+    // this.scene.stage.addChild( this.texture.stage );
+    this.scene.stage.addChild( this.textCanvas );
+    this.scene.stage.addChild( this.Ftext.stage );
+    // this.scene.stage.addChild( this.kaleido.stage );
   }
 
-  getRandomColor() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+  overFn(){
+    console.log ( "over!" );
   }
-
+  outFn( highscore ){
+    console.log ( 'outFn highscore', highscore );
+    this.highscoreText.text = `Highscore: ${highscore} seconds`;
+  }
 
   render () {
     console.log ( 'HomePage' );
