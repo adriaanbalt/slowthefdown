@@ -1,6 +1,6 @@
 import PIXI from 'pixi.js';
 
-export default class ScenePixi{
+export default class ScenePixi {
 
   constructor(){
     // Let pixi determine canvas or webGL renderer
