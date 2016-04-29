@@ -25,10 +25,9 @@ THREE.GPUParticleSystem = function(options) {
   // parse options and use defaults
   self.PARTICLE_COUNT = options.maxParticles || 1000000;
   self.PARTICLE_CONTAINERS = options.containerCount || 1;
-  self.PARTICLES_PER_CONTAINER = Math.ceil(self.PARTICLE_COUNT / self.PARTICLE_CONTAINERS);
+  self.PARTICLES_PER_CONTAINER = 1;//Math.ceil(self.PARTICLE_COUNT / self.PARTICLE_CONTAINERS);
   self.PARTICLE_CURSOR = 0;
   self.time = 0;
-
 
   // Custom vertex and fragement shader
   var GPUParticleShader = {
@@ -48,11 +47,11 @@ THREE.GPUParticleSystem = function(options) {
 
       '//Handle special cases',
       'if(av < FLOAT_MIN) {',
-      'return vec4(0.0, 0.0, 0.0, 0.0);',
+        'return vec4(0.0, 0.0, 0.0, 0.0);',
       '} else if(v > FLOAT_MAX) {',
-      'return vec4(127.0, 128.0, 0.0, 0.0) / 255.0;',
+        'return vec4(127.0, 128.0, 0.0, 0.0) / 255.0;',
       '} else if(v < -FLOAT_MAX) {',
-      'return vec4(255.0, 128.0, 0.0, 0.0) / 255.0;',
+        'return vec4(255.0, 128.0, 0.0, 0.0) / 255.0;',
       '}',
 
       'highp vec4 c = vec4(0,0,0,0);',
@@ -83,18 +82,18 @@ THREE.GPUParticleSystem = function(options) {
 
       'vec4 pack(const in float depth)',
       '{',
-      'const vec4 bit_shift = vec4(256.0*256.0*256.0, 256.0*256.0, 256.0, 1.0);',
-      'const vec4 bit_mask  = vec4(0.0, 1.0/256.0, 1.0/256.0, 1.0/256.0);',
-      'vec4 res = fract(depth * bit_shift);',
-      'res -= res.xxyz * bit_mask;',
-      'return res;',
+        'const vec4 bit_shift = vec4(256.0*256.0*256.0, 256.0*256.0, 256.0, 1.0);',
+        'const vec4 bit_mask  = vec4(0.0, 1.0/256.0, 1.0/256.0, 1.0/256.0);',
+        'vec4 res = fract(depth * bit_shift);',
+        'res -= res.xxyz * bit_mask;',
+        'return res;',
       '}',
 
       'float unpack(const in vec4 rgba_depth)',
       '{',
-      'const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);',
-      'float depth = dot(rgba_depth, bit_shift);',
-      'return depth;',
+        'const vec4 bit_shift = vec4(1.0/(256.0*256.0*256.0), 1.0/(256.0*256.0), 1.0/256.0, 1.0);',
+        'float depth = dot(rgba_depth, bit_shift);',
+        'return depth;',
       '}',
 
       'uniform float uTime;',
@@ -136,35 +135,26 @@ THREE.GPUParticleSystem = function(options) {
 
       'newPosition = mix(newPosition, newPosition + vec3(noiseVel * ( turbulence * 5. ) ), (timeElapsed / particleVelColSizeLife.a) );',
 
-      'if( velocity.y > 0. && velocity.y < .05 ) {',
-      'lifeLeft = 0.;',
-      '}',
+        'if( velocity.y > 0. && velocity.y < .05 ) {',
+            'lifeLeft = 0.;',
+        '}',
 
-      'if( velocity.x < -1.45 ) {',
-      'lifeLeft = 0.;',
-      '}',
+        'if( velocity.x < -1.45 ) {',
+            'lifeLeft = 0.;',
+        '}',
 
-      'if( timeElapsed > 0. ) {',
-      'gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );',
-      '} else {',
-      'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-      'lifeLeft = 0.;',
-      'gl_PointSize = 0.;',
-      '}',
+        'if( timeElapsed > 0. ) {',
+            'gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );',
+        '} else {',
+            'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+        'lifeLeft = 0.;',
+            'gl_PointSize = 0.;',
+        '}',
       '}'
 
     ].join("\n"),
 
     fragmentShader: [
-
-      'float scaleLinear(float value, vec2 valueDomain) {',
-      'return (value - valueDomain.x) / (valueDomain.y - valueDomain.x);',
-      '}',
-
-      'float scaleLinear(float value, vec2 valueDomain, vec2 valueRange) {',
-      'return mix(valueRange.x, valueRange.y, scaleLinear(value, valueDomain));',
-      '}',
-
       'varying vec4 vColor;',
       'varying float lifeLeft;',
 
@@ -172,17 +162,11 @@ THREE.GPUParticleSystem = function(options) {
 
       'void main() {',
 
-      'float alpha = 0.;',
+          'float alpha = 1.;',
 
-      'if( lifeLeft > .995 ) {',
-      'alpha = scaleLinear( lifeLeft, vec2(1., .995), vec2(0., 1.));//mix( 0., 1., ( lifeLeft - .95 ) * 100. ) * .75;',
-      '} else {',
-      'alpha = lifeLeft * .75;',
-      '}',
+          'vec4 tex = texture2D( tSprite, gl_PointCoord );',
 
-      'vec4 tex = texture2D( tSprite, gl_PointCoord );',
-
-      'gl_FragColor = vec4( vColor.rgb * tex.a, alpha * tex.a );',
+          'gl_FragColor = vec4( vColor.rgb * tex.a, alpha * tex.a );',
       '}'
 
     ].join("\n")
@@ -200,11 +184,13 @@ THREE.GPUParticleSystem = function(options) {
     return ++i >= self.rand.length ? self.rand[i = 1] : self.rand[i];
   }
 
-  self.particleNoiseTex = THREE.ImageUtils.loadTexture("assets/textures/perlin-512.png");
-  self.particleNoiseTex.wrapS = self.particleNoiseTex.wrapT = THREE.RepeatWrapping;
+  // self.particleNoiseTex = THREE.ImageUtils.loadTexture("assets/textures/perlin-512.png");
+  // self.particleNoiseTex.wrapS = self.particleNoiseTex.wrapT = THREE.RepeatWrapping;
 
-  self.particleSpriteTex = THREE.ImageUtils.loadTexture("assets/textures/particle2.png");
-  self.particleSpriteTex.wrapS = self.particleSpriteTex.wrapT = THREE.RepeatWrapping;
+  self.particleSpriteTex = THREE.ImageUtils.loadTexture("assets/images/adriaan.jpg");
+  // self.particleSpriteTex.wrapS = self.particleSpriteTex.wrapT = THREE.RepeatWrapping;
+
+  console.log ( 'particleSpriteTex', self.particleSpriteTex );
 
   self.particleShaderMat = new THREE.ShaderMaterial({
     transparent: true,
@@ -220,7 +206,7 @@ THREE.GPUParticleSystem = function(options) {
       },
       "tNoise": {
         type: "t",
-        value: self.particleNoiseTex
+        value: 1.0
       },
       "tSprite": {
         type: "t",
@@ -261,8 +247,11 @@ THREE.GPUParticleSystem = function(options) {
       self.PARTICLE_CURSOR = 1;
     }
 
-    var currentContainer = self.particleContainers[Math.floor(self.PARTICLE_CURSOR / self.PARTICLES_PER_CONTAINER)];
 
+// update
+    var currentContainer = self.particleContainers[0];//Math.floor(self.PARTICLE_CURSOR / self.PARTICLES_PER_CONTAINER)];
+
+    // console.log ( 'currentContainer', currentContainer );
     currentContainer.spawnParticle(options);
 
   }
@@ -346,21 +335,21 @@ THREE.GPUParticleContainer = function(maxParticles, particleSystem) {
   self.particlePositionsStartTime = new Float32Array(self.PARTICLE_COUNT * 4); // position
   self.particleVelColSizeLife = new Float32Array(self.PARTICLE_COUNT * 4);
 
-  for (var i = 0; i < self.PARTICLE_COUNT; i++) {
-    self.particlePositionsStartTime[i * 4 + 0] = 100; //x
-    self.particlePositionsStartTime[i * 4 + 1] = 0; //y
-    self.particlePositionsStartTime[i * 4 + 2] = 0.0; //z
-    self.particlePositionsStartTime[i * 4 + 3] = 0.0; //startTime
+  // for (var i = 0; i < self.PARTICLE_COUNT; i++) {
+  //   self.particlePositionsStartTime[i * 4 + 0] = 100; //x
+  //   self.particlePositionsStartTime[i * 4 + 1] = 0; //y
+  //   self.particlePositionsStartTime[i * 4 + 2] = 0.0; //z
+  //   self.particlePositionsStartTime[i * 4 + 3] = 0.0; //startTime
 
-    self.particleVertices[i * 3 + 0] = 0; //x
-    self.particleVertices[i * 3 + 1] = 0; //y
-    self.particleVertices[i * 3 + 2] = 0.0; //z
+  //   self.particleVertices[i * 3 + 0] = 0; //x
+  //   self.particleVertices[i * 3 + 1] = 0; //y
+  //   self.particleVertices[i * 3 + 2] = 0.0; //z
 
-    self.particleVelColSizeLife[i * 4 + 0] = decodeFloat(128, 128, 0, 0); //vel
-    self.particleVelColSizeLife[i * 4 + 1] = decodeFloat(0, 254, 0, 254); //color
-    self.particleVelColSizeLife[i * 4 + 2] = 1.0; //size
-    self.particleVelColSizeLife[i * 4 + 3] = 0.0; //lifespan
-  }
+  //   self.particleVelColSizeLife[i * 4 + 0] = decodeFloat(128, 128, 0, 0); //vel
+  //   self.particleVelColSizeLife[i * 4 + 1] = decodeFloat(0, 254, 0, 254); //color
+  //   self.particleVelColSizeLife[i * 4 + 2] = 1.0; //size
+  //   self.particleVelColSizeLife[i * 4 + 3] = 0.0; //lifespan
+  // }
 
   self.particleShaderGeo.addAttribute('position', new THREE.BufferAttribute(self.particleVertices, 3));
   self.particleShaderGeo.addAttribute('particlePositionsStartTime', new THREE.BufferAttribute(self.particlePositionsStartTime, 4).setDynamic(true));
@@ -380,14 +369,15 @@ THREE.GPUParticleContainer = function(maxParticles, particleSystem) {
   var options = {},
     position = new THREE.Vector3(),
     velocity = new THREE.Vector3(),
-    positionRandomness = 0.,
-    velocityRandomness = 0.,
+    positionRandomness = 0,
+    velocityRandomness = 0,
     color = 0xffffff,
-    colorRandomness = 0.,
-    turbulence = 0.,
-    lifetime = 0.,
-    size = 0.,
-    sizeRandomness = 0.,
+    colorRandomness = 0,
+    turbulence = 0,
+    lifetime = 0,
+    size = 0,
+    sizeRandomness = 0,
+    smoothPosition = 0,
     i;
 
   var maxVel = 2;
@@ -409,8 +399,8 @@ THREE.GPUParticleContainer = function(maxParticles, particleSystem) {
     turbulence = options.turbulence !== undefined ? options.turbulence : 1.0;
     lifetime = options.lifetime !== undefined ? options.lifetime : 5.0;
     size = options.size !== undefined ? options.size : 10;
-    sizeRandomness = options.sizeRandomness !== undefined ? options.sizeRandomness : 0.0,
-      smoothPosition = options.smoothPosition !== undefined ? options.smoothPosition : false;
+    sizeRandomness = options.sizeRandomness !== undefined ? options.sizeRandomness : 0.0;
+    smoothPosition = options.smoothPosition !== undefined ? options.smoothPosition : false;
 
     if (self.DPR !== undefined) size *= self.DPR;
 

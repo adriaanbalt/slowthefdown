@@ -1,93 +1,97 @@
-var glslify = require('glslify'); // this has to be required separately for some reason
+// var glslify = require('glslify'); // this has to be required separately for some reason
 
 // REQUIREMENTS
-var THREE = require('three')
-  , GPUParticleSystem = require('./GPUParticleSystem.js')
-  , ThreeScene = require('./ThreeScene.js');
+import THREE from 'three'
+import ParticlesSystem from './ParticlesSystem.js'
+import ParticlesScene from './ParticlesScene.js';
 
-// create a new ThreeJS Scene
-var scene = new ThreeScene();
-scene.camera.position.z = 50;
+export default class Particles {
 
-// create a dim ambient light
-var ambientLight = new THREE.AmbientLight( 0x555555 );
-scene.add( ambientLight );
+  constructor(){
+    // create a new ThreeJS Scene
+    this.scene = new ParticlesScene();
 
-// and a brighter point light slightly off center
-var pointLight = new THREE.PointLight( 0xffeedd );
-pointLight.position.set( 1, 2, 2 );
-scene.add( pointLight );
+    this.scene.camera.position.z = 50;
 
-var p = new GPUParticleSystem({
-  maxParticles: 1000000
-});
-scene.add( p );
+    // create a dim ambient light
+    var ambientLight = new THREE.AmbientLight( 0x555555 );
+    this.scene.add( ambientLight );
 
-var clock = new THREE.Clock( true );
+    // and a brighter point light slightly off center
+    var pointLight = new THREE.PointLight( 0xffeedd );
+    pointLight.position.set( 1, 2, 2 );
+    this.scene.add( pointLight );
 
-// options passed during each spawned
-var particleOptions = {
-  position: new THREE.Vector3(),
-  positionRandomness: .5,
-  velocity: new THREE.Vector3(),
-  velocityRandomness: .1,
-  color: 0xaa88ff,
-  colorRandomness: .5,
-  turbulence: .5,
-  lifetime: 2,
-  size: 15,
-  sizeRandomness: 5
-};
+    this.system = new ParticlesSystem({
+      maxParticles: 2
+    });
+    this.scene.add( this.system );
 
-spawnerOptions = {
-  spawnRate: 100,
-  horizontalSpeed: 1.5,
-  verticalSpeed: 2.33,
-  timeScale: 1
+    this.clock = new THREE.Clock( true );
+
+    // options passed during each spawned
+    this.particleOptions = {
+      position: new THREE.Vector3(),
+      positionRandomness: 0,
+      velocity: new THREE.Vector3(),
+      velocityRandomness: 0,
+      color: 0xaa88ff,
+      colorRandomness: 0,
+      turbulence: 0,
+      lifetime: 1,
+      size: 20,
+      sizeRandomness: 0
+    };
+
+    this.spawnerOptions = {
+      spawnRate: 1,
+      horizontalSpeed: 1.5,
+      verticalSpeed: 2.33,
+      timeScale: 1
+    }
+
+    this.colors = [0xaa88ff];
+
+    this.tick = 0;
+
+    this.animate();
+  }
+
+  animate() {
+
+    let delta = this.clock.getDelta() * .5
+    this.tick += delta;
+
+    this.particleOptions.color = this.colors[0];
+
+    this.particleOptions.position.x = Math.sin(this.tick * this.spawnerOptions.horizontalSpeed) * 15;
+    this.particleOptions.position.y = Math.sin(this.tick * this.spawnerOptions.verticalSpeed) * 10;
+
+    for( var i = 0; i < this.spawnerOptions.spawnRate; i++) {
+      this.system.spawnParticle( this.particleOptions );
+    }
+
+    this.particleOptions.color = this.colors[1];
+
+    this.particleOptions.position.x = Math.sin((this.tick + 2) * this.spawnerOptions.horizontalSpeed) * 20;
+    this.particleOptions.position.y = Math.sin((this.tick + 2) * this.spawnerOptions.verticalSpeed) * 10;
+
+    for( var i = 0; i < this.spawnerOptions.spawnRate; i++) {
+      this.system.spawnParticle( this.particleOptions );
+    }
+
+    this.particleOptions.color = this.colors[2];
+
+    this.particleOptions.position.x = Math.sin((this.tick + 4) * this.spawnerOptions.horizontalSpeed) * 20;
+    this.particleOptions.position.y = Math.sin((this.tick + 4) * this.spawnerOptions.verticalSpeed) * 10;
+
+    for( var i = 0; i < this.spawnerOptions.spawnRate; i++) {
+      this.system.spawnParticle( this.particleOptions );
+    }
+
+    this.system.update(this.tick);
+
+    requestAnimationFrame( this.animate.bind( this ) );
+  }
+
 }
-
-var colors = [0xaa88ff, 0x6699aa, 0xddbb88];
-
-var tick = 0;
-
-function frameUpdate() {
-
-  var delta = clock.getDelta() * .5
-  tick += delta;
-
-  particleOptions.color = colors[0];
-
-  particleOptions.position.x = Math.sin(tick * spawnerOptions.horizontalSpeed) * 15;
-  particleOptions.position.y = Math.sin(tick * spawnerOptions.verticalSpeed) * 10;
-
-  for( var i = 0; i < spawnerOptions.spawnRate; i++) {
-    p.spawnParticle( particleOptions );
-  }
-
-  particleOptions.color = colors[1];
-
-  particleOptions.position.x = Math.sin((tick + 2) * spawnerOptions.horizontalSpeed) * 20;
-  particleOptions.position.y = Math.sin((tick + 2) * spawnerOptions.verticalSpeed) * 10;
-
-  for( var i = 0; i < spawnerOptions.spawnRate; i++) {
-    p.spawnParticle( particleOptions );
-  }
-
-  particleOptions.color = colors[2];
-
-  particleOptions.position.x = Math.sin((tick + 4) * spawnerOptions.horizontalSpeed) * 20;
-  particleOptions.position.y = Math.sin((tick + 4) * spawnerOptions.verticalSpeed) * 10;
-
-  for( var i = 0; i < spawnerOptions.spawnRate; i++) {
-    p.spawnParticle( particleOptions );
-  }
-
-  p.update(tick);
-
-  requestAnimationFrame( frameUpdate );
-}
-
-frameUpdate();
-
-window.scene = scene;
-window.THREE = THREE;

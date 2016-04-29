@@ -49,28 +49,19 @@ export default class ThreeScene extends THREE.Scene {
 
     // animate function - gets calls each frame
     animate() {
-
-        console.log ( "ThreeScene Animate")
-
         // get the time elapsed since the start of the scene
-        let delta = this.clock.getDelta();
-        let time = this.clock.getElapsedTime();
-
-        // get the latest audio frequency data
-        // this.analyser.getFloatFrequencyData( this.freqData );
+        var time = this.clock.getElapsedTime();
 
         // update any children with an 'update' method defined, and pass them the
         // time elapsed since the start of the scene, if they need it
-        this.traverse( child => {
-            if( child.update !== undefined ) {
-                child.update( time, delta, this.freqData )
-            }
-        });
+        // _.each( this.scene.children, function( child ) {
+        //   if( child.update !== undefined ) child.update( time );
+        // }.bind( this ) );
 
         // render the scene
-        this.renderer.render( this, this.camera );
+        this.render();
 
         // subscribe to the next frame event
-        requestAnimationFrame( () => this.animate() );
+        requestAnimationFrame( this.animate.bind( this ) );
     }
 }
