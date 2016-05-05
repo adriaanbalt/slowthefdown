@@ -108,32 +108,32 @@ THREE.GPUParticleSystem = function(options) {
 
       'void main() {',
 
-      '// unpack things from our attributes',
-      'vColor = encode_float( particleVelColSizeLife.y );',
+        '// unpack things from our attributes',
+        'vColor = encode_float( particleVelColSizeLife.y );',
 
-      '// convert our velocity back into a value we can use',
-      'vec4 velTurb = encode_float( particleVelColSizeLife.x );',
-      'vec3 velocity = vec3( velTurb.xyz );',
-      'float turbulence = velTurb.w;',
+        '// convert our velocity back into a value we can use',
+        'vec4 velTurb = encode_float( particleVelColSizeLife.x );',
+        'vec3 velocity = vec3( velTurb.xyz );',
+        'float turbulence = velTurb.w;',
 
-      'vec3 newPosition;',
+        'vec3 newPosition;',
 
-      'float timeElapsed = uTime - particlePositionsStartTime.a;',
+        'float timeElapsed = uTime - particlePositionsStartTime.a;',
 
-      'lifeLeft = 1. - (timeElapsed / particleVelColSizeLife.w);',
+        'lifeLeft = 1. - (timeElapsed / particleVelColSizeLife.w);',
 
-      'gl_PointSize = ( uScale * particleVelColSizeLife.z ) * lifeLeft;',
+        'gl_PointSize = ( uScale * particleVelColSizeLife.z ) * lifeLeft;',
 
-      'velocity.x = ( velocity.x - .5 ) * 3.;',
-      'velocity.y = ( velocity.y - .5 ) * 3.;',
-      'velocity.z = ( velocity.z - .5 ) * 3.;',
+        'velocity.x = ( velocity.x - .5 ) * 3.;',
+        'velocity.y = ( velocity.y - .5 ) * 3.;',
+        'velocity.z = ( velocity.z - .5 ) * 3.;',
 
-      'newPosition = particlePositionsStartTime.xyz + ( velocity * 10. ) * ( uTime - particlePositionsStartTime.a );',
+        'newPosition = particlePositionsStartTime.xyz + ( velocity * 10. ) * ( uTime - particlePositionsStartTime.a );',
 
-      'vec3 noise = texture2D( tNoise, vec2( newPosition.x * .015 + (uTime * .05), newPosition.y * .02 + (uTime * .015) )).rgb;',
-      'vec3 noiseVel = ( noise.rgb - .5 ) * 30.;',
+        'vec3 noise = texture2D( tNoise, vec2( newPosition.x * .015 + (uTime * .05), newPosition.y * .02 + (uTime * .015) )).rgb;',
+        'vec3 noiseVel = ( noise.rgb ) * 30.;',
 
-      'newPosition = mix(newPosition, newPosition + vec3(noiseVel * ( turbulence * 5. ) ), (timeElapsed / particleVelColSizeLife.a) );',
+        'newPosition = mix(newPosition, newPosition + vec3(noiseVel * ( turbulence * 5. ) ), (timeElapsed / particleVelColSizeLife.a) );',
 
         'if( velocity.y > 0. && velocity.y < .05 ) {',
             'lifeLeft = 0.;',

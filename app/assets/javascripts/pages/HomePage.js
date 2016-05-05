@@ -10,13 +10,13 @@ import API from '../redux/API';
 // import Kaleidoscope from '../components/Kaleidoscope.js';
 // import Ftext from '../components/Ftext.js';
 
-import Particles from '../components/Particles.js';
+import SpinSketch from '../components/SpinSketch.js';
 
 class HomePage extends UI {
 
   constructor ( ){
     super();
-    this.scene = new Particles();
+    this.scene = new SpinSketch();
     // this.renderSize = 800;
     // this.textCanvas = new PIXI.Container();
     // this.canvas = new PIXI.Container();

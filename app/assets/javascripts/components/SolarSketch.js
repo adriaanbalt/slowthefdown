@@ -1,13 +1,13 @@
 import THREE from 'three';
-import ThreeScene from './ThreeScene';
-import PlanetSystem from './System';
+import SolarScene from './SolarScene';
+import PlanetSystem from './SolarSystem';
 
 export default class Sketch {
 
 	constructor(){
 		console.log ( "Sketch constructor" );
 		// create a new ThreeJS Scene
-		this.scene = new ThreeScene();
+		this.scene = new SolarScene();
 
 		// create star skydome
 		let skyGeo = new THREE.SphereGeometry( 2500, 25, 25 );

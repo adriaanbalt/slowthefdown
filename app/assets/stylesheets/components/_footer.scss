@@ -1,5 +1,6 @@
 .Footer {
-	background: $footer-bg-color;
+	background: $bg-color;
+	@include opacity(.05);
 	.inner {
 		@include outer-container();
 	}

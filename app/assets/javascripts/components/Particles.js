@@ -38,7 +38,7 @@ export default class Particles {
       color: 0xaa88ff,
       colorRandomness: 0,
       turbulence: 0,
-      lifetime: 1,
+      lifetime: 1000,
       size: 20,
       sizeRandomness: 0
     };

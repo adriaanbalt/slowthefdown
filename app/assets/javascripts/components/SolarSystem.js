@@ -1,6 +1,6 @@
 import THREE from 'three';
 import _ from 'lodash';
-import Planet from './Planet';
+import Planet from './SolarPlanet';
 
 export default class System extends THREE.Object3D {
 
