@@ -6,10 +6,11 @@ var config = require('../config/'),
     bluebird = require('bluebird');
 
 gulp.task('webpack:production', (callback) => {
-  var webpackConfig = require('../config/webpack')('prod'),
+  var server = require(path.join(config.root, 'server')),
+      webpackConfig = require('../config/webpack')('prod'),
       serverType = process.argv[2] || process.env.NODE_ENV,
       server = require(path.join(config.root, 'server'))('prod', serverType),
-      serverPort = server.serverPort,
+      serverPort = process.env.PORT,
       app = server.app;
 
   app.listenAsync = bluebird.promisify(app.listen);
