@@ -22,7 +22,6 @@ export default class SpinShader extends THREE.Mesh{
 		// this.pulse = THREE.Math.clamp( this.pulse, 0.0, 25.0 );
 		// this.shaderMat.uniforms['iPulse'].value = this.pulse;
     	this.shaderMat.uniforms['iTime'].value = time;
-    	this.position.z = -500;
 	}
 }
 

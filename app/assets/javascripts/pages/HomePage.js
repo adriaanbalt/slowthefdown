@@ -16,7 +16,7 @@ class HomePage extends UI {
 
   constructor ( ){
     super();
-    this.scene = new SpinSketch();
+    this.scene = new SpinSketch( this.overFn, this.outFn );
     // this.renderSize = 800;
     // this.textCanvas = new PIXI.Container();
     // this.canvas = new PIXI.Container();
@@ -41,11 +41,11 @@ class HomePage extends UI {
   }
 
   overFn(){
-    console.log ( "over!" );
+    // console.log ( "over!" );
   }
   outFn( highscore ){
-    console.log ( 'outFn highscore', highscore );
-    this.highscoreText.text = `Highscore: ${highscore} seconds`;
+    // console.log ( 'outFn highscore', highscore );
+    // this.highscoreText.text = `Highscore: ${highscore} seconds`;
   }
 
   render () {

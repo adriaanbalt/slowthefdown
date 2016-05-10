@@ -136,9 +136,9 @@ export default class System extends THREE.Object3D {
             this.planet.applyForce( force );
             this.planet.applyUpdate();
 
-            force = this.planet.attract( this.centerPlanet );
-            this.centerPlanet.applyForce( force );
-            this.centerPlanet.applyUpdate();
+            // force = this.planet.attract( this.centerPlanet );
+            // this.centerPlanet.applyForce( force );
+            // this.centerPlanet.applyUpdate();
         }
 
         // this.centerPlanet.applyUpdate();

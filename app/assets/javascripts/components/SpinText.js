@@ -6,22 +6,60 @@ export default class SpinText extends THREE.Mesh {
   constructor( geo, mat) {
     super( geo, mat );
 
-    this.position.x = 0;//(Math.random() - .5 ) * 30;
-    this.position.y = 0;//(Math.random() - .5 ) * 30;
-    this.position.z = 700;
-    this.rot = Math.random();
+    this.vx = Math.random() - 0.5;
+    this.vy = Math.random() - 0.5;
 
-    // this.DAMP = 0.98;
-    // this.x = window.innerWidth / 2;
-    // this.y = window.innerHeight / 2;
-    // this.vx = Math.random() - 0.5;
-    // this.vy = Math.random() - 0.5;
+    this.acceleration = new THREE.Vector3();
+    this.velocity = new THREE.Vector3();
+    // this.vec = new THREE.Vector3( 0, 0, 0 );
+    this.speed = 3;
+    this.mass = 2;
+    this.gravity = 1.0;
+    let pos = new THREE.Vector3( 50.0, 50.0, 0 );
+    this.position.set( pos.x, pos.y, pos.z );
 
-    // this.velocity = new THREE.Vector3();
+    this.centerPosition = new THREE.Vector3( 1, 2, 0 );
+
   }
 
   // define a custom update function to be called on the cube each frame
   update( time ) {
+
+    // if ( this.intersects.length > 0 ) {
+    //   if ( INTERSECTED != this.intersects[ 0 ].object ) {
+    //     if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+    //     INTERSECTED = this.intersects[ 0 ].object;
+    //     INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+    //     INTERSECTED.material.emissive.setHex( 0xff0000 );
+    //   }
+    // } else {
+    //   if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+    //   INTERSECTED = null;
+    // }
+
+    // let force = new THREE.Vector3().subVectors( this.position, this.centerPosition );
+    // let d = force.length(); // Distance between objects
+    // // d = THREE.Math.clamp( d, 1.0, 10.0 ); // Limiting the distance to eliminate "extreme" results for very close or very far objects
+    // force = force.normalize(); // Normalize vector (distance doesn't matter here, we just want this vector for direction)
+
+    // this.vx = Math.random() * 0.5;
+    // let strength = Math.cos( ( this.vx * this.mass * this.speed ) );   // Calculate gravitional force magnitude
+    // force = force.multiplyScalar( strength ); // Get force vector --> magnitude * direction
+    // // force = THREE.Math.clamp( force, 1.0, 100.0 );
+
+    // // return a new Vector, which is the force divided by mass
+    // let f = new THREE.Vector3( force.x, force.y, force.z );
+    // // f.divideScalar( this.mass );
+    // this.acceleration.add( f );
+
+    // this.velocity.add( this.acceleration );
+    // this.position.add( this.velocity );
+
+    // // // reset acceleration
+    // this.acceleration.multiplyScalar( 0 );
+
+    // console.log ( 'this.position', this.velocity, force, strength);
+
 
     // this.vx += Math.random() * 0.5 - 0.25;
     // this.vy += Math.random() * 0.5 - 0.25;
@@ -52,16 +90,22 @@ export default class SpinText extends THREE.Mesh {
     // this.rotation.x += this.rot;// * Math.PI / 180;
     // this.rotation.y += this.rot;// * Math.PI / 180;
 
-    
+    this.vx = Math.random() * 0.5;
+    this.vy = Math.random() * 0.5;
+   
+    this.dx = (Math.sin( (time * this.speed )) * 200) ; // X distance from center - movement with speed
+    this.dy = (Math.cos( (time * this.speed )) * 200) ; // Y distance from center - movement with speed over time
+
+    this.position.x = this.dx;
+    this.position.y = this.dy;
+    // // this.position.z = Math.sin( time * this.speed ) * 350 + 350;
 
     // this.position.x += 1;
     // this.position.y += 1;
-    this.position.z -= .5;
+    // this.position.z -= .5;
     // if ( this.position.x > window.innerWidth ) this.position.x = -100;
     // if ( this.position.y > window.innerHeight ) this.position.y = -100;
     // if ( this.position.z > 100 ) this.position.z = 1;
-
-    // console.log ( 'xy:', this.x, this.y, this.position.x, this.position.y );
 
     // this.velocity.add( this.acceleration );
     // this.position.add( this.velocity );
