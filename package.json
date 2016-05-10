@@ -12,10 +12,10 @@
   },
   "scripts": {
     "start": "docker kill slowthefdown-node; docker rm slowthefdown-node; docker rmi $(docker images -f \"dangling=true\" -q); docker build -t slowthefdown .; docker run -it --name slowthefdown-node -p 3000:3000 -v $(pwd):/src/app slowthefdown",
-    "dev": "nohup gulp dev | tee dev.log &",
-    "qa": "nohup gulp qa | tee qa.log &",
+    "dev": "gulp dev | tee dev.log &",
+    "qa": "gulp qa | tee qa.log &",
     "stop": "node server/stop",
-    "prod": "nohup gulp prod | tee prod.log &",
+    "prod": "gulp prod",
     "postinstall": "npm rebuild node-sass"
   },
   "dependencies": {
