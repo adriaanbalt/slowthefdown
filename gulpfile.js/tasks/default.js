@@ -14,7 +14,7 @@ if(['dev','qa','prod'].indexOf(process.argv[2]) === -1) {
 
 else {
   // Production added by running these strings after npm start
-  gulp.task('dev', ['build:production'], () => console.log("dev running on port 3010"));
+  gulp.task('dev', ['build:development'], () => console.log("dev running on port 3010"));
   gulp.task('qa', ['build:production'], () => console.log("qa up and running!"));
   gulp.task('prod', ['build:production'], () => console.log("prod up and running!"));
 }

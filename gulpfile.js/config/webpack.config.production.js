@@ -12,7 +12,6 @@ var webpackManifest = require('../lib/webpackManifest');
  ***********************************************************************/
 module.exports = function(env) {
   var jsSrc = path.resolve(config.sourceAssets + '/javascripts/');
-  var coreJsSrc = path.resolve(config.coreSourceAssets + '/javascripts/');
   var jsDest = path.join(config.publicAssets, '/javascripts/');
   var publicPath = '/assets/javascripts/';
 
@@ -62,7 +61,18 @@ module.exports = function(env) {
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         filename: '[name].js'  // deal with this later ----> env === 'production' ? '[name]-[hash].js' : '[name].js',
-      })
+      }),
+      new webpackManifest(publicPath, config.root + '/public'),
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify('production')
+        }
+      }),
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin({
+        sourceMap: false
+      }),
+      new webpack.NoErrorsPlugin()
     );
   }
 
@@ -72,6 +82,7 @@ module.exports = function(env) {
     webpack.debug = true;
   }
 
+console.log ( 'env', env );
   if(env === 'prod') {
     webpackConfig.plugins.push(
       new webpackManifest(publicPath, config.root + '/public'),

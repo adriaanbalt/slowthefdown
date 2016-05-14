@@ -41,7 +41,7 @@ export default class SpinText extends THREE.Object3D {
 	let fontLoader = new THREE.FontLoader();
 	fontLoader.load( '/assets/fonts/helvetiker_bold.typeface.js', ( response ) => {
 		this.font = response;
-		this.geo = new THREE.TextGeometry( "f",{
+		this.geo = new THREE.TextGeometry( "x",{
 			font: this.font,
 			size: 100,
 			height: 10,
@@ -92,11 +92,10 @@ export default class SpinText extends THREE.Object3D {
   // define a custom update function to be called on the cube each frame
   update( time ) {
 
-	this.vx = Math.random() * 0.5;
-	this.vy = Math.random() * 0.5;
-   
-	this.dx = (Math.sin( (time * this.speed )) * 200) ; // X distance from center - movement with speed
-	this.dy = (Math.cos( (time * this.speed )) * 200) ; // Y distance from center - movement with speed over time
+  	console.log ( 'time', time );
+
+	this.dx = (Math.sin( (time * this.speed * 1.15 )) * 200) + (Math.sin( (time * this.speed * .33 )) * 33); // X distance from center - movement with speed
+	this.dy = (Math.cos( (time * this.speed * 1.45 )) * 45) + (Math.sin( (time * this.speed * .15 )) * 45) ; // Y distance from center - movement with speed over time
 
 	this.position.x = this.dx;
 	this.position.y = this.dy;
@@ -192,7 +191,7 @@ export default class SpinSketch {
 		// this.fog = new THREE.FogExp2( 0x000000, .07 );
 
 		// create the camera
-		this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, .1, 100000 );
+		this.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
 		this.camera.position.z = 1000;
 
 		this.raycaster = new THREE.Raycaster();
@@ -232,6 +231,8 @@ export default class SpinSketch {
 			].join("\n"),
 
 			fragmentShader: [
+				'precision highp float;',
+
 				'uniform float iTime;',
 				'uniform float iPulse;',
 				'uniform sampler2D iText0;',
@@ -249,14 +250,21 @@ export default class SpinSketch {
 
 					'float len = length(q);',
 
-					'float a = atan(q.y, q.x) + iTime * 0.5;', 
-					'float b = atan(q.y, q.x) + iTime * 0.5;',
-					'float r1 = 0.3 / len + iTime * 0.5;',
-					'float r2 = 0.5 / len + iTime * 0.5;',
+					'float a = atan(q.y, q.x);',  //speed of rotation
+					'float b = atan(q.y, q.x);', //speed of rotation
+					'float r1 = 0.3;',
+					'float r2 = 0.5;',
+					// 'float r1 = 0.3 / len + iTime * 0.5;',
+					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
-					'float m = (1. + sin(iTime * 0.1)) / 2.0;',
-					'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
-					'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
+					'float m = (1. + sin(iTime * 0.9)) / 1.0;',
+
+					'vec4 tex1 = texture2D(iText0, vec2(a, r1 ));',
+					'vec4 tex2 = texture2D(iText1, vec2(b, r2 ));',
+
+					// 'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
+					// 'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
+
 					'vec3 col = vec3(mix(tex1, tex2, m));',
 					// 'vec3 col = vec3(tex1));',
 					'vec3 d = col * len * 0.5 * iPulse;',
@@ -270,15 +278,16 @@ export default class SpinSketch {
 
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },
-			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/texture.png') },
-			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/texture.png' ) },
+			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/seamless-texture-polar.png') },
+			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/seamless-texture-polar.png' ) },
 			iPulse: { type: 'f', value: 4 }
 		};
 
 		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
 		tuniform.iText1.value.wrapS = tuniform.iText1.value.wrapT = THREE.RepeatWrapping;
 
-		let geo = new THREE.PlaneGeometry( (window.innerWidth*2.5), (window.innerHeight*2.5), 1 , 1 );
+		let geo = new THREE.PlaneGeometry( (window.innerWidth), (window.innerHeight) );
+		// let geo = new THREE.SphereGeometry( 1000, 16, 32 );
 		this.particleShaderMat = new THREE.ShaderMaterial({
 			uniforms: tuniform,
 			vertexShader: GPUParticleShader.vertexShader,
@@ -286,7 +295,7 @@ export default class SpinSketch {
 			side:THREE.DoubleSide
 		});
 		this.spinshader = new SpinShader( geo, this.particleShaderMat );
-		this.spinshader.position.z = -1500;
+		this.spinshader.position.z = -1000;
 
 		this.spinText = new SpinText(() => this.animate());
 		this.scene.add( this.spinshader );
@@ -301,6 +310,9 @@ export default class SpinSketch {
 		// bevelSize — Float. How far from text outline is bevel. Default is 8.
 
 		document.addEventListener( 'mousemove', (e)=> this.onDocumentMouseMove(e), false );
+		document.addEventListener( 'touchstart', (e)=> this.onDocumentMouseMove(e), false)
+		document.addEventListener( 'touchmove', (e)=> this.onDocumentMouseMove(e), false)
+
 
 		// add the camera to the scene
 		this.scene.add( this.camera );
@@ -316,8 +328,10 @@ export default class SpinSketch {
 
 	onDocumentMouseMove( event ) {
 		event.preventDefault();
-		this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-		this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  		let xPos = event.touches ? event.touches[0].pageX : 0;
+  		let yPos = event.touches ? event.touches[0].pageY : 0;
+		this.mouse.x = ( xPos / window.innerWidth ) * 2 - 1;
+		this.mouse.y = - ( yPos / window.innerHeight ) * 2 + 1;
 	}
 
 	// browser resize handler
@@ -325,6 +339,11 @@ export default class SpinSketch {
 		// update camera
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
+
+		console.log ( 'this.spinShader', this.spinshader );
+
+		// this.spinshader.geometry.width = window.innerWidth;
+		// this.spinshader.geometry.height = window.innerHeight;
 
 		// update renderer
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -362,7 +381,11 @@ export default class SpinSketch {
 				this.overFn();
 			}
 		} else {
+			console.log ( "over here" );
 			if ( this.overTime ){
+
+				this.spinText.setSpeed( 3 );
+				this.spinText.setDepth( 800 );
 				this.outTime = Date.now();
 				this.highscore = (this.outTime - this.overTime )/ 1000;
 				this.overTime = null;

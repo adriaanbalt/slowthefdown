@@ -46,6 +46,8 @@ import Terms from './pages/TermsPage';
 // const store = configureStore(window.__INITIAL_STATE__ || { user: null, posts: []});
 const store = configureStore();
 //<DevTools />
+
+console.log ( 'Config.constants.ROOT_PATH', Config.constants.ROOT_PATH );
 render((
     <Provider store={store}>
         <div>
