@@ -1,5 +1,6 @@
 // REQUIREMENTS
 import THREE from 'three';
+import SimplexNoise from 'simplex-noise';
 
 export default class SpinShader extends THREE.Mesh{
 
@@ -7,19 +8,17 @@ export default class SpinShader extends THREE.Mesh{
 		super( geo, mat );
 		this.shaderMat = mat;
 		this.pulse = 0;
+		this.hover = 3;
+		this.superName = "SpinShader";
+	}
+
+	setSpeed( hover ) {
+		this.hover = hover;
 	}
 
 	update( time ) {
-		// console.log ( 'spin shader update', this.pulse );
-		// if ( 0 < this.pulse && this.pulse < 15 ) {
-		// 	console.log ( "inside space!" );
-		// 	this.pulse += -0.1;
-		// } else {
-		// 	this.pulse -= 0.1;
-		// }
-		// this.pulse = THREE.Math.clamp( this.pulse, 0.0, 25.0 );
-		// this.shaderMat.uniforms['iPulse'].value = this.pulse;
 		this.shaderMat.uniforms['iTime'].value = time;
+		this.shaderMat.uniforms['iHover'].value = this.hover;
 		this.position.z = 0;
 	}
 }
@@ -31,6 +30,8 @@ export default class SpinText extends THREE.Object3D {
 	super();
 
 	this.superName = "F";
+
+	this.simplex = new SimplexNoise(Math.random);
 
 	this.mat = new THREE.MeshPhongMaterial({
 	  color: 0xFFFFFF,
@@ -63,17 +64,21 @@ export default class SpinText extends THREE.Object3D {
 	this.circle = new THREE.Mesh( geometry, material );
 	this.circle.position.x = 25;
 	this.circle.position.y = 50;
+	this.progress = 0 ;
 	this.add( this.circle );
 
 	this.vx = Math.random() - 0.5;
 	this.vy = Math.random() - 0.5;
 
 	this.acceleration = new THREE.Vector3();
-	this.velocity = new THREE.Vector3();
+	this.velocity = 0.01;
+	this.radius = 500;
+	this.noiseAccum = 0;
 	// this.vec = new THREE.Vector3( 0, 0, 0 );
-	this.speed = 3;
+	this.speed = 100;
 	this.mass = 2;
 	this.gravity = 1.0;
+
 	let pos = new THREE.Vector3( 50.0, 50.0, 0 );
 	this.position.set( pos.x, pos.y, pos.z );
 
@@ -85,95 +90,30 @@ export default class SpinText extends THREE.Object3D {
   	this.speed = newSpeed;
   }
 
+  setNoiseSpeed( newSpeed ) {
+  	this.noiseSpeed = newSpeed;
+  }
+
   setDepth( newZ ) {
   	this.position.z = newZ;
   }
 
   // define a custom update function to be called on the cube each frame
   update( time ) {
+  	
 
-  	console.log ( 'time', time );
+	this.noise = this.simplex.noise2D(this.progress, 0);
 
-	this.dx = (Math.sin( (time * this.speed * 1.15 )) * 200) + (Math.sin( (time * this.speed * .33 )) * 33); // X distance from center - movement with speed
-	this.dy = (Math.cos( (time * this.speed * 1.45 )) * 45) + (Math.sin( (time * this.speed * .15 )) * 45) ; // Y distance from center - movement with speed over time
+	this.dx = (Math.cos( (this.progress) ) * (this.radius * (this.noise ) )) ;//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
+	this.dy = (Math.sin( (this.progress) ) * (this.radius * (this.noise ) )) ;//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // Y distance from center - movement with speed over time
 
 	this.position.x = this.dx;
 	this.position.y = this.dy;
 
-
-	// let force = new THREE.Vector3().subVectors( this.position, this.centerPosition );
-	// let d = force.length(); // Distance between objects
-	// // d = THREE.Math.clamp( d, 1.0, 10.0 ); // Limiting the distance to eliminate "extreme" results for very close or very far objects
-	// force = force.normalize(); // Normalize vector (distance doesn't matter here, we just want this vector for direction)
-
-	// this.vx = Math.random() * 0.5;
-	// let strength = Math.cos( ( this.vx * this.mass * this.speed ) );   // Calculate gravitional force magnitude
-	// force = force.multiplyScalar( strength ); // Get force vector --> magnitude * direction
-	// // force = THREE.Math.clamp( force, 1.0, 100.0 );
-
-	// // return a new Vector, which is the force divided by mass
-	// let f = new THREE.Vector3( force.x, force.y, force.z );
-	// // f.divideScalar( this.mass );
-	// this.acceleration.add( f );
-
-	// this.velocity.add( this.acceleration );
-	// this.position.add( this.velocity );
-
-	// // // reset acceleration
-	// this.acceleration.multiplyScalar( 0 );
-
-	// console.log ( 'this.position', this.velocity, force, strength);
-
-
-	// this.vx += Math.random() * 0.5 - 0.25;
-	// this.vy += Math.random() * 0.5 - 0.25;
-
-	// let newx = this.x + this.vx;
-	// let newy = this.y + this.vy;
-	// let dy = newy - this.y;
-	// let dx = newx - this.x;
-							   
-	// // let a = (Math.atan2(dy, dx) + PIBY2)*ToDegrees;  // The new target rotation in degrees
-	// // dot.transform("r"+a);;
-
-	// this.x += this.vx;
-	// this.y += this.vy;
-
-	// this.vx *= this.DAMP;
-	// this.vy *= this.DAMP;
-
-	// //check bounds invert direction 
-	// this.vx = this.x < 50 ? this.vx * -1 : this.x > 415 ? this.vx * -1 : this.vx;
-	// this.vy = this.y < 50 ? this.vy * -1 : this.y > 415 ? this.vy * -1 : this.vy;
-	// this.x = this.x < 0 ? window.innerWidth : this.x > window.innerWidth ? 0 : this.x;
-	// this.y = this.y < 0 ? window.innerHeight : this.y > window.innerHeight ? 0 : this.y;
-
-	// this.position.x = this.x * (Math.random() * .1);
-	// this.position.y = this.y * (Math.random() * .1);
-
-	// this.rotation.x += this.rot;// * Math.PI / 180;
-	// this.rotation.y += this.rot;// * Math.PI / 180;
-
-	// // this.position.z = Math.sin( time * this.speed ) * 350 + 350;
-
-	// this.position.x += 1;
-	// this.position.y += 1;
-	// this.position.z -= .5;
-	// if ( this.position.x > window.innerWidth ) this.position.x = -100;
-	// if ( this.position.y > window.innerHeight ) this.position.y = -100;
-	// if ( this.position.z > 100 ) this.position.z = 1;
-
-	// this.velocity.add( this.acceleration );
-	// this.position.add( this.velocity );
-
-	// // reset acceleration
-	// this.acceleration.multiplyScalar( 0 );
-
+	this.progress += this.velocity * this.speed;
+	this.noiseAccum += 0.01 * this.noiseSpeed;
   }
-
 }
-
-
 
 export default class SpinSketch {
 
@@ -234,53 +174,101 @@ export default class SpinSketch {
 				'precision highp float;',
 
 				'uniform float iTime;',
-				'uniform float iPulse;',
+				'uniform float iHover;',
+				'uniform float iDistance;',
 				'uniform sampler2D iText0;',
 				'uniform sampler2D iText1;',
 
 				'varying vec2 vUv;',
 
+
 				'void main()',
 				'{',
-					'vec2 p = -1.0 + 2.0 * vUv;',
+					'vec2 p = -1.0 + 3.0 * vUv;',
 					'vec2 q = p - vec2(0.5, 0.5);',// start pos
 
-					'q.x += 0.4 - sin((iTime * 0.) * 0.9) * 0.2;', // X distance from center - movement with speed
-					'q.y += 0.3 - cos((iTime * 0.) * 0.9) * 0.2;', // Y distance from center - movement with speed over time
+					'q.x += 0.;', // X distance from center - movement with speed
+					'q.y += 0.;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
-					'float a = atan(q.y, q.x);',  //speed of rotation
-					'float b = atan(q.y, q.x);', //speed of rotation
-					'float r1 = 0.3;',
-					'float r2 = 0.5;',
+					'float a = atan( q.y, q.x ) / 3.1416  ;',  //speed of rotation
+					'float b = atan( q.y, q.x ) / 3.1416  ;', //speed of rotation
+					'float r1 = (0.01*iHover) / len + iTime;', // remove the / for reverse whirlpool
+					'float r2 = (0.1*iHover) / len + iTime;',
 					// 'float r1 = 0.3 / len + iTime * 0.5;',
 					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
-					'float m = (1. + sin(iTime * 0.9)) / 1.0;',
+					'float m = (cos(.5 ) + sin(iHover * .9)) / .5;',
 
-					'vec4 tex1 = texture2D(iText0, vec2(a, r1 ));',
-					'vec4 tex2 = texture2D(iText1, vec2(b, r2 ));',
+					'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
+					'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
 
 					// 'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
 					// 'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
 
 					'vec3 col = vec3(mix(tex1, tex2, m));',
 					// 'vec3 col = vec3(tex1));',
-					'vec3 d = col * len * 0.5 * iPulse;',
+					'vec3 d = col * len * 0.5 * iDistance;',
 					'gl_FragColor = vec4(d, 1.0);',
 				'}',
 			].join("\n")
 
 		};
 
+// fragmentShader: [
+// 		'precision highp float;',
+
+// 		'uniform float iTime;',
+// 		'uniform float iDistance;',
+// 		'uniform sampler2D iText0;',
+// 		'uniform sampler2D iText1;',
+
+// 		'varying vec2 vUv;',
+
+// 		'void main()',
+// 		'{',
+// 			'vec2 p = -1.0 + 2.0 * vUv;',
+// 			'vec2 q = p - vec2(0.5, 0.5);',// start pos
+
+// 			// 'q.x += 0.4 - sin((iTime * 0.) * 0.9) * 0.2;', // X distance from center - movement with speed
+// 			// 'q.y += 0.3 - cos((iTime * 0.) * 0.9) * 0.2;', // Y distance from center - movement with speed over time
+
+// 			'q.x += 0.2;', // X distance from center - movement with speed
+// 			'q.y += 0.2;', // Y distance from center - movement with speed over time
+
+// 			'float len = length(q);',
+
+// 			'float a = atan( q.y, q.x ) / 3.1416;',  //speed of rotation
+// 			'float b = atan( q.y, q.x ) / 3.1416;', //speed of rotation
+// 			'float r1 = 0.3 / len + iTime * 0.35;', // remove the / for reverse whirlpool
+// 			'float r2 = 0.5 / len + iTime * 0.35;',
+// 			// 'float r1 = 0.3 / len + iTime * 0.5;',
+// 			// 'float r2 = 0.5 / len + iTime * 0.5;',
+
+// 			'float m = (1. + sin(iTime * 0.9)) / 1.0;',
+
+// 			'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
+// 			'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
+
+// 			// 'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
+// 			// 'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
+
+// 			'vec3 col = vec3(mix(tex1, tex2, m));',
+// 			// 'vec3 col = vec3(tex1));',
+// 			'vec3 d = col * len * 0.5 * iDistance;',
+// 			'gl_FragColor = vec4(d, 1.0);',
+// 		'}',
+// 	].join("\n")
+
 		this.particleSpriteTex = THREE.ImageUtils.loadTexture("assets/images/texture.png");
 
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },
-			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/seamless-texture-polar.png') },
-			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/seamless-texture-polar.png' ) },
-			iPulse: { type: 'f', value: 4 }
+			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/moon.jpg') },
+			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/moon.jpg' ) },
+			iDistance: { type: 'f', value: 5 },
+			iHover: { type: 'f', value: 3 }
 		};
 
 		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
@@ -328,8 +316,8 @@ export default class SpinSketch {
 
 	onDocumentMouseMove( event ) {
 		event.preventDefault();
-  		let xPos = event.touches ? event.touches[0].pageX : 0;
-  		let yPos = event.touches ? event.touches[0].pageY : 0;
+  		let xPos = event.touches ? event.touches[0].pageX : event.clientX;
+  		let yPos = event.touches ? event.touches[0].pageY : event.clientY;
 		this.mouse.x = ( xPos / window.innerWidth ) * 2 - 1;
 		this.mouse.y = - ( yPos / window.innerHeight ) * 2 + 1;
 	}
@@ -340,7 +328,7 @@ export default class SpinSketch {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 
-		console.log ( 'this.spinShader', this.spinshader );
+		console.log ( 'this.spinShader', this.scene );
 
 		// this.spinshader.geometry.width = window.innerWidth;
 		// this.spinshader.geometry.height = window.innerHeight;
@@ -355,51 +343,40 @@ export default class SpinSketch {
 		let delta = this.clock.getDelta();
 		let time = this.clock.getElapsedTime();
 
-		// get the latest audio frequency data
-		// this.analyser.getFloatFrequencyData( this.freqData );
-
-		// update any children with an 'update' method defined, and pass them the
-		// time elapsed since the start of the scene, if they need it
 		this.scene.traverse( child => {
 			if( child.update !== undefined ) {
 				child.update( time, delta )
 			}
 		});
 
+		this.camera.updateMatrixWorld();
+
 		this.raycaster.setFromCamera( this.mouse, this.camera );
 		this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
 		
-
-		if ( this.intersects.length > 0 ) {
-			if ( this.intersects[0].distance > 0 && this.intersects[0].object.parent.superName == "F"){
-				if ( this.once ) {
-					this.spinText.setSpeed( 2 );
-					this.spinText.setDepth( 500 );
-					this.overTime = Date.now();
-					this.once = false;
-				}
-				this.overFn();
-			}
-		} else {
-			console.log ( "over here" );
-			if ( this.overTime ){
-
-				this.spinText.setSpeed( 3 );
-				this.spinText.setDepth( 800 );
-				this.outTime = Date.now();
-				this.highscore = (this.outTime - this.overTime )/ 1000;
-				this.overTime = null;
-				// this.once = true;
-				this.outFn( this.highscore );
-			}
+		this.out();
+		if ( this.intersects[1] ) {
+			let mesh = this.intersects.filter( obj => {return obj.object.superName != 'SpinShader'} );
+			if ( mesh.length > 0 ){
+				this.over();
+			} 
 		}
-
 
 		// render the scene
 		this.renderer.render( this.scene, this.camera );
 
 		// subscribe to the next frame event
 		requestAnimationFrame( () => this.animate() );
+	}
+
+	over () {
+		this.spinshader.setSpeed( 9 );
+		this.spinText.setSpeed( .5 );
+	}
+
+	out () {
+		this.spinshader.setSpeed( 3 );
+		this.spinText.setSpeed( 1 );
 	}
 
 
