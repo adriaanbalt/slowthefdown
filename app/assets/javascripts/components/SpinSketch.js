@@ -8,17 +8,17 @@ export default class SpinShader extends THREE.Mesh{
 		super( geo, mat );
 		this.shaderMat = mat;
 		this.pulse = 0;
-		this.hover = 3;
+		this.speed = 3;
 		this.superName = "SpinShader";
 	}
 
-	setSpeed( hover ) {
-		this.hover = hover;
+	setSpeed( speed ) {
+		this.speed = speed;
 	}
 
 	update( time ) {
 		this.shaderMat.uniforms['iTime'].value = time;
-		this.shaderMat.uniforms['iHover'].value = this.hover;
+		this.shaderMat.uniforms['iHover'].value = this.speed;
 		this.position.z = 0;
 	}
 }
@@ -29,7 +29,7 @@ export default class SpinText extends THREE.Object3D {
   constructor( cb ) {
 	super();
 
-	this.superName = "F";
+	this.superName = "FText";
 
 	this.simplex = new SimplexNoise(Math.random);
 
@@ -42,9 +42,9 @@ export default class SpinText extends THREE.Object3D {
 	let fontLoader = new THREE.FontLoader();
 	fontLoader.load( '/assets/fonts/helvetiker_bold.typeface.js', ( response ) => {
 		this.font = response;
-		this.geo = new THREE.TextGeometry( "x",{
+		this.geo = new THREE.TextGeometry( "F",{
 			font: this.font,
-			size: 100,
+			size: 70,
 			height: 10,
 			curveSegments: 4,
 			bevelThickness: 1,
@@ -58,12 +58,12 @@ export default class SpinText extends THREE.Object3D {
 		cb();
 	});
 
-	let geometry = new THREE.CircleGeometry( 60, 10 );
+	let geometry = new THREE.CircleGeometry( 47, 10 );
 	let material = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.0 } );
 	material.transparent = true;
 	this.circle = new THREE.Mesh( geometry, material );
 	this.circle.position.x = 25;
-	this.circle.position.y = 50;
+	this.circle.position.y = 35;
 	this.progress = 0 ;
 	this.add( this.circle );
 
@@ -74,8 +74,7 @@ export default class SpinText extends THREE.Object3D {
 	this.velocity = 0.01;
 	this.radius = 500;
 	this.noiseAccum = 0;
-	// this.vec = new THREE.Vector3( 0, 0, 0 );
-	this.speed = 100;
+	this.speed = 1;
 	this.mass = 2;
 	this.gravity = 1.0;
 
@@ -84,6 +83,11 @@ export default class SpinText extends THREE.Object3D {
 
 	this.centerPosition = new THREE.Vector3( 1, 2, 0 );
 
+  }
+
+  setScale( scale ) {
+  	this.scale.x = scale;
+  	this.scale.y = scale;
   }
 
   setSpeed( newSpeed ) {
@@ -96,6 +100,10 @@ export default class SpinText extends THREE.Object3D {
 
   setDepth( newZ ) {
   	this.position.z = newZ;
+  }
+
+  setRadius( newRadius ) {
+  	this.radius = newRadius;
   }
 
   // define a custom update function to be called on the cube each frame
@@ -122,11 +130,12 @@ export default class SpinSketch {
 		this.overFn = overFn;
 		this.outFn	= outFn;
 
-		this.once = true;
-		this.overTime = null;
+		this.overText = true;
 		this.scene = new THREE.Scene();
 
 		this.mouse = new THREE.Vector2();
+		this.mouse.x = window.innerWidth + 100;
+		this.mouse.y = window.innerWidth + 100;
 		// add some unused fog by default
 		// this.fog = new THREE.FogExp2( 0x000000, .07 );
 
@@ -149,14 +158,13 @@ export default class SpinSketch {
 		this.clock = new THREE.Clock( true );
 
 		// create a dim ambient light
-		let ambientLight = new THREE.AmbientLight( 0x555555 );
-		this.scene.add( ambientLight );
+		// let ambientLight = new THREE.AmbientLight( 0x555555 );
+		// this.scene.add( ambientLight );
 
 		// and a brighter point light slightly off center
-		let pointLight = new THREE.PointLight( 0xffeedd );
-		pointLight.position.set( 0, 0, 800 );
+		let pointLight = new THREE.PointLight( 0xFFFFFF );
+		pointLight.position.set( 0, 0, 50 );
 		this.scene.add( pointLight );
-
 
 		var GPUParticleShader = {
 
@@ -216,57 +224,12 @@ export default class SpinSketch {
 
 		};
 
-// fragmentShader: [
-// 		'precision highp float;',
-
-// 		'uniform float iTime;',
-// 		'uniform float iDistance;',
-// 		'uniform sampler2D iText0;',
-// 		'uniform sampler2D iText1;',
-
-// 		'varying vec2 vUv;',
-
-// 		'void main()',
-// 		'{',
-// 			'vec2 p = -1.0 + 2.0 * vUv;',
-// 			'vec2 q = p - vec2(0.5, 0.5);',// start pos
-
-// 			// 'q.x += 0.4 - sin((iTime * 0.) * 0.9) * 0.2;', // X distance from center - movement with speed
-// 			// 'q.y += 0.3 - cos((iTime * 0.) * 0.9) * 0.2;', // Y distance from center - movement with speed over time
-
-// 			'q.x += 0.2;', // X distance from center - movement with speed
-// 			'q.y += 0.2;', // Y distance from center - movement with speed over time
-
-// 			'float len = length(q);',
-
-// 			'float a = atan( q.y, q.x ) / 3.1416;',  //speed of rotation
-// 			'float b = atan( q.y, q.x ) / 3.1416;', //speed of rotation
-// 			'float r1 = 0.3 / len + iTime * 0.35;', // remove the / for reverse whirlpool
-// 			'float r2 = 0.5 / len + iTime * 0.35;',
-// 			// 'float r1 = 0.3 / len + iTime * 0.5;',
-// 			// 'float r2 = 0.5 / len + iTime * 0.5;',
-
-// 			'float m = (1. + sin(iTime * 0.9)) / 1.0;',
-
-// 			'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
-// 			'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
-
-// 			// 'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
-// 			// 'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
-
-// 			'vec3 col = vec3(mix(tex1, tex2, m));',
-// 			// 'vec3 col = vec3(tex1));',
-// 			'vec3 d = col * len * 0.5 * iDistance;',
-// 			'gl_FragColor = vec4(d, 1.0);',
-// 		'}',
-// 	].join("\n")
-
 		this.particleSpriteTex = THREE.ImageUtils.loadTexture("assets/images/texture.png");
 
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },
-			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/moon.jpg') },
-			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/moon.jpg' ) },
+			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/stars.jpg') },
+			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/stars.jpg' ) },
 			iDistance: { type: 'f', value: 5 },
 			iHover: { type: 'f', value: 3 }
 		};
@@ -297,10 +260,10 @@ export default class SpinSketch {
 		// bevelThickness — Float. How deep into text bevel goes. Default is 10.
 		// bevelSize — Float. How far from text outline is bevel. Default is 8.
 
-		document.addEventListener( 'mousemove', (e)=> this.onDocumentMouseMove(e), false );
-		document.addEventListener( 'touchstart', (e)=> this.onDocumentMouseMove(e), false)
-		document.addEventListener( 'touchmove', (e)=> this.onDocumentMouseMove(e), false)
-
+		document.addEventListener( 'mousemove', (e)=> this.mouseMove(e), false );
+		document.addEventListener( 'touchstart', (e)=> this.mouseMove(e), false)
+		document.addEventListener( 'touchmove', (e)=> this.mouseMove(e), false)
+		document.addEventListener( 'touchend', (e)=> this.moveEnd(e), false)
 
 		// add the camera to the scene
 		this.scene.add( this.camera );
@@ -314,12 +277,17 @@ export default class SpinSketch {
 
 	}
 
-	onDocumentMouseMove( event ) {
+	mouseMove( event ) {
 		event.preventDefault();
   		let xPos = event.touches ? event.touches[0].pageX : event.clientX;
   		let yPos = event.touches ? event.touches[0].pageY : event.clientY;
 		this.mouse.x = ( xPos / window.innerWidth ) * 2 - 1;
 		this.mouse.y = - ( yPos / window.innerHeight ) * 2 + 1;
+	}
+
+	moveEnd( event ) {
+		this.mouse.x = window.innerWidth + 100;
+		this.mouse.y = window.innerWidth + 100;
 	}
 
 	// browser resize handler
@@ -328,10 +296,8 @@ export default class SpinSketch {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 
-		console.log ( 'this.spinShader', this.scene );
-
-		// this.spinshader.geometry.width = window.innerWidth;
-		// this.spinshader.geometry.height = window.innerHeight;
+		this.spinText.setRadius( (window.innerWidth)/2 )
+		this.spinText.setScale( 1 );
 
 		// update renderer
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -354,13 +320,17 @@ export default class SpinSketch {
 		this.raycaster.setFromCamera( this.mouse, this.camera );
 		this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
 		
-		this.out();
-		if ( this.intersects[1] ) {
-			let mesh = this.intersects.filter( obj => {return obj.object.superName != 'SpinShader'} );
+
+		// this.out();
+		let mesh = this.intersects.filter( obj => { return obj.object.superName != 'SpinShader'} );
+
+		// if ( this.intersects[1] ) {
 			if ( mesh.length > 0 ){
 				this.over();
-			} 
-		}
+			} else {
+				this.out();
+			}
+		// }
 
 		// render the scene
 		this.renderer.render( this.scene, this.camera );
@@ -370,11 +340,23 @@ export default class SpinSketch {
 	}
 
 	over () {
+		if ( this.overText ) {
+			this.startTime = Date.now();
+			this.overText = false;
+			this.overFn();
+		}
 		this.spinshader.setSpeed( 9 );
-		this.spinText.setSpeed( .5 );
+		this.spinText.setSpeed( .2 );
 	}
 
 	out () {
+		if ( !this.overText ) {
+			this.endTime = Date.now();
+			this.deltaTime = (this.endTime - this.startTime) / 1000;
+			this.startTime = null;
+			this.overText = true;
+			this.outFn( this.deltaTime );
+		}
 		this.spinshader.setSpeed( 3 );
 		this.spinText.setSpeed( 1 );
 	}
