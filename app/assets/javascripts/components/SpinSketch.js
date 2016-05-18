@@ -61,28 +61,19 @@ export default class SpinText extends THREE.Object3D {
 	let geometry = new THREE.CircleGeometry( 47, 10 );
 	let material = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.0 } );
 	material.transparent = true;
+
 	this.circle = new THREE.Mesh( geometry, material );
 	this.circle.position.x = 25;
 	this.circle.position.y = 35;
-	this.progress = 0 ;
 	this.add( this.circle );
 
-	this.vx = Math.random() - 0.5;
-	this.vy = Math.random() - 0.5;
-
-	this.acceleration = new THREE.Vector3();
+	this.progress = 0 ;
 	this.velocity = 0.01;
 	this.radius = 500;
 	this.noiseAccum = 0;
-	this.speed = 1;
-	this.mass = 2;
-	this.gravity = 1.0;
+	this.speed = 1.5;
 
-	let pos = new THREE.Vector3( 50.0, 50.0, 0 );
-	this.position.set( pos.x, pos.y, pos.z );
-
-	this.centerPosition = new THREE.Vector3( 1, 2, 0 );
-
+	this.position.set( 50, 50, 0 );
   }
 
   setScale( scale ) {
@@ -108,8 +99,6 @@ export default class SpinText extends THREE.Object3D {
 
   // define a custom update function to be called on the cube each frame
   update( time ) {
-  	
-
 	this.noise = this.simplex.noise2D(this.progress, 0);
 
 	this.dx = (Math.cos( (this.progress) ) * (this.radius * (this.noise ) )) ;//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
@@ -346,7 +335,7 @@ export default class SpinSketch {
 			this.overFn();
 		}
 		this.spinshader.setSpeed( 9 );
-		this.spinText.setSpeed( .2 );
+		this.spinText.setSpeed( .5 );
 	}
 
 	out () {
@@ -358,7 +347,7 @@ export default class SpinSketch {
 			this.outFn( this.deltaTime );
 		}
 		this.spinshader.setSpeed( 3 );
-		this.spinText.setSpeed( 1 );
+		this.spinText.setSpeed( 1.5 );
 	}
 
 
