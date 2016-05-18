@@ -1,6 +1,7 @@
 // REQUIREMENTS
 import THREE from 'three';
 import SimplexNoise from 'simplex-noise';
+import Config from './Config';
 
 export default class SpinShader extends THREE.Mesh{
 
@@ -94,6 +95,7 @@ export default class SpinText extends THREE.Object3D {
   }
 
   setRadius( newRadius ) {
+	console.log ( 'setRadius', newRadius);
   	this.radius = newRadius;
   }
 
@@ -106,6 +108,10 @@ export default class SpinText extends THREE.Object3D {
 
 	this.position.x = this.dx;
 	this.position.y = this.dy;
+
+	// this.rotation.x += 0.1;
+	// this.rotation.y += 0.1;
+	// this.rotation.z += 0.1;
 
 	this.progress += this.velocity * this.speed;
 	this.noiseAccum += 0.01 * this.noiseSpeed;
@@ -147,8 +153,8 @@ export default class SpinSketch {
 		this.clock = new THREE.Clock( true );
 
 		// create a dim ambient light
-		// let ambientLight = new THREE.AmbientLight( 0x555555 );
-		// this.scene.add( ambientLight );
+		let ambientLight = new THREE.AmbientLight( 0xFFFFFF );
+		this.scene.add( ambientLight );
 
 		// and a brighter point light slightly off center
 		let pointLight = new THREE.PointLight( 0xFFFFFF );
