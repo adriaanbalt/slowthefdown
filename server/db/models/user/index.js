@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
     crypto = require('crypto'),
-    shortId = require('shortId');
+    shortId = require('shortid');
 
 var UserSchema = new mongoose.Schema({
     email: String,
