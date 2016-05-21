@@ -28,7 +28,7 @@ import { render } from 'react-dom';
 
 // React's front end routing handler
 import { Router, Route, browserHistory } from 'react-router';
-// import { IntlProvider } from 'react-intl';
+
 
 import App from './App';
 import Config from './lib/Config';
