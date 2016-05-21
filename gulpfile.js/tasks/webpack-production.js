@@ -7,6 +7,6 @@ var gulp    = require('gulp'),
 gulp.task('webpack:production', function(callback) {
   webpack(config, function(err, stats) {
     logger(err, stats);
-    server(callback, process.env.PORT);
+    server(callback, process.env.PORT || 5000);
   });
 });
