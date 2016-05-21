@@ -9,10 +9,7 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       compression = require('compression'),
       favicon = require('serve-favicon'),
-      cors = require('cors'),
-
-      // environmental variable importing
-      dotenv = require('dotenv');
+      cors = require('cors');
 
       // Webpack imports
       // webpack = require('webpack'),
@@ -25,9 +22,6 @@ const express = require('express'),
 
 function runExpress(callback, proxyPort){
   
-  // Grabs key-value pairs from ".env" folder and sets keys as properties on "process.env" object accessable anywhere in the app
-  dotenv.config();
-
 
   // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
   var app = express();
