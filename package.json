@@ -11,7 +11,7 @@
     "url": "https://github.com/adriaanbalt/slowthefdown.git"
   },
   "scripts": {
-    "start": "docker kill slowthefdown-node; docker rm slowthefdown-node; docker rmi $(docker images -f \"dangling=true\" -q); docker build -t slowthefdown .; docker run -it --name slowthefdown-node -p 3000:3000 -v $(pwd):/src/app slowthefdown",
+    "start": "gulp",
     "dev": "gulp dev | tee dev.log &",
     "qa": "gulp qa | tee qa.log &",
     "stop": "node server/stop",
