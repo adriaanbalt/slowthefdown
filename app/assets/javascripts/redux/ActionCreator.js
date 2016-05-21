@@ -24,6 +24,13 @@ export default {
     };
   },
 
+  toggleDrawer(obj) {
+    return {
+      type: ActionTypes.TOGGLE_DRAWER,
+      obj
+    };
+  },
+
 // HighScore
 
   editHighScore(obj) {
@@ -33,9 +40,10 @@ export default {
     };
   },
 
-  addHighScore(obj) {
+  setHighscore(obj) {
+    console.log( 'setHighscore', obj );
     return {
-      type: ActionTypes.ADD_HIGHSCORE,
+      type: ActionTypes.SET_HIGHSCORE,
       obj
     };
   },

@@ -22,7 +22,7 @@ module.exports = (router) => {
     let tempId = shortid.generate()
     const newHighScore = new HighScore(_.merge({ _id: Number(new Date()).toString() + '_' + tempId }, req.body));
 
-    console.log ( 'newHighScore', newHighScore._id );
+    console.log ( 'newHighScore', newHighScore, req.body );
     // const newHighScore = new HighScore(req.body);
     newHighScore.saveAsync()
       .then(savedHighScore => res.json(savedHighScore[0] || savedHighScore)) // sometimes returns array of [savedHighScore, 1], not sure if this a MongoDB or Mongoose version thing

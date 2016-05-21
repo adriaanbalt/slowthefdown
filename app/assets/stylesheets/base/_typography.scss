@@ -105,29 +105,6 @@ small {
   }
 }
 
-p.quote {
-  font-size: 28px;
-  line-height: 34px;
-  color: $darkBlue;
-  font-style: italic;
-  font-family: $fontLt;
-}
-
-p.bylineName {
-  font-size: 11px;
-  line-height: 14px;
-  color: $gray;
-  font-family: $fontBld;
-}
-
-p.bylineDate {
-  font-size: 11px;
-  line-height: 14px;
-  color: $gray;
-  font-family: $fontReg;
-}
-
-
 h1 {
   font-size: 40px;
   line-height: 50px;
@@ -181,20 +158,12 @@ h5 {
 h6 {
   font-size: 12px;
   line-height: 16px;
-  color: $gray;
+  color: $fontColor;
   font-family: $fontBld;
   a{
     font-size: 12px;
     line-height: 16px;
   }
-}
-h6.alt {
-  font-size: 11px;
-  line-height: 15px;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  font-family: "ProximaNovaBld";
-  color: $gray;
 }
 
 
@@ -205,7 +174,6 @@ h6.alt {
     margin: 0;
     font-size: 18px;
     line-height: 24px;
-    color: $fontColor;
     &.medium {
       font-size: 14px;
       line-height: 20px;
@@ -215,7 +183,6 @@ h6.alt {
       line-height: 16px;
 
       a{
-        color: $mediumBlue;
         font-style: 12px;
         line-height: 16px;
         font-family: $fontBld;
@@ -230,7 +197,6 @@ h6.alt {
   h1 {
     font-size: 50px;
     line-height: 54px;
-    color: $fontColor;
     font-family: $fontLt;
     a {
       font-size: 50px;
@@ -240,7 +206,6 @@ h6.alt {
   h2 {
     font-size: 40px;
     line-height: 48px;
-    color: $fontColor;
     font-family: $fontLt;
     a{
       font-size: 40px;
@@ -250,7 +215,6 @@ h6.alt {
   h3 {
     font-size: 30px;
     line-height: 36px;
-    color: $fontColor;
     font-family: $fontLt;
     a{
       font-size: 30px;
@@ -260,7 +224,6 @@ h6.alt {
   h4 {
     font-size: 20px;
     line-height: 24px;
-    color: $fontColor;
     font-family: $fontLt;
     a{
       font-size: 20px;
@@ -270,7 +233,6 @@ h6.alt {
   h5 {
     font-size: 18px;
     line-height: 24px;
-    color: $fontColor;
     font-family: $fontBld;
     a{
       font-size: 18px;
@@ -280,24 +242,10 @@ h6.alt {
   h6 {
     font-size: 12px;
     line-height: 16px;
-    color: $gray;
     font-family: $fontBld;
     a{
       font-size: 12px;
       line-height: 16px;
-    }
-  }
-  h6.alt {
-    font-size: 11px;
-    line-height: 15px;
-    letter-spacing: .5px;
-    color: $gray;
-    font-family: $fontBld;
-    text-transform: uppercase;
-    a{
-      font-size: 11px;
-      line-height: 15px;
-      letter-spacing: .5px;
     }
   }
 }

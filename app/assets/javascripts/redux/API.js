@@ -55,14 +55,15 @@ export default {
 			.catch( err => console.log(err));;
 	},
 
-	addHighScore( newHighScore ) {
-		console.log ( 'newHighScore', newHighScore );
+	setHighscore( newHighscore ) {
 		return dispatch => 
 			this.post({
 					route: '/api/highscore',
-					body: newHighScore
+					body: {
+						highscore: newHighscore
+					}
 				})
-				.then( res => dispatch(ActionCreator.addHighScore(res)))
+				.then( res => dispatch(ActionCreator.setHighscore(res)))
 				.catch( err => console.log(err));
 	},
 

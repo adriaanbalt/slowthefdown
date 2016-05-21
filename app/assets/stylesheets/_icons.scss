@@ -5,3 +5,7 @@ $icons: sprite-map("icons/*.png", $layout: smart);
 	position: relative;
 	display: inline-block;
 }
+
+.icon-icon-menu {
+	@include get-sprite( icon-menu );
+}

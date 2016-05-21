@@ -22,30 +22,28 @@ const rootReducer = (state = InitialState, action) => {
         projects: []
       });
 
+    case ActionTypes.TOGGLE_DRAWER :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        drawerOpen: !state.drawerOpen
+      });
+
     case ActionTypes.EDIT_HIGHSCORE :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
         project: Object.assign({}, state.project, action.obj)
       });
 
-    case ActionTypes.ADD_HIGHSCORE :
+    case ActionTypes.SET_HIGHSCORE :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
-        projects: [
-          action.obj,
-          ...state.projects
-        ]
-        ,
-        project: Object.assign({}, action.obj) // clear form
+        highscore: action.obj
       });
 
     case ActionTypes.UPDATE_HIGHSCORE :
-      const updateProject = state.projects.slice(); // creating new array (removes pointer to old one)
-      updateProject[action.index] = action.obj;
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
-        projects: updateProject,
-        project: Object.assign({}, state.project) // clear form
+        highscore: action.obj
       });
 
     case ActionTypes.DELETE_HIGHSCORE :
@@ -66,7 +64,6 @@ const rootReducer = (state = InitialState, action) => {
 
     case ActionTypes.UPDATE_ANIMATION :
       let newT = Object.assign({}, state, _.merge(state.animation, action.obj) );
-      console.log ('newT  ', state.animation );
       return newT;
 
     default:

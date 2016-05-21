@@ -7,6 +7,7 @@ import { Router } from 'react-router';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import API from './redux/API';
+import ActionCreator from './redux/ActionCreator';
 import _ from 'lodash';
 
 class App extends Component {
@@ -30,6 +31,11 @@ class App extends Component {
 		window.addEventListener('resize', this.updateViewport, false);
 	}
 
+	toggleDrawer() {
+		console.log ('toggleDrawer');
+		this.props.dispatch( ActionCreator.toggleDrawer() );
+	}
+
 	render () {
 		return (
 			<div  id='main' rel="main" >
@@ -37,14 +43,22 @@ class App extends Component {
 				{
 					this.props.children
 				}
-				<Footer />
+				<Footer highscore={ this.props.highscore } toggleDrawer={ () => this.toggleDrawer() } drawerOpen={ this.props.drawerOpen } />
 			</div>
 		);
 	}
 };
 
+function mapStateToProps(store) {
+  return {
+    highscore: store.highscore,
+    drawerOpen: store.drawerOpen
+  };
+}
 App.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  highscore: PropTypes.object,
+  drawerOpen: PropTypes.bool
 };
 
-export default connect()(App);
+export default connect(mapStateToProps)(App);

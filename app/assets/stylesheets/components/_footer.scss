@@ -1,7 +1,35 @@
 .Footer {
-	background: $bg-color;
-	@include opacity(.05);
+	position: fixed;
+	bottom: -92px;
+	width: 100%;
 	.inner {
-		@include outer-container();
+		padding: 1em;
+	}
+	&.true {
+		bottom: 0;
+	}
+	.info {
+		@include clearfix();
+		.highscore-small {
+			margin-left: 1em;
+			color: #fff;
+			float: left;
+			line-height: 44px;
+			vertical-align: top;
+		}
+		.drawerBtn {
+			display: block;
+			cursor: pointer;
+			float: right;
+		}
+	}
+	.drawer{
+		background: $footer-bg-color;
+		.highscore-container{
+			* {
+				display: inline-block;
+				margin-right: .5em;
+			}
+		}
 	}
 }

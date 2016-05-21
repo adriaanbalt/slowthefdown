@@ -26,15 +26,14 @@ export default {
 				fast: 1.5
 			}
 		}
-	}
+	},
 
 	letter: {
+		color: 0xFFFFFF,
+		text: "F",
+		font: "/assets/fonts/helvetiker_bold.typeface.js",
 		mobile:{
-			text: "F",
-			color: "0xFFFFFF",
-			progress: 0 ,
 			velocity: 0.01,
-			radius: 500,
 			noiseAccum: 0,
 			speed: 1.5,
 			fontsize: 70,
@@ -48,11 +47,7 @@ export default {
 			extrudeMaterial: 0
 		},
 		desktop:{
-			text: "F",
-			color: "0xFFFFFF",
-			progress: 0 ,
 			velocity: 0.01,
-			radius: 500,
 			noiseAccum: 0,
 			speed: 1.5,
 			fontsize: 70,
@@ -68,7 +63,7 @@ export default {
 	},
 
 	vortex: {
-		distance: 5
+		distance: 5,
 		z: -1000
 	}
 };

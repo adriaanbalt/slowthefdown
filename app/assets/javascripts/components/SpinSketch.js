@@ -35,15 +35,15 @@ export default class SpinText extends THREE.Object3D {
 	this.simplex = new SimplexNoise(Math.random);
 
 	this.mat = new THREE.MeshPhongMaterial({
-	  color: 0xFFFFFF,
+	  color: Config.letter.color,
 	  // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
 	  shininess: 1
 	});
 
 	let fontLoader = new THREE.FontLoader();
-	fontLoader.load( '/assets/fonts/helvetiker_bold.typeface.js', ( response ) => {
+	fontLoader.load( Config.letter.font, ( response ) => {
 		this.font = response;
-		this.geo = new THREE.TextGeometry( "F",{
+		this.geo = new THREE.TextGeometry( Config.letter.text,{
 			font: this.font,
 			size: 70,
 			height: 10,
@@ -95,7 +95,6 @@ export default class SpinText extends THREE.Object3D {
   }
 
   setRadius( newRadius ) {
-	console.log ( 'setRadius', newRadius);
   	this.radius = newRadius;
   }
 
@@ -219,8 +218,6 @@ export default class SpinSketch {
 
 		};
 
-		this.particleSpriteTex = THREE.ImageUtils.loadTexture("assets/images/texture.png");
-
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },
 			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/stars.jpg') },
@@ -266,14 +263,16 @@ export default class SpinSketch {
 		// subscribe to resize events
 		window.addEventListener( 'resize', this.onWindowResize.bind( this ), false );
 		this.onWindowResize();
+	}
 
+	start(){
 		// add the Three.js canvas to the document
-		document.body.appendChild( this.renderer.domElement );
-
+		document.getElementById('game').appendChild( this.renderer.domElement );
 	}
 
 	mouseMove( event ) {
 		event.preventDefault();
+		// get mouse or touch coordinates for raycaster
   		let xPos = event.touches ? event.touches[0].pageX : event.clientX;
   		let yPos = event.touches ? event.touches[0].pageY : event.clientY;
 		this.mouse.x = ( xPos / window.innerWidth ) * 2 - 1;

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import UI from '../lib/UI';
 import API from '../redux/API';
+import ActionCreator from '../redux/ActionCreator';
 // import ScenePixi from '../components/ScenePixi.js';
 // import Texture from '../components/Texture.js';
 // import Kaleidoscope from '../components/Kaleidoscope.js';
@@ -14,33 +15,41 @@ import SpinSketch from '../components/SpinSketch.js';
 
 class HomePage extends UI {
 
-  constructor ( ){
+  constructor(){
     super();
-    this.scene = new SpinSketch( this.overFn, this.outFn );
+    this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
   overFn(){
-    console.log ( "over!" );
   }
+
   outFn( highscore ){
-    console.log ( 'outFn highscore', highscore );
-    // this.highscoreText.text = `Highscore: ${highscore} seconds`;
+    if ( this.props.highscore.highscore < highscore ) {
+    console.log ( 'out highscore', this.props.highscore.highscore, highscore)
+      // this.props.dispatch( API.setHighscore( highscore ) );
+      this.props.dispatch( ActionCreator.setHighscore( {highscore:highscore} ) );
+    }
+  }
+
+  componentDidMount(){
+      this.sketch.start();
   }
 
   render () {
-    console.log ( 'HomePage' );
-      return (<div></div>)
+      return (<div id="game"></div>)
   }
 
 };
 
 function mapStateToProps(store) {
   return {
+    highscore: store.highscore,
   };
 }
 
 HomePage.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
+  highscore: PropTypes.object
 };
 
 export default connect(mapStateToProps)(HomePage);

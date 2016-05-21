@@ -47,7 +47,6 @@ import Terms from './pages/TermsPage';
 const store = configureStore();
 //<DevTools />
 
-console.log ( 'Config.constants.ROOT_PATH', Config.constants.ROOT_PATH );
 render((
     <Provider store={store}>
         <div>
