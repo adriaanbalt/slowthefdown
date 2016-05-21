@@ -43,7 +43,8 @@ module.exports = function(env) {
         test: /\.jsx?$/,
         loader: 'babel',
         query: {
-            optional: ["es7.decorators", "es7.classProperties"]
+           plugins: ['transform-decorators-legacy'],
+           presets: ['es2015', 'react', 'stage-0']
         },
         include: [jsSrc]
       }]
