@@ -1,5 +1,5 @@
 import * as ActionTypes from '../ActionTypes';
-import * as InitialState from '../InitialState';
+import InitialState from '../InitialState';
 import _ from 'lodash';
 
 const rootReducer = (state = InitialState, action) => {

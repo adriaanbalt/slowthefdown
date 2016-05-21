@@ -8,6 +8,7 @@ const initialState = {
 		highscore: 0
 	},
 	highscores: [],
+	drawerOpen: false,
 	animation: {
 		callback: null,
 		x: 0,
