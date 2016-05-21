@@ -1,8 +1,8 @@
 export default {
 
 	textures: {
-		adriaan: "textures/adriaan.jpg",
-		stars: "textures/stars.jpg"
+		adriaan: "assets/images/textures/adriaan.jpg",
+		stars: "assets/images/textures/stars.jpg"
 	},
 
 	speed: {

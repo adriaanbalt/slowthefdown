@@ -160,7 +160,7 @@ export default class SpinSketch {
 		pointLight.position.set( 0, 0, 50 );
 		this.scene.add( pointLight );
 
-		var GPUParticleShader = {
+		this.shader = {
 
 			vertexShader: [
 				'varying vec2 vUv;',
@@ -189,15 +189,15 @@ export default class SpinSketch {
 					'vec2 p = -1.0 + 3.0 * vUv;',
 					'vec2 q = p - vec2(0.5, 0.5);',// start pos
 
-					'q.x += 0.;', // X distance from center - movement with speed
-					'q.y += 0.;', // Y distance from center - movement with speed over time
+					'q.x += 0. + sin(iTime * .5) / 4.;', // X distance from center - movement with speed
+					'q.y += 0. + sin(iTime * .5) / 4.;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
 					'float a = atan( q.y, q.x ) / 3.1416  ;',  //speed of rotation
 					'float b = atan( q.y, q.x ) / 3.1416  ;', //speed of rotation
 					'float r1 = (0.01*iHover) / len + iTime;', // remove the / for reverse whirlpool
-					'float r2 = (0.1*iHover) / len + iTime;',
+					'float r2 = (0.1*iHover) / len + iTime ;',
 					// 'float r1 = 0.3 / len + iTime * 0.5;',
 					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
@@ -218,31 +218,20 @@ export default class SpinSketch {
 
 		};
 
-		var tuniform = {
-			iTime: { type: 'f', value: 0.1 },
-			iText0: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/stars.jpg') },
-			iText1: { type: 't', value: THREE.ImageUtils.loadTexture( 'assets/images/textures/stars.jpg' ) },
-			iDistance: { type: 'f', value: 5 },
-			iHover: { type: 'f', value: 3 }
-		};
+		this.loader = new THREE.TextureLoader();
+		this.loader.load( 
+			Config.textures.stars,
+			( texture ) => this.textureLoaded( texture ),
+			// Function called when download progresses
+			( xhr ) => {
+				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+			},
+			// Function called when download errors
+			( xhr ) => {
+				console.log( 'An error happened' );
+			}
+		)
 
-		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
-		tuniform.iText1.value.wrapS = tuniform.iText1.value.wrapT = THREE.RepeatWrapping;
-
-		let geo = new THREE.PlaneGeometry( (window.innerWidth), (window.innerHeight) );
-		// let geo = new THREE.SphereGeometry( 1000, 16, 32 );
-		this.particleShaderMat = new THREE.ShaderMaterial({
-			uniforms: tuniform,
-			vertexShader: GPUParticleShader.vertexShader,
-			fragmentShader: GPUParticleShader.fragmentShader,
-			side:THREE.DoubleSide
-		});
-		this.spinshader = new SpinShader( geo, this.particleShaderMat );
-		this.spinshader.position.z = -1000;
-
-		this.spinText = new SpinText(() => this.animate());
-		this.scene.add( this.spinshader );
-		this.scene.add( this.spinText );
 
 		// font — THREE.Font.
 		// size — Float. Size of the text.
@@ -257,11 +246,41 @@ export default class SpinSketch {
 		document.addEventListener( 'touchmove', (e)=> this.mouseMove(e), false)
 		document.addEventListener( 'touchend', (e)=> this.moveEnd(e), false)
 
+		// subscribe to resize events
+		window.addEventListener( 'resize', this.onWindowResize.bind( this ), false );
+	}
+
+	textureLoaded( textureImg ){
+
+		var tuniform = {
+			iTime: { type: 'f', value: 0.1 },
+			iText0: { type: 't', value: textureImg },
+			iText1: { type: 't', value: textureImg },
+			iDistance: { type: 'f', value: 5 },
+			iHover: { type: 'f', value: 3 }
+		};
+
+		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
+		tuniform.iText1.value.wrapS = tuniform.iText1.value.wrapT = THREE.RepeatWrapping;
+
+		let geo = new THREE.PlaneGeometry( (window.innerWidth), (window.innerHeight) );
+		// let geo = new THREE.SphereGeometry( 1000, 16, 32 );
+		this.particleShaderMat = new THREE.ShaderMaterial({
+			uniforms: tuniform,
+			vertexShader: this.shader.vertexShader,
+			fragmentShader: this.shader.fragmentShader,
+			side:THREE.DoubleSide
+		});
+		this.spinshader = new SpinShader( geo, this.particleShaderMat );
+		this.spinshader.position.z = -1000;
+
+		this.spinText = new SpinText(() => this.animate());
+		this.scene.add( this.spinshader );
+		this.scene.add( this.spinText );
+
 		// add the camera to the scene
 		this.scene.add( this.camera );
 
-		// subscribe to resize events
-		window.addEventListener( 'resize', this.onWindowResize.bind( this ), false );
 		this.onWindowResize();
 	}
 
