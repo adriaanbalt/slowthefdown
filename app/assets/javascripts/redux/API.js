@@ -48,15 +48,20 @@ export default {
 			.catch( err => console.log(err));;
 	},
 
-	setHighscore( newHighscore ) {
+	setUserHighscore( newHighscore ) {
 		return dispatch => 
 			this.post({
 					route: '/api/highscore',
 					body: {
-						highscore: newHighscore
+						highscore: {
+							score: newHighscore
+						}
 					}
 				})
-				.then( res => dispatch(ActionCreator.setHighscore(res)))
+				.then( res => {
+					console.log ( 'res', res );
+					dispatch(ActionCreator.setUserHighscore( res ))
+				})
 				.catch( err => console.log(err));
 	},
 

@@ -43,7 +43,7 @@ class LoginPage extends UI {
               style={user && user.facebook && user.facebook.photo && {backgroundImage: `url(${user.facebook.photo})`}}></li>
           <li className="nav-button">
             {
-              (!user || !user.email || !user.hasPassword || !user.google || !user.google.photo || !user.facebook || !user.facebook.photo)
+              (!user || !user.email || !user.google || !user.google.photo || !user.facebook || !user.facebook.photo)
               &&
               <span>
                 LOG IN
@@ -64,14 +64,10 @@ class LoginPage extends UI {
                 }
                 {/*Repeating logic the the two below because of some CSS annoying-ness*/}
                 {
-                  (!user || !user.hasPassword)
-                  &&
                   <TextInput className="nav-input" ref="password" placeholder="password" type="password"/>
                 }
                 {
-                  (!user || !user.hasPassword)
-                  &&
-                  <button className="local-auth-button" onClick={this.login.bind(this)}>Post LocalAuth</button>
+                  <button className="local-auth-button" onClick={this.login.bind(this)}>Submit</button>
                 }
               </span>
             }
@@ -103,7 +99,6 @@ LoginPage.propTypes = {
     createdDate: PropTypes.string.isRequired,
     lastLoginDate: PropTypes.string,
     email: PropTypes.string,
-    hasPassword: PropTypes.bool.isRequired,
     google: PropTypes.shape({
       _id: PropTypes.string,
       photo: PropTypes.string,

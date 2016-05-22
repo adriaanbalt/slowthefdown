@@ -36,12 +36,7 @@ class Login extends UI {
 	}
 
 	render () {
-
-		// <p>Email: <TextInput ref="email" placeholder="email" /></p>
-		// <p>Password: <TextInput ref="password" placeholder="password" /></p>
-
 		const user = this.props.user;
-
 		return (
 
 		  <ul className="nav navbar-nav navbar-right">
@@ -125,7 +120,7 @@ Login.propTypes = {
 	email: PropTypes.string,
 	phone: PropTypes.string,
 	fax: PropTypes.string,
-	hasPassword: PropTypes.bool.isRequired,
+	hasPassword: PropTypes.bool,
 	google: PropTypes.shape({
 	  _id: PropTypes.string,
 	  photo: PropTypes.string,

@@ -24,9 +24,14 @@ class HomePage extends UI {
   }
 
   outFn( highscore ){
+    console.log ( "outFn", this.props.highscore.score, highscore, this.props.user );
     this.props.dispatch( ActionCreator.setScore( highscore ) );
-    if ( this.props.highscore.highscore < highscore ) {
-      this.props.dispatch( API.setHighscore( highscore ) );
+    if ( this.props.highscore.score < highscore ) {
+      if ( this.props.user ) {
+        this.props.dispatch( API.setUserHighscore( highscore ) );
+      } else {
+        this.props.dispatch( ActionCreator.setHighscore( {score:highscore} ) );
+      }
       setTimeout( () => {
         this.props.dispatch( ActionCreator.hideDrawer() );
       }, 2000)
@@ -47,12 +52,14 @@ class HomePage extends UI {
 function mapStateToProps(store) {
   return {
     highscore: store.highscore,
+    user: store.user
   };
 }
 
 HomePage.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  highscore: PropTypes.object
+  highscore: PropTypes.object,
+  user: PropTypes.object
 };
 
 export default connect(mapStateToProps)(HomePage);

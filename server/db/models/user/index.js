@@ -14,6 +14,14 @@ var UserSchema = new mongoose.Schema({
         type: Date,
         default: new Date()
     },
+    lastUpdateDate: {
+        type: Date,
+        default: new Date()
+    },
+    highscore:{
+      _id: String,
+      score: Number
+    },
     google: {
       _id: String,
       photo: String,
@@ -36,7 +44,6 @@ UserSchema.methods.correctPassword = function(password) {
 
 // hashes password for secure storage
 function hashPassword(plainText, salt) {
-  console.log ( 'hashPassword' );
     var hash = crypto.createHash('sha1');
     hash.update(plainText);
     hash.update(salt);
@@ -45,7 +52,6 @@ function hashPassword(plainText, salt) {
 
 // combines above functions for password save and update handling
 function handlePasswordChange(next) {
-  console.log ( 'handlePasswordChange' );
     if (this.isModified('password')) {
         this.salt = crypto.randomBytes(16).toString('base64'); // generates a random string to be added to the user's password prior to hashing, an extra security measure
         this.password = this.constructor.hashPassword(this.password, this.salt);

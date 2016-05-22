@@ -61,6 +61,13 @@ export default {
     };
   },
 
+  setUserHighscore(obj) {
+    return {
+      type: ActionTypes.SET_USER_HIGHSCORE,
+      obj
+    };
+  },
+
   updateHighScore({index: index, obj: obj}) {
     return {
       type: ActionTypes.UPDATE_HIGHSCORE,

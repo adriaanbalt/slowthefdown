@@ -5,11 +5,12 @@ const initialState = {
 	currentLocale: window.navigator && window.navigator.language || 'en', // default to language detected by browser
 	acceptedLocales: window.navigator && window.navigator.languages || [], // default to languages list detected by browser
 	highscore: {
-		highscore: 0
+		score: 0
 	},
 	score: 0,
 	highscores: [],
 	drawerOpen: false,
+	drawerPeak: true,
 	animation: {
 		callback: null,
 		x: 0,

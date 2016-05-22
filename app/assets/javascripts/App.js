@@ -45,7 +45,7 @@ class App extends Component {
 				}
 				<Footer 
 					score={ this.props.score} 
-					highscore={ this.props.highscore } 
+					highscore={ (this.props.user && this.props.user.highscore.score) || this.props.highscore.score } 
 					toggleDrawer={ () => this.toggleDrawer() } 
 					drawerOpen={ this.props.drawerOpen } 
 					drawerPeak={ this.props.drawerPeak } />
@@ -56,6 +56,7 @@ class App extends Component {
 
 function mapStateToProps(store) {
   return {
+  	user: store.user,
     score: store.score,
     highscore: store.highscore,
     drawerOpen: store.drawerOpen,
@@ -64,6 +65,7 @@ function mapStateToProps(store) {
 }
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  user: PropTypes.object,
   score: PropTypes.number,
   highscore: PropTypes.object,
   drawerOpen: PropTypes.bool,

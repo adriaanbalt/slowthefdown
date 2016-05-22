@@ -6,20 +6,21 @@ const rootReducer = (state = InitialState, action) => {
   switch (action.type) {
     case ActionTypes.INITIALIZE_APP :
       return Object.assign({},state,{
-        user: action.user
+        user: action.user,
+        highscore: action.user.highscore ? action.user.highscore : { score:0 }
       });
 
 
     case ActionTypes.LOG_IN :
       return Object.assign({},state,{
         user: action.user,
-        projects: action.projects
+        highscore: action.user.highscore
       });
 
     case ActionTypes.LOG_OUT :
       return Object.assign({},state,{
         user: null,
-        projects: []
+        highscore: { score: 0 }
       });
 
     case ActionTypes.HIDE_DRAWER :
@@ -51,6 +52,14 @@ const rootReducer = (state = InitialState, action) => {
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
         highscore: action.obj,
+        drawerPeak: true
+      });
+
+    case ActionTypes.SET_USER_HIGHSCORE :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        highscore: action.obj.highscore,
+        user: action.obj,
         drawerPeak: true
       });
 

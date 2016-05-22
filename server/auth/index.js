@@ -12,6 +12,7 @@ Promise.promisifyAll(User.prototype);
 
 module.exports = (app) => {
 
+    console.log ( "auth ", app );
     
     // First, our session middleware will set/read sessions from the request.
     // Our sessions will get stored in Mongo using the same connection from
@@ -36,11 +37,13 @@ module.exports = (app) => {
 
     // When we give a cookie to the browser, it is just the userId (encrypted with our secret).
     passport.serializeUser((user, done) => {
+        console.log ( "serializeUser", user );
         return done(null, user.id)
     });
 
     // When we receive a cookie from the browser, we use that id to set our req.user to a user found in the database.
     passport.deserializeUser((id, done) =>{
+        console.log ( "deserializeUser", id );
       return User.findByIdAsync(id)
         .then(user => done(null, user))
         .catch(err => console.log(err));
