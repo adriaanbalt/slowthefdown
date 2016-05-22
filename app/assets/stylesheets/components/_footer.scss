@@ -5,7 +5,10 @@
 	.inner {
 		padding: 1em;
 	}
-	&.true {
+	&.drawerOpen {
+		bottom: 0;
+	}
+	&.drawerPeak {
 		bottom: 0;
 	}
 	.info {
