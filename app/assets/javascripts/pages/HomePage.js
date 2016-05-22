@@ -24,9 +24,12 @@ class HomePage extends UI {
   }
 
   outFn( highscore ){
+    this.props.dispatch( ActionCreator.setScore( highscore ) );
     if ( this.props.highscore.highscore < highscore ) {
-    console.log ( 'out highscore', this.props.highscore.highscore, highscore)
       this.props.dispatch( API.setHighscore( highscore ) );
+      setTimeout( () => {
+        this.props.dispatch( ActionCreator.hideDrawer() );
+      }, 2000)
       // this.props.dispatch( ActionCreator.setHighscore( {highscore:highscore} ) );
     }
   }
