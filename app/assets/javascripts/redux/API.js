@@ -27,23 +27,16 @@ export default {
 	},
 
 	login( user ) {
+		console.log ( 'login', user );
 		return (dispatch) => 
 			this.post({
 				route: `/auth/login`,
 				body: user
 			})
-			.then( res => {
-				return Promise.all([
-        			Promise.resolve(res),
-					this.get({
-						route: `/api/highscore`
-					})
-				]);
-			})
-			.then(([user, HighScores]) => {
+			.then(user => {
+				console.log ( 'login res', user );
 				return dispatch(ActionCreator.login({
-					user:user, 
-					HighScores:HighScores
+					user:user
 				}))
 			})
 			.catch( err => console.log(err));

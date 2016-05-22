@@ -12,7 +12,7 @@ module.exports = (api) => {
     console.log ( "endpoint: post /login", req.body );
     var newObj = new User(req.body);
     newObj.saveAsync()
-      .then( savedObj  => User.populate(savedObj, {path:"highscores"} ))
+      .then( savedObj  => User.populate(savedObj, {path:"HighScores"} ))
       .then( populatedObj => {
         console.log ( "USER ", populatedObj )
         res.json( populatedObj ) 
@@ -27,6 +27,7 @@ module.exports = (api) => {
   router.delete( '/:id', (req, res, next) => {
     User.findByIdAndRemoveAsync(req.params.id).then( ( newUser ) => res.json( newUser ) );
   });
+
 
   router.get('/:id', (req, res) =>
     User.findById(req.params.id)

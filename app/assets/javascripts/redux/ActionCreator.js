@@ -31,6 +31,13 @@ export default {
     };
   },
 
+  hideDrawer(obj) {
+    return {
+      type: ActionTypes.HIDE_DRAWER,
+      obj
+    };
+  },
+
 // HighScore
 
   editHighScore(obj) {
@@ -40,8 +47,14 @@ export default {
     };
   },
 
+  setScore(obj) {
+    return {
+      type: ActionTypes.SET_SCORE,
+      obj
+    };
+  },
+
   setHighscore(obj) {
-    console.log( 'setHighscore', obj );
     return {
       type: ActionTypes.SET_HIGHSCORE,
       obj

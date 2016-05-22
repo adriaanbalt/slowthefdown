@@ -22,6 +22,13 @@ const rootReducer = (state = InitialState, action) => {
         projects: []
       });
 
+    case ActionTypes.HIDE_DRAWER :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        drawerOpen: false,
+        drawerPeak: false
+      });
+
     case ActionTypes.TOGGLE_DRAWER :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
@@ -34,10 +41,17 @@ const rootReducer = (state = InitialState, action) => {
         project: Object.assign({}, state.project, action.obj)
       });
 
+    case ActionTypes.SET_SCORE :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        score: action.obj
+      });
+
     case ActionTypes.SET_HIGHSCORE :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
-        highscore: action.obj
+        highscore: action.obj,
+        drawerPeak: true
       });
 
     case ActionTypes.UPDATE_HIGHSCORE :

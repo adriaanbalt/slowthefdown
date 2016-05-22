@@ -7,6 +7,7 @@ const initialState = {
 	highscore: {
 		highscore: 0
 	},
+	score: 0,
 	highscores: [],
 	drawerOpen: false,
 	animation: {

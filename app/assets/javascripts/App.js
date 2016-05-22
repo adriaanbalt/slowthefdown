@@ -24,7 +24,7 @@ class App extends Component {
 
 	componentWillMount () {
 		// initialize user with their locale data
-		// this.props.dispatch(API.authenticate());
+		this.props.dispatch(API.authenticate());
 
 		// listen for updates on passing viewport threshold
 		window.addEventListener('orientationchange', this.updateViewport, false);
@@ -43,7 +43,12 @@ class App extends Component {
 				{
 					this.props.children
 				}
-				<Footer highscore={ this.props.highscore } toggleDrawer={ () => this.toggleDrawer() } drawerOpen={ this.props.drawerOpen } />
+				<Footer 
+					score={ this.props.score} 
+					highscore={ this.props.highscore } 
+					toggleDrawer={ () => this.toggleDrawer() } 
+					drawerOpen={ this.props.drawerOpen } 
+					drawerPeak={ this.props.drawerPeak } />
 			</div>
 		);
 	}
@@ -51,14 +56,18 @@ class App extends Component {
 
 function mapStateToProps(store) {
   return {
+    score: store.score,
     highscore: store.highscore,
-    drawerOpen: store.drawerOpen
+    drawerOpen: store.drawerOpen,
+    drawerPeak: store.drawerPeak
   };
 }
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  score: PropTypes.number,
   highscore: PropTypes.object,
-  drawerOpen: PropTypes.bool
+  drawerOpen: PropTypes.bool,
+  drawerPeak: PropTypes.bool
 };
 
 export default connect(mapStateToProps)(App);
