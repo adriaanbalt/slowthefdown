@@ -46,7 +46,7 @@ class App extends Component {
 				}
 				<Footer 
 					score={ this.props.score} 
-					highscore={ (this.props.user && this.props.user.highscore.score) || this.props.highscore.score } 
+					highscore={ (this.props.user && this.props.user.highscore && this.props.user.highscore.score) || this.props.highscore.score } 
 					toggleDrawer={ () => this.toggleDrawer() } 
 					drawerOpen={ this.props.drawerOpen } 
 					drawerPeak={ this.props.drawerPeak } />

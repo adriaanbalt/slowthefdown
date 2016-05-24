@@ -48,19 +48,19 @@ class Login extends UI {
 			  {
 				(!user || !user.email || !user.hasPassword || !user.google || !user.google.photo || !user.facebook || !user.facebook.photo)
 				&&
-				<span>
-				  LOG IN
+				<div>
+					<span>Login: </span>
 				  {
 					(!user || !user.google)
 					&&
-					<a href="/auth/google">Google</a>
+					<a href="/auth/google">Google </a>
 				  }
 				  {
 					(!user || !user.facebook)
 					&&
 					<a href="/auth/facebook">Facebook</a>
 				  }
-				</span>
+				</div>
 			  }
 			  {
 				user
