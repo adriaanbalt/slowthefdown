@@ -53,41 +53,12 @@ class Login extends UI {
 				  {
 					(!user || !user.google)
 					&&
-					<a href="/auth/google"><i className="fa fa-google o-auth-btn"></i></a>
+					<a href="/auth/google">Google</a>
 				  }
 				  {
 					(!user || !user.facebook)
 					&&
-					<a href="/auth/facebook"><i className="fa fa-facebook o-auth-btn"></i></a>
-				  }
-				  {
-					(!user || !user.email)
-					&&
-					<input 
-						ref="email" 
-						type="text" 
-						className="textinput" 
-						name="emailInput" 
-						placeholder="email"
-						onFocus={ this.onFocus.bind(this) } 
-						onChange={ this.onChange.bind(this) }/>
-				  }
-				  {
-					(!user || !user.hasPassword)
-					&&
-					<input 
-						ref="password" 
-						type="text" 
-						className="textinput" 
-						name="passwordInput" 
-						placeholder="password"
-						onFocus={ this.onFocus.bind(this) } 
-						onChange={ this.onChange.bind(this) }/>
-				  }
-				  {
-					(!user || !user.hasPassword)
-					&&
-					<button className="local-auth-button" onClick={this.login.bind(this)}>Post LocalAuth</button>
+					<a href="/auth/facebook">Facebook</a>
 				  }
 				</span>
 			  }

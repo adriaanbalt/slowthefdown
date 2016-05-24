@@ -11,15 +11,16 @@ module.exports = function (app) {
         clientID: process.env.FACEBOOK_CLIENT_ID,
         clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         callbackURL: process.env.FACEBOOK_CLIENT_CALLBACK,
-        profileFields: ['email', 'photos', 'link'] // this is the Google strategy's equivalent of "scope"
+        profileFields: ['emails', 'photos', 'link', 'first_name', 'last_name', 'gender'] // this is the Google strategy's equivalent of "scope"
     };
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
+        console.log('verifyCallback', profile );
         User.findOneAsync({
                 'email': profile.emails[0].value
             })
             .then((user) => {
+                console.log ( "findoneasync user", user );
                 if(user && user.facebook._id) return Promise.resolve(user); // no need to fill in info w/profile if user already has Facebook log-in
                 user = user || new User();
                 user = _.merge(user, { // use Facebook profile to fill out user info if it does not already exist
@@ -40,11 +41,15 @@ module.exports = function (app) {
 
     passport.use(new FacebookStrategy(facebookCredentials, verifyCallback));
 
-    app.get('/auth/facebook', passport.authenticate('facebook'));
+    app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['user_friends', 'email'] } ));
 
     app.get('/auth/facebook/callback',
-        passport.authenticate('facebook', { failureRedirect: '/' }),
+        passport.authenticate('facebook', {
+          failureRedirect: '/',
+          scope: ['email']
+        }),
         function (req, res) {
+            console.log ( "FACEBOOK SUCCESS!" );
             res.redirect('/');
         });
 
