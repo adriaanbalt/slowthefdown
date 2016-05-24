@@ -9,8 +9,8 @@ const initialState = {
 	},
 	score: 0,
 	highscores: [],
-	drawerOpen: false,
-	drawerPeak: true,
+	drawerOpen: true,
+	drawerPeak: false,
 	animation: {
 		callback: null,
 		x: 0,
