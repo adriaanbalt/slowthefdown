@@ -9,6 +9,13 @@ import Login from './Login';
 function Footer( props ) {
 	let drawerOpen = props.drawerOpen ? ' drawerOpen' : '';
 	let drawerPeak = props.drawerPeak ? ' drawerPeak' : '';
+	
+			    // <ins className="adsbygoogle"
+			    // 	 style={{display: 'block'}}
+			    //      data-ad-client="ca-pub-3194664333843576"
+			    //      data-ad-slot="7746823241"
+			    //      data-ad-test="on"
+			    //      data-ad-format="auto"></ins>
 	return (
 		<footer className={`Footer${ drawerOpen }${ drawerPeak }`}>
 			<div className="info">
@@ -19,13 +26,20 @@ function Footer( props ) {
 			</div>
 			<div className="drawer">
 				<div className="inner">
+				    <ins className="adsbygoogle"
+			    	 style={{display: 'block'}}
+			         data-ad-client="ca-pub-3194664333843576"
+			         data-ad-slot="7746823241"
+			         data-ad-test="on"
+			         data-ad-format="auto"></ins>
 					<div className="highscore-container">
 						<h3>High Score</h3>
 						<h3 className="highscore-big">{ props.highscore }</h3>
 					</div>
 					<Login />
-					<small><a href="http://balt.us">BALT.us</a>  Copyright 2016</small>
+					<small><a href="http://balt.us">BALT.us</a> 123 Copyright 2016</small>
 				</div>
+
 			</div>
 		</footer>
 	);
