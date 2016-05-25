@@ -35,6 +35,16 @@ class Login extends UI {
 		
 	}
 
+	googleAuth() {
+		e.preventDefault();
+		window.location="/auth/google";
+	}
+
+	facebookAuth(e) {
+		e.preventDefault();
+		window.location="/auth/facebook";
+	}
+
 	render () {
 		const user = this.props.user;
 		return (
@@ -53,12 +63,12 @@ class Login extends UI {
 				  {
 					(!user || !user.google)
 					&&
-					<a href="/auth/google">Google </a>
+					<a href="/auth/google" onTouch={ this.googleAuth.bind(this) }>Google </a>
 				  }
 				  {
 					(!user || !user.facebook)
 					&&
-					<a href="/auth/facebook">Facebook</a>
+					<a href="/auth/facebook" onTouch={ this.facebookAuth.bind(this) }>Facebook</a>
 				  }
 				</div>
 			  }
