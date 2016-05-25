@@ -5,17 +5,17 @@ import { Link } from 'react-router';
 
 import Icon from './Icon';
 import Login from './Login';
+import Ads from '../lib/Ads';
 
 function Footer( props ) {
 	let drawerOpen = props.drawerOpen ? ' drawerOpen' : '';
 	let drawerPeak = props.drawerPeak ? ' drawerPeak' : '';
-	
-			    // <ins className="adsbygoogle"
-			    // 	 style={{display: 'block'}}
-			    //      data-ad-client="ca-pub-3194664333843576"
-			    //      data-ad-slot="7746823241"
-			    //      data-ad-test="on"
-			    //      data-ad-format="auto"></ins>
+    // <ins className="adsbygoogle"
+    // 	 style={{display: 'block'}}
+    //      data-ad-client="ca-pub-3194664333843576"
+    //      data-ad-slot="7746823241"
+    //      data-ad-test="on"
+    //      data-ad-format="auto"></ins>
 	return (
 		<footer className={`Footer${ drawerOpen }${ drawerPeak }`}>
 			<div className="info">
@@ -26,13 +26,15 @@ function Footer( props ) {
 			</div>
 			<div className="drawer">
 				<div className="inner">
-				    <ins className="adsbygoogle"
-			    	 style={{display: 'block'}}
-			         data-ad-client="ca-pub-3194664333843576"
-			         data-ad-slot="7746823241"
-			         data-ad-test="on"
-			         data-ad-format="auto"></ins>
-					<div className="highscore-container">
+				    <Ads 
+				    	id="div-gpt-ad-1464203173988-0"
+				    	adUnit="/22986605/slowthefdown-ad"
+				    	slot="7746823241" 
+				    	format="auto" 
+				    	client="ca-pub-3194664333843576" 
+				    	width="300" 
+				    	height="100"/>
+					<div>
 						<h3>High Score</h3>
 						<h3 className="highscore-big">{ props.highscore }</h3>
 					</div>
