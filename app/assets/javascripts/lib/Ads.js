@@ -9,50 +9,67 @@ let instance = 0;
 
 export default class Ads extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
     if (window.googletag && googletag.apiReady) {
       console.log ( 'googletag', googletag, this.props )
+
+      // googletag.cmd.push(function() {
+      //   googletag
+      //     .defineSlot('/22986605/slowthefdown-ad', [300, 100], 'div-gpt-ad-1464203173988-0')
+      //     .addService(googletag.pubads());
+      // });
+
+      googletag.cmd.push(() => {
+
+        // Define the ad slot
+        let slot = googletag.defineSlot(
+          this.props.adUnit, 
+          [this.props.width, this.props.height], 
+          this.props.id
+        ).addService(googletag.pubads());
+
+        googletag.pubads().addEventListener('slotRenderEnded', (event) => {
+          console.log('Slot has been rendered:', event);
+        });
+        // Start ad fetching
+        googletag.enableServices();
+
+        console.log ( 'slot', this.props.id, slot );
+      });
     }
+  }
 
-    // googletag.cmd.push(function() {
-    //   googletag
-    //     .defineSlot('/22986605/slowthefdown-ad', [300, 100], 'div-gpt-ad-1464203173988-0')
-    //     .addService(googletag.pubads());
-    // });
+  componentDidMount() {
+    googletag.pubads().refresh()
+  }
 
+  refreshAd() {
+    console.log ( "REFRESH ");
+    googletag.pubads().refresh();
+  }
+  
+  displayAd() {
     googletag.cmd.push(() => {
-
-      // Define the ad slot
-      let slot = googletag.defineSlot(
-        this.props.adUnit, 
-        [this.props.width, this.props.height], 
-        this.props.id
-      ).addService(googletag.pubads());
-
-      // Start ad fetching
-      googletag.pubads().enableSingleRequest();
-      googletag.pubads().enableSyncRendering();
-      googletag.enableServices();
-
+    console.log ( 'displayAd', this.props.id);
       // display ad
-      googletag.display(this.props.id);
-      console.log ( 'slot', this.props, slot );
+      googletag.display( this.props.id );
     });
   }
 
   render() {
-    console.log ( 'rendered')
+    console.log ( 'rendered', this.props.open)
+    if ( this.props.open ){
+      this.displayAd();
+    }
     return (
-      <div style={{width:this.props.width, height:this.props.height}}>
-        <div id={this.props.id}></div>
+      <div>
+        <div onClick={ this.refreshAd.bind(this) }>REFRESH</div>
+        <div style={{width:this.props.width, height:this.props.height}}>
+          <div id={this.props.id}></div>
+        </div>
       </div>
     );
   }
-  // displayAd(id) {
-  //   googletag.cmd.push(function() {
-  //     googletag.display(id);
-  //   });
-  // }
 }
 
 function mapStateToProps(store) {

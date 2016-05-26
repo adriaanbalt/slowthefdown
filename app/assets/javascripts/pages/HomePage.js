@@ -17,7 +17,7 @@ class HomePage extends UI {
 
   constructor(){
     super();
-    this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
+    // this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
   overFn(){
@@ -40,7 +40,7 @@ class HomePage extends UI {
   }
 
   componentDidMount(){
-      this.sketch.start();
+      // this.sketch.start();
   }
 
   render () {

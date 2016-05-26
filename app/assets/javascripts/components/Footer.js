@@ -27,8 +27,9 @@ function Footer( props ) {
 			<div className="drawer">
 				<div className="inner">
 				    <Ads 
+				    	open={ props.drawerOpen }
 				    	id="div-gpt-ad-1464203173988-0"
-				    	adUnit="/22986605/slowthefdown-ad"
+				    	adUnit="/22986605/slowthefdown"
 				    	slot="7746823241" 
 				    	format="auto" 
 				    	client="ca-pub-3194664333843576" 
