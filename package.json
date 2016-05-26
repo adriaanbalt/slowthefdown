@@ -85,6 +85,7 @@
     "passport-local": "^1.0.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
+    "react-google-ad": "^1.0.2",
     "react-hot-loader": "^1.2.8",
     "react-prefixr": "^0.1.0",
     "react-redux": "^4.4.1",
