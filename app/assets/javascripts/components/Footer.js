@@ -26,15 +26,12 @@ function Footer( props ) {
 			</div>
 			<div className="drawer">
 				<div className="inner">
-				    <Ads 
-				    	open={ props.drawerOpen }
-				    	id="div-gpt-ad-1464203173988-0"
-				    	adUnit="/22986605/slowthefdown"
-				    	slot="7746823241" 
-				    	format="auto" 
-				    	client="ca-pub-3194664333843576" 
-				    	width="300" 
-				    	height="100"/>
+								    
+				    <ins class="adsbygoogle"
+				         style="display:block"
+				         data-ad-client="ca-pub-3194664333843576"
+				         data-ad-slot="7746823241"
+				         data-ad-format="auto"></ins>
 					<div>
 						<h3>High Score</h3>
 						<h3 className="highscore-big">{ props.highscore }</h3>
