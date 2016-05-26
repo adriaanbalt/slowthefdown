@@ -10,50 +10,50 @@ let instance = 0;
 export default class Ads extends Component {
 
   componentWillMount() {
-    if (window.googletag && googletag.apiReady) {
-      console.log ( 'googletag', googletag, this.props )
+    // if (window.googletag && googletag.apiReady) {
+    //   console.log ( 'googletag', googletag, this.props )
 
-      // googletag.cmd.push(function() {
-      //   googletag
-      //     .defineSlot('/22986605/slowthefdown-ad', [300, 100], 'div-gpt-ad-1464203173988-0')
-      //     .addService(googletag.pubads());
-      // });
+    //   // googletag.cmd.push(function() {
+    //   //   googletag
+    //   //     .defineSlot('/22986605/slowthefdown-ad', [300, 100], 'div-gpt-ad-1464203173988-0')
+    //   //     .addService(googletag.pubads());
+    //   // });
 
-      googletag.cmd.push(() => {
+    //   googletag.cmd.push(() => {
 
-        // Define the ad slot
-        let slot = googletag.defineSlot(
-          this.props.adUnit, 
-          [this.props.width, this.props.height], 
-          this.props.id
-        ).addService(googletag.pubads());
+    //     // Define the ad slot
+    //     let slot = googletag.defineSlot(
+    //       this.props.adUnit, 
+    //       [this.props.width, this.props.height], 
+    //       this.props.id
+    //     ).addService(googletag.pubads());
 
-        googletag.pubads().addEventListener('slotRenderEnded', (event) => {
-          console.log('Slot has been rendered:', event);
-        });
-        // Start ad fetching
-        googletag.enableServices();
+    //     googletag.pubads().addEventListener('slotRenderEnded', (event) => {
+    //       console.log('Slot has been rendered:', event);
+    //     });
+    //     // Start ad fetching
+    //     googletag.enableServices();
 
-        console.log ( 'slot', this.props.id, slot );
-      });
-    }
+    //     console.log ( 'slot', this.props.id, slot );
+    //   });
+    // }
   }
 
   componentDidMount() {
-    googletag.pubads().refresh()
+    // googletag.pubads().refresh()
   }
 
   refreshAd() {
     console.log ( "REFRESH ");
-    googletag.pubads().refresh();
+    // googletag.pubads().refresh();
   }
   
   displayAd() {
-    googletag.cmd.push(() => {
-    console.log ( 'displayAd', this.props.id);
-      // display ad
-      googletag.display( this.props.id );
-    });
+    // googletag.cmd.push(() => {
+    // console.log ( 'displayAd', this.props.id);
+    //   // display ad
+    //   googletag.display( this.props.id );
+    // });
   }
 
   render() {
