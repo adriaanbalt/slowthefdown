@@ -19,7 +19,11 @@
   if (window.googletag && googletag.apiReady) {
     console.log ( '(window.googletag && googletag.apiReady)' , (window.googletag && googletag.apiReady) );
     googletag.cmd.push(function() {
-      googletag.defineSlot('/22986605/slowthefdown', [300, 100], 'div-gpt-ad-1464285602016-0').addService(googletag.pubads());
+      googletag.defineSlot('/22986605/slowthefdown', [300, 100], 'div-gpt-ad-1464285602016-0').addService(googletag.pubads())
+        .setTargeting("interests", ["sports", "music", "movies"])
+        .setTargeting("gender", "male")
+        .setTargeting("gender", "female")
+        .setTargeting("age", "20-30");
       googletag.pubads().enableSingleRequest();
       googletag.pubads().enableSyncRendering();
       googletag.enableServices();
