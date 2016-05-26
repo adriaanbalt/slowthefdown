@@ -10,12 +10,6 @@ import Ads from '../lib/Ads';
 function Footer( props ) {
 	let drawerOpen = props.drawerOpen ? ' drawerOpen' : '';
 	let drawerPeak = props.drawerPeak ? ' drawerPeak' : '';
-    // <ins className="adsbygoogle"
-    // 	 style={{display: 'block'}}
-    //      data-ad-client="ca-pub-3194664333843576"
-    //      data-ad-slot="7746823241"
-    //      data-ad-test="on"
-    //      data-ad-format="auto"></ins>
 	return (
 		<footer className={`Footer${ drawerOpen }${ drawerPeak }`}>
 			<div className="info">
