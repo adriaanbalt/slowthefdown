@@ -63,12 +63,12 @@ class Login extends UI {
 				  {
 					(!user || !user.google)
 					&&
-					<a href="/auth/google" onTouch={ this.googleAuth.bind(this) }>Google </a>
+					<a href="/auth/google" onTouchStart={ this.googleAuth.bind(this) }>Google </a>
 				  }
 				  {
 					(!user || !user.facebook)
 					&&
-					<a href="/auth/facebook" onTouch={ this.facebookAuth.bind(this) }>Facebook</a>
+					<a href="/auth/facebook" onTouchStart={ this.facebookAuth.bind(this) }>Facebook</a>
 				  }
 				</div>
 			  }
