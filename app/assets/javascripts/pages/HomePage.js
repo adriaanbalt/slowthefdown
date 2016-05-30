@@ -20,11 +20,11 @@ class HomePage extends UI {
     this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
-  overFn(){
+  overFn( highscore ){
+    this.props.dispatch( ActionCreator.setScore( highscore ) );
   }
 
   outFn( highscore ){
-    console.log ( "outFn", this.props.highscore.score, highscore, this.props.user );
     this.props.dispatch( ActionCreator.setScore( highscore ) );
     if ( this.props.highscore.score < highscore ) {
       if ( this.props.user ) {

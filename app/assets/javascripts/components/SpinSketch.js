@@ -356,8 +356,12 @@ export default class SpinSketch {
 		if ( this.overText ) {
 			this.startTime = Date.now();
 			this.overText = false;
-			this.overFn();
 		}
+		this.endTime = Date.now();
+		this.deltaTime = (this.endTime - this.startTime) / 1000;
+
+		this.overFn( this.deltaTime );
+
 		this.spinshader.setSpeed( 9 );
 		this.spinText.setSpeed( .5 );
 	}
