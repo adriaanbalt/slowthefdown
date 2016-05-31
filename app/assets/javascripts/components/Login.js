@@ -22,17 +22,7 @@ class Login extends UI {
 
 	logout(e) {
 		e.preventDefault();
-		this.props.dispatch(
-			API.logout()
-		);
-	}
-
-	onFocus() {
-
-	}
-	
-	onChange() {
-		
+		this.props.dispatch( API.logout() );
 	}
 
 	googleAuth() {
@@ -47,47 +37,36 @@ class Login extends UI {
 
 	render () {
 		const user = this.props.user;
+
+		/*
+		<li className={`nav user-photo ${user && user.google && user.google.photo && 'show'}`}
+			style={user && user.google && user.google.photo && {backgroundImage: `url(${user.google.photo})`}}/>
+		<li className={`nav user-photo ${user && user.facebook && user.facebook.photo && 'show'}`}
+			style={user && user.facebook && user.facebook.photo && {backgroundImage: `url(${user.facebook.photo})`}}></li>
+		<a href="/auth/google" onTouchStart={ this.googleAuth.bind(this) }>Google</a>
+		*/
+
 		return (
 
-		  <ul className="nav navbar-nav navbar-right">
-			<li className={`nav user-photo ${user && user.google && user.google.photo && 'show'}`}
-				style={user && user.google && user.google.photo && {backgroundImage: `url(${user.google.photo})`}}/>
-			<li className={`nav user-photo ${user && user.facebook && user.facebook.photo && 'show'}`}
-				style={user && user.facebook && user.facebook.photo && {backgroundImage: `url(${user.facebook.photo})`}}></li>
-			<li className="nav-button">
-			  {
-				(!user || !user.email || !user.hasPassword || !user.google || !user.google.photo || !user.facebook || !user.facebook.photo)
-				&&
-				<div>
-					<span>Login: </span>
-				  {
-					(!user || !user.google)
-					&&
-					<a href="/auth/google" onTouchStart={ this.googleAuth.bind(this) }>Google </a>
-				  }
-				  {
-					(!user || !user.facebook)
-					&&
-					<a href="/auth/facebook" onTouchStart={ this.facebookAuth.bind(this) }>Facebook</a>
-				  }
-				</div>
-			  }
-			  {
-				user
-				&&
-				<a className="nav-button log-out-button show" href="#" onClick={this.logout.bind(this)}>
-				  LOG OUT
-				</a>
-			  }
-			</li>
-		  </ul>
+		  <div>
+		  	{
+			!user
+			&&
+			<a className="log-button" href="/auth/facebook" onTouchStart={ this.facebookAuth.bind(this) }>Login with Facebook</a>
+			}
+			{
+			user
+			&&
+			<a className="log-button" href="#" onClick={this.logout.bind(this)} onTouchStart={this.logout.bind(this)}>Log Out</a>
+		  	}
+		  </div>
 		);
 	}
 };
 
 function mapStateToProps(store) {
   return {
-	user: store.user,
+	user: store.user
   };
 }
 

@@ -13,25 +13,24 @@ function Footer( props ) {
 	return (
 		<footer className={`Footer${ drawerOpen }${ drawerPeak }`}>
 			<div className="info">
-				<h6 className="highscore-small">{ props.score }</h6>
+				<h3 className="highscore-small">{ props.score }</h3>
 				<a className="drawerBtn" onTouchStart={ props.toggleDrawer } onClick={ props.toggleDrawer }>				
 					<Icon name="icon-menu"/>	
 				</a>
 			</div>
 			<div className="drawer">
-				<div className="inner">
-								    
+				<div className="inner"> 
 				    <ins className="adsbygoogle"
 				         style={{display:"block"}}
 				         data-ad-client="ca-pub-3194664333843576"
 				         data-ad-slot="7746823241"
 				         data-ad-format="auto"></ins>
-					<div>
+					<div className="">
 						<h3>High Score</h3>
 						<h3 className="highscore-big">{ props.highscore }</h3>
 					</div>
 					<Login />
-					<small><a href="http://balt.us">BALT.us</a> 123 Copyright 2016</small>
+					<small><a href="http://balt.us" onTouchStart={ props.gotoBalt }>BALT.us</a> Copyright 2016</small>
 				</div>
 
 			</div>

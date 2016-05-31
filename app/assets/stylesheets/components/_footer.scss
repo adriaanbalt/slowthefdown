@@ -1,6 +1,6 @@
 .Footer {
 	position: fixed;
-	bottom: -130px;
+	bottom: -112px;
 	width: 100%;
 	.inner {
 		padding: 1em;
@@ -14,7 +14,7 @@
 	.info {
 		@include clearfix();
 		.highscore-small {
-			margin-left: 1em;
+			margin-left: .75em;
 			color: #fff;
 			float: left;
 			line-height: 44px;
@@ -25,6 +25,19 @@
 			cursor: pointer;
 			float: right;
 		}
+	}
+	.log-button {
+	    font-size: 16px;
+	    display: inline-block;
+	    padding: .25em 0;
+	    margin: 0 0 .25em 0;
+	}
+	.adsbygoogle{
+		overflow: hidden;
+		max-height: 100px;
+	}
+	h3{
+		margin: 0 .5em 0 0;
 	}
 	.drawer{
 		background: $footer-bg-color;
