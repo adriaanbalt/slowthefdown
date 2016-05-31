@@ -30,6 +30,12 @@ const rootReducer = (state = InitialState, action) => {
         drawerPeak: false
       });
 
+    case ActionTypes.TOGGLE_INSTRUCTIONS :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        instructionsOpen: !state.instructionsOpen
+      });
+
     case ActionTypes.TOGGLE_DRAWER :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
