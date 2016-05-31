@@ -189,8 +189,8 @@ export default class SpinSketch {
 					'vec2 p = -1.0 + 3.0 * vUv;',
 					'vec2 q = p - vec2(0.5, 0.5);',// start pos
 
-					'q.x += 0. + sin(iTime * .5) / 4.;', // X distance from center - movement with speed
-					'q.y += 0. + sin(iTime * .5) / 4.;', // Y distance from center - movement with speed over time
+					// 'q.x += 0. + sin(iTime * .5) / 1.;', // X distance from center - movement with speed
+					'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
