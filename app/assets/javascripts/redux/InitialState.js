@@ -10,6 +10,7 @@ const initialState = {
 	score: 0,
 	highscores: [],
 	drawerOpen: true,
+	instructionsOpen: true,
 	drawerPeak: false,
 	animation: {
 		callback: null,

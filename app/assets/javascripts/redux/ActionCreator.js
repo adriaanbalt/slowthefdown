@@ -24,6 +24,13 @@ export default {
     };
   },
 
+  toggleInstructions(obj) {
+    return {
+      type: ActionTypes.TOGGLE_INSTRUCTIONS,
+      obj
+    };
+  },
+
   toggleDrawer(obj) {
     return {
       type: ActionTypes.TOGGLE_DRAWER,

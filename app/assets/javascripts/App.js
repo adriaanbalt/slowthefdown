@@ -6,6 +6,8 @@ import { Router } from 'react-router';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Instructions from './components/Instructions';
+
 import API from './redux/API';
 import ActionCreator from './redux/ActionCreator';
 import _ from 'lodash';
@@ -32,13 +34,26 @@ class App extends Component {
 	}
 
 	toggleDrawer() {
-		console.log ('toggleDrawer');
 		this.props.dispatch( ActionCreator.toggleDrawer() );
+	}
+
+	toggleInstructions() {
+		this.props.dispatch( ActionCreator.toggleInstructions() );
+	}
+
+	gotoBalt(e) {
+		e.preventDefault();
+		window.location="http://www.balt.us";
 	}
 
 	render () {
 		return (
 			<div  id='main' rel="main" >
+				{
+					this.props.instructionsOpen
+					&&
+					<Instructions toggleInstructions={ () => this.toggleInstructions() } />
+				}
 				<Header />
 				{
 					this.props.children
@@ -48,7 +63,8 @@ class App extends Component {
 					highscore={ (this.props.user && this.props.user.highscore && this.props.user.highscore.score) || this.props.highscore.score } 
 					toggleDrawer={ () => this.toggleDrawer() } 
 					drawerOpen={ this.props.drawerOpen } 
-					drawerPeak={ this.props.drawerPeak } />
+					drawerPeak={ this.props.drawerPeak } 
+					gotoBalt={ () => this.gotoBalt() } />
 			</div>
 		);
 	}
@@ -60,7 +76,8 @@ function mapStateToProps(store) {
     score: store.score,
     highscore: store.highscore,
     drawerOpen: store.drawerOpen,
-    drawerPeak: store.drawerPeak
+    drawerPeak: store.drawerPeak,
+    instructionsOpen: store.instructionsOpen
   };
 }
 App.propTypes = {
@@ -69,7 +86,8 @@ App.propTypes = {
   score: PropTypes.number,
   highscore: PropTypes.object,
   drawerOpen: PropTypes.bool,
-  drawerPeak: PropTypes.bool
+  drawerPeak: PropTypes.bool,
+  instructionsOpen: PropTypes.bool
 };
 
 export default connect(mapStateToProps)(App);
