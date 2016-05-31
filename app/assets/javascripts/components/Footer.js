@@ -30,7 +30,7 @@ function Footer( props ) {
 						<h3 className="highscore-big">{ props.highscore }</h3>
 					</div>
 					<Login />
-					<small><a href="http://balt.us" onTouchStart={ props.gotoBalt }>BALT.us</a> Copyright 2016</small>
+					<small><a href="http://balt.us" onTouchStart={ props.gotoBalt }>BALT.us</a> Copyright &#169; 2016</small>
 				</div>
 
 			</div>
