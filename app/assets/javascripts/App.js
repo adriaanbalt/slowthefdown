@@ -50,7 +50,7 @@ class App extends Component {
 		return (
 			<div  id='main' rel="main" >
 				{
-					this.props.instructionsOpen
+					this.props.instructionsOpen && window.innerWidth <= 768
 					&&
 					<Instructions toggleInstructions={ () => this.toggleInstructions() } />
 				}
@@ -64,7 +64,7 @@ class App extends Component {
 					toggleDrawer={ () => this.toggleDrawer() } 
 					drawerOpen={ this.props.drawerOpen } 
 					drawerPeak={ this.props.drawerPeak } 
-					gotoBalt={ () => this.gotoBalt() } />
+					gotoBalt={ (e) => this.gotoBalt(e) } />
 			</div>
 		);
 	}
