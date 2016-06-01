@@ -190,7 +190,7 @@ export default class SpinSketch {
 					'vec2 q = p - vec2(0.5, 0.5);',// start pos
 
 					// 'q.x += 0. + sin(iTime * .5) / 1.;', // X distance from center - movement with speed
-					// 'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
+					'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
@@ -220,7 +220,7 @@ export default class SpinSketch {
 
 		this.loader = new THREE.TextureLoader();
 		this.loader.load( 
-			"assets/images/textures/saturn.jpg",
+			Config.textures.stars,
 			( texture ) => this.textureLoaded( texture ),
 			// Function called when download progresses
 			( xhr ) => {
