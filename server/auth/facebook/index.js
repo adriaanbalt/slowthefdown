@@ -8,9 +8,9 @@ const passport = require('passport'),
 module.exports = function (app) {
 
     const facebookCredentials = {
-        clientID:"116392235445686",
-        clientSecret:"4a106e08a1c4b7adf1121a9343e14805",
-        callbackURL:"https://www.slowthefdown.com/auth/facebook/callback",
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: process.env.FACEBOOK_CLIENT_CALLBACK,
         profileFields: ['emails', 'photos', 'link', 'first_name', 'last_name', 'gender'] // this is the Google strategy's equivalent of "scope"
     };
 

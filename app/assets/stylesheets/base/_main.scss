@@ -33,3 +33,18 @@ body {
 .loading {
 	color: $white;
 }
+
+
+
+#main {
+	width: 100%;
+}
+
+@include media(min-width $large-breakpoint) {
+	#main{
+	    width: 100%;
+	    margin: 0 auto;
+	    position: relative;
+	    overflow: hidden;
+	}
+}
