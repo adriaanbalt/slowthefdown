@@ -1,6 +1,6 @@
 .Footer {
 	position: absolute;
-	bottom: -112px;
+	bottom: -140px;
 	width: 100%;
 	.inner {
 		padding: 1em;
@@ -13,24 +13,23 @@
 	}
 	.info {
 		@include clearfix();
-		.highscore-small {
+		.highscore{
 			margin-left: .75em;
-			color: #fff;
 			float: left;
 			line-height: 44px;
 			vertical-align: top;
+		}
+		.highscore.big {
+			color: #f00;
+		}
+		.highscore.small {
+			color: #fff;
 		}
 		.drawerBtn {
 			display: block;
 			cursor: pointer;
 			float: right;
 		}
-	}
-	.log-button {
-	    font-size: 16px;
-	    display: inline-block;
-	    padding: .25em 0;
-	    margin: 0 0 .25em 0;
 	}
 	.adsbygoogle{
 		overflow: hidden;
