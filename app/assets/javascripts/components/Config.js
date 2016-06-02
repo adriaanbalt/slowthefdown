@@ -1,7 +1,7 @@
 export default {
 
 	textures: {
-		adriaan: "assets/images/textures/adriaan.jpg",
+		cloud: "assets/images/textures/cloud.png",
 		stars: "assets/images/textures/stars.jpg"
 	},
 
