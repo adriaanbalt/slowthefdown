@@ -7,15 +7,19 @@ const passport = require('passport'),
 
 module.exports = function (app) {
 
+FACEBOOK_CLIENT_ID="116392235445686"
+FACEBOOK_CLIENT_SECRET="4a106e08a1c4b7adf1121a9343e14805"
+FACEBOOK_CLIENT_CALLBACK="https://www.slowthefdown.com/auth/facebook/callback"
+
+
     const facebookCredentials = {
-        clientID: process.env.FACEBOOK_CLIENT_ID,
-        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-        callbackURL: process.env.FACEBOOK_CLIENT_CALLBACK,
+        clientID: '116392235445686',
+        clientSecret: "4a106e08a1c4b7adf1121a9343e14805",
+        callbackURL: "https://www.slowthefdown.com/auth/facebook/callback",
         profileFields: ['emails', 'photos', 'link', 'first_name', 'last_name', 'gender'] // this is the Google strategy's equivalent of "scope"
     };
 
     var verifyCallback = function (accessToken, refreshToken, profile, done) {
-        console.log('verifyCallback', profile );
         User.findOneAsync({
                 'email': profile && profile.emails && profile.emails[0] && profile.emails[0].value
             })
