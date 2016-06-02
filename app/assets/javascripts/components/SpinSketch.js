@@ -82,8 +82,13 @@ export default class SpinText extends THREE.Object3D {
   	this.scale.y = scale;
   }
 
+  setVelocity( newVelocity ) {
+  	this.velocity = newVelocity;
+  }
+
   setSpeed( newSpeed ) {
   	this.speed = newSpeed;
+  	console.log( 'newSpeed', newSpeed );
   }
 
   setNoiseSpeed( newSpeed ) {
@@ -98,20 +103,15 @@ export default class SpinText extends THREE.Object3D {
   	this.radius = newRadius;
   }
 
-  // define a custom update function to be called on the cube each frame
   update( time ) {
 	this.noise = this.simplex.noise2D(this.progress, 0);
-
 	this.dx = (Math.cos( (this.progress) ) * (this.radius * (this.noise ) )) ;//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
 	this.dy = (Math.sin( (this.progress) ) * (this.radius * (this.noise ) )) ;//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // Y distance from center - movement with speed over time
-
 	this.position.x = this.dx;
 	this.position.y = this.dy;
-
 	// this.rotation.x += 0.1;
 	// this.rotation.y += 0.1;
 	// this.rotation.z += 0.1;
-
 	this.progress += this.velocity * this.speed;
 	this.noiseAccum += 0.01 * this.noiseSpeed;
   }
@@ -376,7 +376,7 @@ export default class SpinSketch {
 		this.overFn( this.deltaTime );
 
 		this.spinshader.setSpeed( 9 );
-		this.spinText.setSpeed( .5 );
+		this.spinText.setSpeed( .01 + .6 * (1 - window.innerWidth/2000) );
 	}
 
 	out () {
