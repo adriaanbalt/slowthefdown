@@ -358,7 +358,7 @@ export default class SpinSketch {
 			this.overText = false;
 		}
 		this.endTime = Date.now();
-		this.deltaTime = (this.endTime - this.startTime) / 1000;
+		this.deltaTime = (this.endTime - this.startTime);
 
 		this.overFn( this.deltaTime );
 
@@ -369,7 +369,7 @@ export default class SpinSketch {
 	out () {
 		if ( !this.overText ) {
 			this.endTime = Date.now();
-			this.deltaTime = (this.endTime - this.startTime) / 1000;
+			this.deltaTime = (this.endTime - this.startTime);
 			this.startTime = null;
 			this.overText = true;
 			this.outFn( this.deltaTime );
