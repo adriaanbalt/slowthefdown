@@ -9,3 +9,12 @@ $icons: sprite-map("icons/*.png", $layout: smart);
 .icon-icon-menu {
 	@include get-sprite( icon-menu );
 }
+
+.icon-icon-close {
+	@include get-sprite( icon-close );
+}
+
+.icon-icon-facebook {
+	@include get-sprite( icon-facebook );
+}
+

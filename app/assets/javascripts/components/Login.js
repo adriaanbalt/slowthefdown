@@ -4,6 +4,7 @@ import React, { PropTypes } from 'react';
 import cx from 'classnames';
 import { connect } from 'react-redux';
 
+import Icon from './Icon';
 import UI from '../lib/UI';
 import API from '../redux/API';
 
@@ -47,17 +48,16 @@ class Login extends UI {
 		*/
 
 		return (
-
 		  <div>
 		  	{
 			!user
 			&&
-			<a className="log-button" href="/auth/facebook" onTouchStart={ this.facebookAuth.bind(this) }>Login with Facebook</a>
+			<a className="facebook log-button" href="/auth/facebook" onTouchStart={ this.facebookAuth.bind(this) }><Icon name="icon-facebook"/><span className="font-bold">Login </span> <span className="font-reg">with</span> <span className="font-bold">Facebook</span></a>
 			}
 			{
 			user
 			&&
-			<a className="log-button" href="#" onClick={this.logout.bind(this)} onTouchStart={this.logout.bind(this)}>Log Out</a>
+			<a className="log-button" href="#" onClick={this.logout.bind(this)} onTouchStart={this.logout.bind(this)}><Icon name="icon-facebook"/>Log out</a>
 		  	}
 		  </div>
 		);
