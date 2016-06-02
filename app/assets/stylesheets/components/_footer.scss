@@ -1,6 +1,6 @@
 .Footer {
 	position: absolute;
-	bottom: -140px;
+	bottom: -110px;
 	width: 100%;
 	.inner {
 		padding: 1em;
@@ -39,6 +39,7 @@
 		margin: 0 .5em 0 0;
 	}
 	.drawer{
+		text-align: center;
 		background: $footer-bg-color;
 		.highscore-container{
 			* {

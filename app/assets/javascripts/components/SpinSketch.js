@@ -152,13 +152,11 @@ export default class SpinSketch {
 		this.clock = new THREE.Clock( true );
 
 		// create a dim ambient light
-		let ambientLight = new THREE.AmbientLight( 0xFFFFFF );
-		this.scene.add( ambientLight );
-
+		this.ambientLight = new THREE.AmbientLight( 0xFFFFFF );
+		
 		// and a brighter point light slightly off center
-		let pointLight = new THREE.PointLight( 0xFFFFFF );
-		pointLight.position.set( 0, 0, 50 );
-		this.scene.add( pointLight );
+		this.pointLight = new THREE.PointLight( 0xFFFFFF );
+		this.pointLight.position.set( 0, 0, 50 );
 
 		this.shader = {
 
@@ -190,7 +188,7 @@ export default class SpinSketch {
 					'vec2 q = p - vec2(0.5, 0.5);',// start pos
 
 					// 'q.x += 0. + sin(iTime * .5) / 1.;', // X distance from center - movement with speed
-					'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
+					// 'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
@@ -218,19 +216,8 @@ export default class SpinSketch {
 
 		};
 
-		this.loader = new THREE.TextureLoader();
-		this.loader.load( 
-			Config.textures.stars,
-			( texture ) => this.textureLoaded( texture ),
-			// Function called when download progresses
-			( xhr ) => {
-				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-			},
-			// Function called when download errors
-			( xhr ) => {
-				console.log( 'An error happened' );
-			}
-		)
+
+		this.loadTextureByName( Config.textures.stars );
 
 
 		// font — THREE.Font.
@@ -250,7 +237,33 @@ export default class SpinSketch {
 		window.addEventListener( 'resize', this.onWindowResize.bind( this ), false );
 	}
 
+	loadTextureByName( txt ) {
+		let child;
+		for( let i = this.scene.children.length - 1; i >= 0; i--) {
+		     child = this.scene.children[i];
+		     this.scene.remove(child);
+		}
+
+		this.loader = new THREE.TextureLoader();
+		this.loader.load( 
+			txt,
+			( texture ) => this.textureLoaded( texture ),
+			// Function called when download progresses
+			( xhr ) => {
+				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+			},
+			// Function called when download errors
+			( xhr ) => {
+				console.log( 'An error happened' );
+			}
+		)
+	}
+
 	textureLoaded( textureImg ){
+
+		this.scene.add( this.ambientLight );
+		this.scene.add( this.pointLight );
+
 
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },

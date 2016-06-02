@@ -11,6 +11,7 @@ import ActionCreator from '../redux/ActionCreator';
 // import Kaleidoscope from '../components/Kaleidoscope.js';
 // import Ftext from '../components/Ftext.js';
 
+import Config from '../components/Config.js';
 import SpinSketch from '../components/SpinSketch.js';
 
 class HomePage extends UI {
@@ -44,7 +45,9 @@ class HomePage extends UI {
   }
 
   render () {
-      return (<div id="game"></div>)
+      return (
+        <div id="game"></div>
+      )
   }
 
 };
