@@ -18,7 +18,7 @@ gulp.task('build:production', (cb) =>{
   stopPrevious(serverType, () =>
     childProcess.exec(cmd, (err, stdout) => { // create new pid file
       if(err) throw err;
-      else gulpSequence('clean', 'fonts', 'images', 'compass', 'mongo', 'webpack:production', 'html', cb);
+      else gulpSequence('clean', 'fonts', 'images', 'compass', 'mongo', 'webpack:production', 'html', cb);	
     })
   )}
 );
