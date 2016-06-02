@@ -7,11 +7,6 @@ const passport = require('passport'),
 
 module.exports = function (app) {
 
-FACEBOOK_CLIENT_ID="116392235445686"
-FACEBOOK_CLIENT_SECRET="4a106e08a1c4b7adf1121a9343e14805"
-FACEBOOK_CLIENT_CALLBACK="https://www.slowthefdown.com/auth/facebook/callback"
-
-
     const facebookCredentials = {
         clientID: '116392235445686',
         clientSecret: "4a106e08a1c4b7adf1121a9343e14805",
