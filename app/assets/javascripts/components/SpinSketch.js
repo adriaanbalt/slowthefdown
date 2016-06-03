@@ -9,7 +9,7 @@ export default class SpinShader extends THREE.Mesh{
 		super( geo, mat );
 		this.shaderMat = mat;
 		this.pulse = 0;
-		this.speed = 3;
+		this.speed = 1;
 		this.superName = "SpinShader";
 	}
 
@@ -19,8 +19,10 @@ export default class SpinShader extends THREE.Mesh{
 
 	update( time ) {
 		this.shaderMat.uniforms['iTime'].value = time;
-		this.shaderMat.uniforms['iHover'].value = this.speed;
+		this.shaderMat.uniforms['iSpeed'].value = this.speed;
 		this.position.z = 0;
+
+		console.log ( 'shader update', this.speed );
 	}
 }
 
@@ -69,7 +71,8 @@ export default class SpinText extends THREE.Object3D {
 	this.add( this.circle );
 
 	this.progress = 0 ;
-	this.velocity = 0.01;
+	// this.velocity = 0.01;
+	this.velocity = .005 + .01 * (1 - window.innerWidth/2000);
 	this.radius = 500;
 	this.noiseAccum = 0;
 	this.speed = 1.5;
@@ -88,7 +91,6 @@ export default class SpinText extends THREE.Object3D {
 
   setSpeed( newSpeed ) {
   	this.speed = newSpeed;
-  	console.log( 'newSpeed', newSpeed );
   }
 
   setNoiseSpeed( newSpeed ) {
@@ -174,7 +176,7 @@ export default class SpinSketch {
 				'precision highp float;',
 
 				'uniform float iTime;',
-				'uniform float iHover;',
+				'uniform float iSpeed;',
 				'uniform float iDistance;',
 				'uniform sampler2D iText0;',
 				'uniform sampler2D iText1;',
@@ -194,12 +196,12 @@ export default class SpinSketch {
 
 					'float a = atan( q.y, q.x ) / 3.1416  ;',  //speed of rotation
 					'float b = atan( q.y, q.x ) / 3.1416  ;', //speed of rotation
-					'float r1 = (0.01*iHover) / len + iTime;', // remove the / for reverse whirlpool
-					'float r2 = (0.1*iHover) / len + iTime ;',
+					'float r1 = (0.01*iSpeed) / len + iTime;', // remove the / for reverse whirlpool
+					'float r2 = (0.1*iSpeed) / len + iTime ;',
 					// 'float r1 = 0.3 / len + iTime * 0.5;',
 					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
-					'float m = (cos(.5 ) + sin(iHover * .9)) / .5;',
+					'float m = (cos(.5 ) + sin(.9)) / .5;',
 
 					'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
 					'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
@@ -270,7 +272,7 @@ export default class SpinSketch {
 			iText0: { type: 't', value: textureImg },
 			iText1: { type: 't', value: textureImg },
 			iDistance: { type: 'f', value: 5 },
-			iHover: { type: 'f', value: 3 }
+			iSpeed: { type: 'f', value: 1 }
 		};
 
 		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
@@ -293,6 +295,13 @@ export default class SpinSketch {
 
 		// add the camera to the scene
 		this.scene.add( this.camera );
+
+		window.onblur = () => {
+			this.mouse.x = window.innerWidth + 100;
+			this.mouse.y = window.innerHeight + 100;
+			this.deltaTime = 0;
+			this.spinText.setSpeed( 0 );
+		};
 
 		this.onWindowResize();
 	}
@@ -322,7 +331,7 @@ export default class SpinSketch {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
 
-		this.spinText.setRadius( (window.innerWidth)/2 )
+		this.spinText.setRadius( ((window.innerWidth)/2) )
 		this.spinText.setScale( 1 );
 
 		// update renderer
@@ -375,8 +384,8 @@ export default class SpinSketch {
 
 		this.overFn( this.deltaTime );
 
-		this.spinshader.setSpeed( 9 );
-		this.spinText.setSpeed( .01 + .6 * (1 - window.innerWidth/2000) );
+		this.spinshader.setSpeed( 3 );
+		this.spinText.setSpeed( .5 );
 	}
 
 	out () {
@@ -387,7 +396,7 @@ export default class SpinSketch {
 			this.overText = true;
 			this.outFn( this.deltaTime );
 		}
-		this.spinshader.setSpeed( 3 );
+		this.spinshader.setSpeed( 1.5 );
 		this.spinText.setSpeed( 1.5 );
 	}
 
