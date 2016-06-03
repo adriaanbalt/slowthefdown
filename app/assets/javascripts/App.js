@@ -50,7 +50,7 @@ class App extends Component {
 		return (
 			<div  id='main' rel="main" >
 				{
-					this.props.instructionsOpen && window.innerWidth <= 768
+					this.props.instructionsOpen
 					&&
 					<Instructions toggleInstructions={ () => this.toggleInstructions() } />
 				}
