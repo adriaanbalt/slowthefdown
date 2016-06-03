@@ -21,15 +21,9 @@ function Footer( props ) {
 			</div>
 			<div className="drawer">
 				<div className="inner"> 
-				    <ins className="adsbygoogle"
-				         style={{display:"block"}}
-				         data-ad-client="ca-pub-3194664333843576"
-				         data-ad-slot="7746823241"
-				         data-ad-format="auto"></ins>
 					<Login />
 					<small><a href="http://balt.us" onTouchStart={ props.gotoBalt }>BALT.us</a> Copyright &#169; 2016</small>
 				</div>
-
 			</div>
 		</footer>
 	);
