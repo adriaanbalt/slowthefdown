@@ -17,12 +17,14 @@ export default class SpinShader extends THREE.Mesh{
 		this.speed = speed;
 	}
 
-	update( time ) {
+	update( time, mouseX, mouseY ) {
 		this.shaderMat.uniforms['iTime'].value = time;
 		this.shaderMat.uniforms['iSpeed'].value = this.speed;
+		this.shaderMat.uniforms['iMouseX'].value = mouseX;
+		this.shaderMat.uniforms['iMouseY'].value = mouseY;
 		this.position.z = 0;
 
-		console.log ( 'shader update', this.speed );
+		console.log ( 'iMouseY', mouseX, mouseY)
 	}
 }
 
@@ -72,7 +74,7 @@ export default class SpinText extends THREE.Object3D {
 
 	this.progress = 0 ;
 	// this.velocity = 0.01;
-	this.velocity = .005 + .01 * (1 - window.innerWidth/2000);
+	this.velocity = .004 + .01 * (1 - window.innerWidth/2000);
 	this.radius = 500;
 	this.noiseAccum = 0;
 	this.speed = 1.5;
@@ -130,8 +132,8 @@ export default class SpinSketch {
 		this.scene = new THREE.Scene();
 
 		this.mouse = new THREE.Vector2();
-		this.mouse.x = window.innerWidth + 100;
-		this.mouse.y = window.innerWidth + 100;
+		// this.mouse.x = window.innerWidth + 100;
+		// this.mouse.y = window.innerWidth + 100;
 		// add some unused fog by default
 		// this.fog = new THREE.FogExp2( 0x000000, .07 );
 
@@ -178,6 +180,8 @@ export default class SpinSketch {
 				'uniform float iTime;',
 				'uniform float iSpeed;',
 				'uniform float iDistance;',
+				'uniform float iMouseX;',
+				'uniform float iMouseY;',
 				'uniform sampler2D iText0;',
 				'uniform sampler2D iText1;',
 
@@ -191,6 +195,9 @@ export default class SpinSketch {
 
 					// 'q.x += 0. + sin(iTime * .5) / 1.;', // X distance from center - movement with speed
 					// 'q.y += 0. + sin(iTime * .5) / 1.;', // Y distance from center - movement with speed over time
+
+					'q.x += iMouseX;', // Y distance from center - movement with speed over time
+					'q.y += iMouseY;', // Y distance from center - movement with speed over time
 
 					'float len = length(q);',
 
@@ -272,6 +279,8 @@ export default class SpinSketch {
 			iText0: { type: 't', value: textureImg },
 			iText1: { type: 't', value: textureImg },
 			iDistance: { type: 'f', value: 5 },
+			iMouseX: { type: 'f', value: 1 },
+			iMouseY: { type: 'f', value: 1 },
 			iSpeed: { type: 'f', value: 1 }
 		};
 
@@ -321,8 +330,8 @@ export default class SpinSketch {
 	}
 
 	moveEnd( event ) {
-		this.mouse.x = window.innerWidth + 100;
-		this.mouse.y = window.innerWidth + 100;
+		// this.mouse.x = window.innerWidth + 100;
+		// this.mouse.y = window.innerWidth + 100;
 	}
 
 	// browser resize handler
@@ -346,7 +355,7 @@ export default class SpinSketch {
 
 		this.scene.traverse( child => {
 			if( child.update !== undefined ) {
-				child.update( time, delta )
+				child.update( time, this.mouse.x, this.mouse.y )
 			}
 		});
 
@@ -355,7 +364,6 @@ export default class SpinSketch {
 		this.raycaster.setFromCamera( this.mouse, this.camera );
 		this.intersects = this.raycaster.intersectObjects( this.scene.children, true );
 		
-
 		// this.out();
 		let mesh = this.intersects.filter( obj => { return obj.object.superName != 'SpinShader'} );
 
