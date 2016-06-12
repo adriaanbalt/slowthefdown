@@ -9,8 +9,7 @@ function Instructions( props ) {
 		<div className="inner">
 			<Icon name="icon-close"/>
 			<h2>How to play</h2>
-			<p>The longer you follow the F with your thumb the higher your score.</p>
-			<p>The white number is your progress. The red number is your high score.</p>
+			<p>The longer you follow the F with your finger the higher your score.</p>
 		</div>
 	</div>
   );
