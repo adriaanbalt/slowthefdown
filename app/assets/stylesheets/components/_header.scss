@@ -1,5 +1,20 @@
 .Header {
-	.inner {
-		@include outer-container();
+    position: absolute;
+    padding: .5em;
+    width: 100%;
+    .copy {
+		margin-right: .25em;
+	    vertical-align: top;
+	}
+	.highscore{
+		float: left;
+		vertical-align: top;
+	}
+	.highscore.big {
+		color: #fff;
+	}
+	.highscore.small {
+		float: right;
+		color: #fff;
 	}
 }

@@ -13,8 +13,6 @@ function Footer( props ) {
 	return (
 		<footer className={`Footer${ drawerOpen }${ drawerPeak }`}>
 			<div className="info">
-				<h3 className="highscore big">{ props.highscore }</h3>
-				<h2 className="highscore small">{ props.score }</h2>
 				<a className="drawerBtn" onTouchStart={ props.toggleDrawer } onClick={ props.toggleDrawer }>				
 					<Icon name="icon-menu"/>	
 				</a>

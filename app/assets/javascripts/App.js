@@ -54,7 +54,9 @@ class App extends Component {
 					&&
 					<Instructions toggleInstructions={ () => this.toggleInstructions() } />
 				}
-				<Header />
+				<Header
+					score={ this.props.score} 
+					highscore={ (this.props.user && this.props.user.highscore && this.props.user.highscore.score) || this.props.highscore.score }  />
 				{
 					this.props.children
 				}
