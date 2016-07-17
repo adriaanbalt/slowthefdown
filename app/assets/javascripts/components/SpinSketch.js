@@ -73,8 +73,8 @@ export default class SpinText extends THREE.Object3D {
 	this.add( this.circle );
 
 	this.progress = 0 ;
-	// this.velocity = 0.01;
-	this.velocity = .04 + .0001 * (1 - window.innerWidth/2000);
+	this.velocity = 0.01;
+	// this.velocity = .04;// + .0001 * (1 - window.innerWidth/2000);
 	this.radius = 500;
 	this.noiseAccum = 0;
 	this.speed = 1.5;
