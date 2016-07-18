@@ -23,8 +23,6 @@ export default class SpinShader extends THREE.Mesh{
 		this.shaderMat.uniforms['iMouseX'].value = mouseX;
 		this.shaderMat.uniforms['iMouseY'].value = mouseY;
 		this.position.z = 0;
-
-		console.log ( 'iMouseY', mouseX, mouseY)
 	}
 }
 
@@ -73,11 +71,12 @@ export default class SpinText extends THREE.Object3D {
 	this.add( this.circle );
 
 	this.progress = 0 ;
-	this.velocity = 0.02;
+	this.velocity = 0.005;
 	// this.velocity = .04;// + .0001 * (1 - window.innerWidth/2000);
 	this.radius = 500;
 	this.noiseAccum = 0;
 	this.speed = 1.5;
+	this.isOver = false;
 
 	this.position.set( 50, 50, 0 );
   }
@@ -91,8 +90,9 @@ export default class SpinText extends THREE.Object3D {
   	this.velocity = newVelocity;
   }
 
-  setSpeed( newSpeed ) {
+  setSpeed( newSpeed, isOver ) {
   	this.speed = newSpeed;
+  	this.isOver = isOver;
   }
 
   setNoiseSpeed( newSpeed ) {
@@ -118,6 +118,12 @@ export default class SpinText extends THREE.Object3D {
 	// this.rotation.z += 0.1;
 	this.progress += this.velocity * this.speed;
 	this.noiseAccum += 0.01 * this.noiseSpeed;
+
+	// if ( this.isOver ) {
+		this.speed += time/500;
+	// }
+	console.log ( 'time', this.speed, time/500 );
+
   }
 }
 
@@ -393,7 +399,7 @@ export default class SpinSketch {
 		this.overFn( this.deltaTime );
 
 		this.spinshader.setSpeed( 3 );
-		this.spinText.setSpeed( .7 );
+		this.spinText.setSpeed( .5, true );
 	}
 
 	out () {
@@ -405,7 +411,7 @@ export default class SpinSketch {
 			this.outFn( this.deltaTime );
 		}
 		this.spinshader.setSpeed( 1.5 );
-		this.spinText.setSpeed( 1.5 );
+		this.spinText.setSpeed( 1.5, false );
 	}
 
 
