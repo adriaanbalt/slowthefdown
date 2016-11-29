@@ -23,6 +23,7 @@ export default class SpinShader extends THREE.Mesh{
 		this.shaderMat.uniforms['iMouseX'].value = mouseX;
 		this.shaderMat.uniforms['iMouseY'].value = mouseY;
 		this.position.z = 0;
+		console.log ( 'shader update', time, this.speed, mouseX, mouseY)
 	}
 }
 
@@ -214,7 +215,7 @@ export default class SpinSketch {
 					// 'float r1 = 0.3 / len + iTime * 0.5;',
 					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
-					'float m = (cos(.5 ) + sin(.9)) / .5;',
+					'float m = (cos(.5 ) + sin(.9)) / .5 ;',
 
 					'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
 					'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
@@ -312,8 +313,7 @@ export default class SpinSketch {
 		this.scene.add( this.camera );
 
 		window.onblur = () => {
-			this.mouse.x = window.innerWidth + 100;
-			this.mouse.y = window.innerHeight + 100;
+			this.reset();
 			this.deltaTime = 0;
 			this.spinText.setSpeed( 0 );
 		};
@@ -327,7 +327,6 @@ export default class SpinSketch {
 	}
 
 	mouseMove( event ) {
-		// console.log ( 'mousemove')
 		event.preventDefault();
 		// get mouse or touch coordinates for raycaster
   		let xPos = event.touches ? event.touches[0].pageX : event.clientX;
@@ -337,10 +336,12 @@ export default class SpinSketch {
 	}
 
 	moveEnd( event ) {
-		// console.log ( 'moveEnd')
+		this.reset();
+	}
 
-		this.mouse.x = -100;
-		this.mouse.y = -100;
+	reset() {
+		this.mouse.x = 1;
+		this.mouse.y = -1;	
 	}
 
 	// browser resize handler

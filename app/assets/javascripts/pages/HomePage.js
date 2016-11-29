@@ -40,6 +40,10 @@ class HomePage extends UI {
     }
   }
 
+  reset(){
+    this.sketch.reset();
+  }
+
   componentDidMount(){
       this.sketch.start();
   }
