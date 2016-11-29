@@ -122,7 +122,7 @@ export default class SpinText extends THREE.Object3D {
 	// if ( this.isOver ) {
 		this.speed += time/500;
 	// }
-	console.log ( 'time', this.speed, time/500 );
+	// console.log ( 'time', this.speed, time/500 );
 
   }
 }
@@ -327,6 +327,7 @@ export default class SpinSketch {
 	}
 
 	mouseMove( event ) {
+		// console.log ( 'mousemove')
 		event.preventDefault();
 		// get mouse or touch coordinates for raycaster
   		let xPos = event.touches ? event.touches[0].pageX : event.clientX;
@@ -336,8 +337,10 @@ export default class SpinSketch {
 	}
 
 	moveEnd( event ) {
-		// this.mouse.x = window.innerWidth + 100;
-		// this.mouse.y = window.innerWidth + 100;
+		// console.log ( 'moveEnd')
+
+		this.mouse.x = -100;
+		this.mouse.y = -100;
 	}
 
 	// browser resize handler
@@ -372,7 +375,6 @@ export default class SpinSketch {
 		
 		// this.out();
 		let mesh = this.intersects.filter( obj => { return obj.object.superName != 'SpinShader'} );
-
 		// if ( this.intersects[1] ) {
 			if ( mesh.length > 0 ){
 				this.over();
