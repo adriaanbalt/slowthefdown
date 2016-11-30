@@ -11,19 +11,20 @@ export default class SpinShader extends THREE.Mesh{
 		this.pulse = 0;
 		this.speed = 1;
 		this.superName = "SpinShader";
+		this.textPosition = {x:-1,y:-1}
 	}
 
-	setSpeed( speed ) {
+	setSpeed( speed, textPosition ) {
 		this.speed = speed;
+		this.textPosition = textPosition;
 	}
 
 	update( time, mouseX, mouseY ) {
 		this.shaderMat.uniforms['iTime'].value = time;
 		this.shaderMat.uniforms['iSpeed'].value = this.speed;
-		this.shaderMat.uniforms['iMouseX'].value = mouseX;
-		this.shaderMat.uniforms['iMouseY'].value = mouseY;
+		this.shaderMat.uniforms['iMouseX'].value = this.textPosition.x/500;
+		this.shaderMat.uniforms['iMouseY'].value = this.textPosition.y/500;
 		this.position.z = 0;
-		console.log ( 'shader update', time, this.speed, mouseX, mouseY)
 	}
 }
 
@@ -139,8 +140,7 @@ export default class SpinSketch {
 		this.scene = new THREE.Scene();
 
 		this.mouse = new THREE.Vector2();
-		// this.mouse.x = window.innerWidth + 100;
-		// this.mouse.y = window.innerWidth + 100;
+		this.reset()
 		// add some unused fog by default
 		// this.fog = new THREE.FogExp2( 0x000000, .07 );
 
@@ -400,8 +400,7 @@ export default class SpinSketch {
 		this.deltaTime = (this.endTime - this.startTime);
 
 		this.overFn( this.deltaTime );
-
-		this.spinshader.setSpeed( 3 );
+		this.spinshader.setSpeed( 3, this.spinText.position );
 		this.spinText.setSpeed( .5, true );
 	}
 
@@ -413,7 +412,7 @@ export default class SpinSketch {
 			this.overText = true;
 			this.outFn( this.deltaTime );
 		}
-		this.spinshader.setSpeed( 1.5 );
+		this.spinshader.setSpeed( 1.5, this.spinText.position );
 		this.spinText.setSpeed( 1.5, false );
 	}
 
