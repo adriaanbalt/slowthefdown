@@ -64,10 +64,10 @@ export default class SpinText extends THREE.Object3D {
 	});
 
 	let geometry = new THREE.CircleGeometry( 47, 10 );
-	let material = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.0 } );
-	material.transparent = true;
+	let hitMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, opacity: 0.0 } );
+	hitMaterial.transparent = true;
 
-	this.circle = new THREE.Mesh( geometry, material );
+	this.circle = new THREE.Mesh( geometry, hitMaterial );
 	this.circle.position.x = 25;
 	this.circle.position.y = 35;
 	this.add( this.circle );
@@ -121,11 +121,13 @@ export default class SpinText extends THREE.Object3D {
 	this.progress += this.velocity * this.speed;
 	this.noiseAccum += 0.01 * this.noiseSpeed;
 
+	// this.material.color.setRGB (100, 100, 100);
+	this.mat.color.setHex(0xFFFFFF*(100/this.progress));
+
+
 	// if ( this.isOver ) {
 		this.speed += time/500;
 	// }
-	// console.log ( 'time', this.speed, time/500 );
-
   }
 }
 
