@@ -31,6 +31,8 @@ class App extends Component {
 		// listen for updates on passing viewport threshold
 		window.addEventListener('orientationchange', this.updateViewport, false);
 		window.addEventListener('resize', this.updateViewport, false);
+
+		window.setTimeout( () => this.toggleInstructions(), 3000)
 	}
 
 	toggleDrawer() {
