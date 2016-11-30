@@ -13,11 +13,13 @@ import ActionCreator from '../redux/ActionCreator';
 
 import Config from '../components/Config.js';
 import SpinSketch from '../components/SpinSketch.js';
+import ColorTrans from '../components/ColorTrans.js';
 
 class HomePage extends UI {
 
   constructor(){
     super();
+    this.colorTrans = new ColorTrans();
     this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
@@ -45,12 +47,16 @@ class HomePage extends UI {
   }
 
   componentDidMount(){
-      this.sketch.start();
+    this.sketch.start();
+    this.colorTrans.startTransition( this.refs.colorMe );
   }
 
   render () {
       return (
-        <div id="game"></div>
+        <div id="container">
+          <div id="colorMe" ref="colorMe">HIHIHIHI</div>
+          <div id="game"></div>
+        </div>
       )
   }
 
