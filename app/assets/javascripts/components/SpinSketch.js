@@ -10,17 +10,21 @@ export default class SpinShader extends THREE.Mesh{
 		this.shaderMat = mat;
 		this.pulse = 0;
 		this.speed = 1;
+		this.progress = 0;
 		this.superName = "SpinShader";
 		this.textPosition = {x:-1,y:-1}
 	}
 
-	setSpeed( speed, textPosition ) {
+	setSpeed( speed, textPosition, progress ) {
 		this.speed = speed;
 		this.textPosition = textPosition;
+		this.progress = progress/1000000;
 	}
 
 	update( time, mouseX, mouseY ) {
+		// console.log ( 'this.progress', this.progress )
 		this.shaderMat.uniforms['iTime'].value = time;
+		this.shaderMat.uniforms['iProgress'].value = this.progress;
 		this.shaderMat.uniforms['iSpeed'].value = this.speed;
 		this.shaderMat.uniforms['iMouseX'].value = this.textPosition.x/500;
 		this.shaderMat.uniforms['iMouseY'].value = this.textPosition.y/500;
@@ -122,7 +126,7 @@ export default class SpinText extends THREE.Object3D {
 	this.noiseAccum += 0.01 * this.noiseSpeed;
 
 	// this.material.color.setRGB (100, 100, 100);
-	this.mat.color.setHex(0xFFFFFF*(100/this.progress));
+	this.mat.color.setHex(0xFFFFFF);
 
 
 	// if ( this.isOver ) {
@@ -138,6 +142,7 @@ export default class SpinSketch {
 		this.overFn = overFn;
 		this.outFn	= outFn;
 
+		this.totalTextureLoaded = 0;
 		this.overText = true;
 		this.scene = new THREE.Scene();
 
@@ -187,12 +192,14 @@ export default class SpinSketch {
 				'precision highp float;',
 
 				'uniform float iTime;',
+				'uniform float iProgress;',
 				'uniform float iSpeed;',
 				'uniform float iDistance;',
 				'uniform float iMouseX;',
 				'uniform float iMouseY;',
 				'uniform sampler2D iText0;',
 				'uniform sampler2D iText1;',
+				'uniform sampler2D iText2;',
 
 				'varying vec2 vUv;',
 
@@ -212,8 +219,9 @@ export default class SpinSketch {
 
 					'float a = atan( q.y, q.x ) / 3.1416  ;',  //speed of rotation
 					'float b = atan( q.y, q.x ) / 3.1416  ;', //speed of rotation
-					'float r1 = (0.01*iSpeed) / len + iTime;', // remove the / for reverse whirlpool
-					'float r2 = (0.1*iSpeed) / len + iTime ;',
+					'float c = atan( q.y, q.x ) / 13.1416  ;', //speed of rotation
+					'float r1 = ((0.1+iProgress)*iSpeed) / len + iTime;', // remove the / for reverse whirlpool
+					'float r2 = ((0.1)*iSpeed) / len + iTime ;',
 					// 'float r1 = 0.3 / len + iTime * 0.5;',
 					// 'float r2 = 0.5 / len + iTime * 0.5;',
 
@@ -221,11 +229,13 @@ export default class SpinSketch {
 
 					'vec4 tex1 = texture2D(iText0, vec2( a, r1 ));', // remove a to remove slice
 					'vec4 tex2 = texture2D(iText1, vec2( b, r2 ));',// remove b to remove slice
+					// 'vec4 tex3 = texture2D(iText2, vec2( c, r2 ));',// remove b to remove slice
 
 					// 'vec4 tex1 = texture2D(iText0, vec2(a + 0.1 / len, r1 ));',
 					// 'vec4 tex2 = texture2D(iText1, vec2(b + 0.1 / len, r2 ));',
 
 					'vec3 col = vec3(mix(tex1, tex2, m));',
+					// 'vec3 col = vec3(mix(col, tex3, m));',
 					// 'vec3 col = vec3(tex1));',
 					'vec3 d = col * len * 0.5 * iDistance;',
 					'gl_FragColor = vec4(d, 1.0);',
@@ -235,7 +245,8 @@ export default class SpinSketch {
 		};
 
 
-		this.loadTextureByName( Config.textures.stars );
+		this.loadTextureByName( Config.textures.stars, (texture)=>this.textureLoadedOne(texture) );
+		this.loadTextureByName( Config.textures.cloud, (texture)=>this.textureLoadedTwo(texture) );
 
 
 		// font — THREE.Font.
@@ -255,7 +266,7 @@ export default class SpinSketch {
 		window.addEventListener( 'resize', this.onWindowResize.bind( this ), false );
 	}
 
-	loadTextureByName( txt ) {
+	loadTextureByName( txt, callback ) {
 		let child;
 		for( let i = this.scene.children.length - 1; i >= 0; i--) {
 		     child = this.scene.children[i];
@@ -265,7 +276,7 @@ export default class SpinSketch {
 		this.loader = new THREE.TextureLoader();
 		this.loader.load( 
 			txt,
-			( texture ) => this.textureLoaded( texture ),
+			( texture ) => callback( texture ),
 			// Function called when download progresses
 			( xhr ) => {
 				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
@@ -277,16 +288,35 @@ export default class SpinSketch {
 		)
 	}
 
-	textureLoaded( textureImg ){
+	textureLoadedOne ( textureImg ) {
+		this.totalTextureLoaded++;
+		this.textureOne = textureImg;
+		if ( this.totalTextureLoaded >= 2 ){
+			this.bothTexturesLoaded()
+		}
+	}
+
+	textureLoadedTwo ( textureImg ) {
+		this.totalTextureLoaded++;
+		this.textureTwo = textureImg;
+		if ( this.totalTextureLoaded >= 2 ){
+			this.bothTexturesLoaded()
+		}
+	}
+
+	bothTexturesLoaded( ){
 
 		this.scene.add( this.ambientLight );
 		this.scene.add( this.pointLight );
 
+		console.log ( 'bothTexturesLoaded', this.textureOne, this.textureTwo )
 
 		var tuniform = {
 			iTime: { type: 'f', value: 0.1 },
-			iText0: { type: 't', value: textureImg },
-			iText1: { type: 't', value: textureImg },
+			iProgress: { type: 'f', value: 0.0 },
+			iText0: { type: 't', value: this.textureOne },
+			iText1: { type: 't', value: this.textureOne },
+			iText2: { type: 't', value: this.textureTwo },
 			iDistance: { type: 'f', value: 5 },
 			iMouseX: { type: 'f', value: 1 },
 			iMouseY: { type: 'f', value: 1 },
@@ -295,6 +325,7 @@ export default class SpinSketch {
 
 		tuniform.iText0.value.wrapS = tuniform.iText0.value.wrapT = THREE.RepeatWrapping;
 		tuniform.iText1.value.wrapS = tuniform.iText1.value.wrapT = THREE.RepeatWrapping;
+		tuniform.iText2.value.wrapS = tuniform.iText2.value.wrapT = THREE.RepeatWrapping;
 
 		let geo = new THREE.PlaneGeometry( (window.innerWidth), (window.innerHeight) );
 		// let geo = new THREE.SphereGeometry( 1000, 16, 32 );
@@ -402,7 +433,7 @@ export default class SpinSketch {
 		this.deltaTime = (this.endTime - this.startTime);
 
 		this.overFn( this.deltaTime );
-		this.spinshader.setSpeed( 3, this.spinText.position );
+		this.spinshader.setSpeed( 3, this.spinText.position, this.deltaTime );
 		this.spinText.setSpeed( .5, true );
 	}
 
@@ -414,7 +445,7 @@ export default class SpinSketch {
 			this.overText = true;
 			this.outFn( this.deltaTime );
 		}
-		this.spinshader.setSpeed( 1.5, this.spinText.position );
+		this.spinshader.setSpeed( 1, this.spinText.position, 0 );
 		this.spinText.setSpeed( 1.5, false );
 	}
 
