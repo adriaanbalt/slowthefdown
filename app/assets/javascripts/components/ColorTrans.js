@@ -94,8 +94,10 @@ export default class ColorTrans {
         // duration = 1-4, fast-to-slow
         var fps             = 30;
         var duration        = 3;
-        this.currentColor   = this.getElementBG( domElement );
+        this.currentColor   = [255,255,255]
         var transHandler    = null;
+
+        console.log ( 'this.currentColor', this.currentColor )
 
         clearInterval(transHandler);
         
