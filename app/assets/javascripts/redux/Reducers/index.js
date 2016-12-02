@@ -36,6 +36,12 @@ const rootReducer = (state = InitialState, action) => {
         instructionsOpen: !state.instructionsOpen
       });
 
+    case ActionTypes.CLOSE_INSTRUCTIONS :
+      // state is immutable, each change replaces an old object with a new one
+      return Object.assign({},state,{
+        instructionsOpen: false
+      });
+
     case ActionTypes.TOGGLE_DRAWER :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
@@ -57,16 +63,14 @@ const rootReducer = (state = InitialState, action) => {
     case ActionTypes.SET_HIGHSCORE :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
-        highscore: action.obj,
-        drawerPeak: true
+        highscore: action.obj
       });
 
     case ActionTypes.SET_USER_HIGHSCORE :
       // state is immutable, each change replaces an old object with a new one
       return Object.assign({},state,{
         highscore: action.obj.highscore,
-        user: action.obj,
-        drawerPeak: true
+        user: action.obj
       });
 
     case ActionTypes.UPDATE_HIGHSCORE :

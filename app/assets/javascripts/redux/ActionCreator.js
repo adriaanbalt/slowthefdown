@@ -31,6 +31,13 @@ export default {
     };
   },
 
+  closeInstructions(obj) {
+    return {
+      type: ActionTypes.CLOSE_INSTRUCTIONS,
+      obj
+    };
+  },
+
   toggleDrawer(obj) {
     return {
       type: ActionTypes.TOGGLE_DRAWER,
