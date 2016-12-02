@@ -32,7 +32,8 @@ class App extends Component {
 		window.addEventListener('orientationchange', this.updateViewport, false);
 		window.addEventListener('resize', this.updateViewport, false);
 
-		window.setTimeout( () => this.toggleInstructions(), 3000)
+		window.setTimeout( () => this.toggleInstructions(), 2000)
+		window.setTimeout( () => this.toggleDrawer(), 2000)
 	}
 
 	toggleDrawer() {
@@ -40,7 +41,7 @@ class App extends Component {
 	}
 
 	toggleInstructions() {
-		this.props.dispatch( ActionCreator.toggleInstructions() );
+		this.props.dispatch( ActionCreator.closeInstructions() );
 	}
 
 	gotoBalt(e) {
