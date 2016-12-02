@@ -6,20 +6,14 @@ import { connect } from 'react-redux';
 import UI from '../lib/UI';
 import API from '../redux/API';
 import ActionCreator from '../redux/ActionCreator';
-// import ScenePixi from '../components/ScenePixi.js';
-// import Texture from '../components/Texture.js';
-// import Kaleidoscope from '../components/Kaleidoscope.js';
-// import Ftext from '../components/Ftext.js';
 
 import Config from '../components/Config.js';
 import SpinSketch from '../components/SpinSketch.js';
-import ColorTrans from '../components/ColorTrans.js';
 
 class HomePage extends UI {
 
   constructor(){
     super();
-    this.colorTrans = new ColorTrans();
     this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
@@ -35,9 +29,9 @@ class HomePage extends UI {
       } else {
         this.props.dispatch( ActionCreator.setHighscore( {score:highscore} ) );
       }
-      setTimeout( () => {
-        this.props.dispatch( ActionCreator.hideDrawer() );
-      }, 2000)
+      // setTimeout( () => {
+      //   this.props.dispatch( ActionCreator.hideDrawer() );
+      // }, 2000)
       // this.props.dispatch( ActionCreator.setHighscore( {highscore:highscore} ) );
     }
   }
@@ -48,13 +42,11 @@ class HomePage extends UI {
 
   componentDidMount(){
     this.sketch.start();
-    this.colorTrans.startTransition( this.refs.colorMe );
   }
 
   render () {
       return (
         <div id="container">
-          <div id="colorMe" ref="colorMe">HIHIHIHI</div>
           <div id="game"></div>
         </div>
       )
