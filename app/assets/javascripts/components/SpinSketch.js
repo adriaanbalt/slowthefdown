@@ -18,7 +18,7 @@ export default class SpinShader extends THREE.Mesh{
 	setSpeed( speed, textPosition, progress ) {
 		this.speed = speed;
 		this.textPosition = textPosition;
-		this.progress = progress/1000000;
+		this.progress = progress/100000;
 	}
 
 	update( time, mouseX, mouseY ) {
