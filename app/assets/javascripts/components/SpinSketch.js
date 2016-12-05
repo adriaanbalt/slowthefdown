@@ -76,7 +76,7 @@ export default class SpinText extends THREE.Object3D {
 	this.circle.position.y = 35;
 	this.add( this.circle );
 
-	this.progress = 0 ;
+	this.progress = 0;
 	this.velocity = 0.005;
 	// this.velocity = .04;// + .0001 * (1 - window.innerWidth/2000);
 	this.radius = 500;
@@ -434,7 +434,9 @@ export default class SpinSketch {
 
 		this.overFn( this.deltaTime );
 		this.spinshader.setSpeed( 3, this.spinText.position, this.deltaTime );
-		this.spinText.setSpeed( .5, true );
+		
+		// increment speed by progress so it slowly gets harder
+		this.spinText.setSpeed( (.5+this.deltaTime/100000), true); 
 	}
 
 	out () {
