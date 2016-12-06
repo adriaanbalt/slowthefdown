@@ -18,7 +18,7 @@ export default class SpinShader extends THREE.Mesh{
 	setSpeed( speed, textPosition, progress ) {
 		this.speed = speed;
 		this.textPosition = textPosition;
-		this.progress = progress/10000;
+		this.progress = progress/1000;
 	}
 
 	update( time, mouseX, mouseY ) {
@@ -281,7 +281,7 @@ export default class SpinSketch {
 
 
 		this.loadTextureByName( Config.textures.stars, (texture)=>this.textureLoadedOne(texture) );
-		this.loadTextureByName( Config.textures.cloud, (texture)=>this.textureLoadedTwo(texture) );
+		this.loadTextureByName( Config.textures.stars2, (texture)=>this.textureLoadedTwo(texture) );
 
 
 		// font — THREE.Font.

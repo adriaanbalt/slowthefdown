@@ -2,7 +2,8 @@ export default {
 
 	textures: {
 		cloud: "assets/images/textures/cloud.png",
-		stars: "assets/images/textures/stars.jpg"
+		stars: "assets/images/textures/stars.jpg",
+		stars2: "assets/images/textures/stars.jpg"
 	},
 
 	speed: {
