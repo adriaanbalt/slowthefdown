@@ -10,12 +10,15 @@
 	.highscore{
 		float: left;
 		vertical-align: top;
-	}
-	.highscore.big {
+		width: 50%;
+		text-align: left;
+		display: inline-block;
 		color: #fff;
 	}
+	// .highscore.big {
+	// 	color: #fff;
+	// }
 	.highscore.small {
-		color: #fff;
-    	width: 100%;
+		text-align: right;
 	}
 }
