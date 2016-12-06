@@ -8,13 +8,14 @@ import API from '../redux/API';
 import ActionCreator from '../redux/ActionCreator';
 
 import Config from '../components/Config.js';
-import SpinSketch from '../components/SpinSketch.js';
+// import SpinSketch from '../components/SpinSketch.js';
+import HappyClouds from '../components/HappyClouds.js';
 
 class HomePage extends UI {
 
   constructor(){
     super();
-    this.sketch = new SpinSketch( hs => this.overFn(hs), hs => this.outFn(hs) );
+    this.sketch = new HappyClouds( hs => this.overFn(hs), hs => this.outFn(hs) );
   }
 
   overFn( highscore ){

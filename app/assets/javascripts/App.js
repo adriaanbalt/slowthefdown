@@ -52,11 +52,6 @@ class App extends Component {
 	render () {
 		return (
 			<div  id='main' rel="main" >
-				{
-					this.props.instructionsOpen
-					&&
-					<Instructions toggleInstructions={ () => this.toggleInstructions() } />
-				}
 				<Header
 					score={ this.props.score} 
 					highscore={ (this.props.user && this.props.user.highscore && this.props.user.highscore.score) || this.props.highscore.score }  />
