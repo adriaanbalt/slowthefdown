@@ -18,7 +18,7 @@ export default class SpinShader extends THREE.Mesh{
 	setSpeed( speed, textPosition, progress ) {
 		this.speed = speed;
 		this.textPosition = textPosition;
-		this.progress = progress/10000000;
+		this.progress = progress/10000;
 	}
 
 	update( time, mouseX, mouseY ) {
@@ -161,8 +161,8 @@ export default class SpinText extends THREE.Object3D {
 
 		// this.material.color.setRGB (100, 100, 100);
 		
-		let newCol = this.colorAnim( "#FFFFFF", "#f83b87", this.overProgress)
-		this.mat.color.setHex("0x" + newCol);
+		// let newCol = this.colorAnim( "#FFFFFF", "#f83b87", this.overProgress)
+		this.mat.color.setHex(0xFFFFFF);
 
 		// if ( this.isOver ) {
 			this.speed += time/500;
