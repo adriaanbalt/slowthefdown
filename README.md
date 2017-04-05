@@ -1,5 +1,7 @@
 # Slow the F down
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/adriaanbalt/slowthefdown.svg)](https://greenkeeper.io/)
+
 An online resource to help you manage a renovation like a general contractor.
 
 1. [General](#general)
