@@ -8,7 +8,6 @@ const express = require('express'),
       cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
       compression = require('compression'),
-      favicon = require('serve-favicon'),
       cors = require('cors');
 
       // Webpack imports

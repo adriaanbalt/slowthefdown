@@ -1,0 +1,25 @@
+.log-button {
+    span{
+        vertical-align: middle;
+    }
+	.font-reg{
+		font-weight: 400;
+	}
+	.font-bold{
+		font-weight: 700;
+	}
+    .icon {
+    	background-size: cover;
+    	height: 21px;
+    	margin: 0 1em 0 0;
+    }
+	background: $facebook-blue;
+	color: $white;
+	font-family: $fontReg;
+	border-bottom: 0;
+    font-size: 16px;
+    display: inline-block;
+    padding: .7em 1.5em .7em 1em;
+    margin: .5em 0;
+    border-radius: 5px;
+}
