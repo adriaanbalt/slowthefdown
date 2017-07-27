@@ -21,7 +21,7 @@ const db = require('./db')(process.env.MONGODB_URI);
 
 function runExpress(callback){
   
-  const proxyPort = process.env.BACK_PORT || 6665;
+  const proxyPort = process.env.PORT || 6665;
 
   // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
   var app = express();
