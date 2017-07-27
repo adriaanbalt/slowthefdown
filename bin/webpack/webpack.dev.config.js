@@ -6,6 +6,9 @@ const ROOT_PATH = path.join(__dirname, '../../' )
 const NODE_MODULES_PATH = path.join(__dirname, '../../node_modules' )
 const DIST_PATH = path.join(__dirname, '../../public' )
 const SOURCE_PATH = path.join(__dirname, '../../source' )
+if(!process.env.RUNNING_IN_HEROKU) require('dotenv').load({
+  path: ROOT_PATH + '.env'
+});
 
 const config = {
   entry: `${SOURCE_PATH}/index.js`,
@@ -51,17 +54,21 @@ const config = {
     ]
   },
   plugins: [
-    new webpack.NamedModulesPlugin(),
-    new webpack.DefinePlugin({
-      '__PORT__': JSON.stringify(process.env.PORT),
-      '__HEROKU__': JSON.stringify(process.env.HEROKU),
-    }),
+    new webpack.NamedModulesPlugin()
   ],
   devServer: {
     contentBase: DIST_PATH,
     inline: true,
-    publicPath: `http://localhost:${6060}`,
-    port: 6060
+    publicPath: `http://localhost:${process.env.FRONT_PORT}`,
+    port: process.env.FRONT_PORT,
+    proxy: {
+      '/api/**/*': {
+        disableHostCheck: false,
+        target: `http://localhost:${process.env.BACK_PORT}`,
+        toProxy: true,
+        changeOrigin: true
+      }
+    }
   },
   devtool: 'eval-source-map'
 }

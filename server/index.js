@@ -10,17 +10,18 @@ const express = require('express'),
       compression = require('compression'),
       cors = require('cors');
 
-      // Webpack imports
-      // webpack = require('webpack'),
-      // config = require('../gulpfile.js/config/webpack-dev')("dev"),
-      // webpackDevMiddleware = require('webpack-dev-middleware'),
-      // webpackHotMiddleware = require('webpack-hot-middleware');
+
+if(!process.env.RUNNING_IN_HEROKU) require('dotenv').load({
+  path: path.join(__dirname, '../') + '.env'
+});
+
+const db = require('./db')(process.env.MONGODB_URI);
 
 !module.parent && runExpress();
 
-
-function runExpress(callback, proxyPort){
+function runExpress(callback){
   
+  const proxyPort = process.env.BACK_PORT || 6665;
 
   // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
   var app = express();

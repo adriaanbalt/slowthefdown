@@ -11,8 +11,6 @@ Promise.promisifyAll(User);
 Promise.promisifyAll(User.prototype);
 
 module.exports = (app) => {
-
-    console.log ( "auth ", app );
     
     // First, our session middleware will set/read sessions from the request.
     // Our sessions will get stored in Mongo using the same connection from
