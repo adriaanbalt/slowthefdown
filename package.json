@@ -20,7 +20,7 @@
     "client": "webpack-dev-server -d --inline --hot --config $npm_package_config_build_scripts_dir/webpack/webpack.dev.config.js --watch --progress",
     "client-prod": "webpack --config $npm_package_config_build_scripts_dir/webpack/webpack.prod.config.js",
     "prod": "NODE_ENV=production concurrently \"npm run server\" \"npm run client-prod\"",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "concurrently \"npm run client\" \"npm run server\""
   },
   "dependencies": {
     "abbrev": "^1.0.7",
