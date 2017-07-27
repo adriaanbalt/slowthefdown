@@ -1,0 +1,49 @@
+@import '../constants';
+
+.columns {
+	&.columns-header {
+		border-bottom: 2px solid $color-font;
+	}
+}
+.columns-header, .row {
+	height: $row-height;
+	position: relative;
+	padding: 20px 0;
+	border-bottom: 1px $color-font solid;
+	&:hover {
+		font-weight: 700;
+	}
+}
+.name {
+	position: absolute;
+	color: $color-font;
+	line-height: $row-height;
+	vertical-align: middle;
+}
+.quantities {
+	display: inline-block;
+	position: absolute;
+	top: 50%;
+    transform: translateY(-50%);
+	right: 0;
+	width: 25%;
+	height: $row-height;
+	.quantity {
+		border-radius: 5px;
+		padding: 0px 15px;
+		color: $color-bg;
+		background: $color-style;
+		line-height: $row-height;
+		vertical-align: middle;
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: none;
+		width: 135px;
+		text-align: center;
+		overflow: hidden;
+		&.is-active {
+			display: block;
+		}
+	}
+}
