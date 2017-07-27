@@ -8,14 +8,12 @@ const express = require('express'),
       cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
       compression = require('compression'),
-      cors = require('cors');
-
+      cors = require('cors'),
+      db = require('./db');
 
 if(!process.env.RUNNING_IN_HEROKU) require('dotenv').load({
   path: path.join(__dirname, '../') + '.env'
 });
-
-const db = require('./db')(process.env.MONGODB_URI);
 
 !module.parent && runExpress();
 
@@ -26,7 +24,6 @@ function runExpress(callback){
   // Express needs to be instantiated, it's possible to run multiple Express instances in the same node app and have them listen on different ports
   var app = express();
 
-
   // Runs React-hot-loader via our webpack dev configuration if in dev mode
   // if (process.env.NODE_ENV !== 'production') {
   //   const compiler = webpack(config);
@@ -34,83 +31,76 @@ function runExpress(callback){
   //   app.use(webpackHotMiddleware(compiler));
   // }
 
-
   // Request parsing middleware
   app.use(bodyParser.json()); // allows request body parsing
   app.use(bodyParser.urlencoded({ extended: false })); // allows request query string parsing, extended : false means query string values cannot contain JSON (must be simple key-value)
   app.use(cookieParser()); // allows cookie parsing (cookies are simple key value stores in the browser)
 
-
   // Allow CORS (this allows you to serve assets, images for example, from other domains)
   app.use(cors());
-
 
   // gzips (technically compresses with zlib) responses to HTTP requests
   app.use(compression());
 
-
   // app root folder path
   const root = path.resolve(__dirname, '..');  // __dirname is a global variable available in any file and refers to that file's directory path
 
+  // Log requests to console
+  if(process.env.NODE_ENV !== 'PRODUCTION') {
+    app.use(logger('dev'));
+  }
 
   // used to set favicon (little image next to page title in browser tab)
   // app.use(favicon(path.join(root, 'public', 'favicon.ico')));
 
-
   // Set static folder
   app.use(express.static(path.join(root, 'public')));
 
+  // Bring in Auth routes from auth folder (must feed in app as middlewares are added at this step)
+  require(path.join(root, 'server', 'auth'))(app);
+  
+// console.log ( 'process.env.MONGODB_URI' , process.env.MONGODB_URI );
+// const startDbPromise = require(path.join(root,'db'))(process.env.MONGODB_URI);
+// startDbPromise.then(() => {
+  // Bring in API routes from crud folder
+  app.use('/api', require(path.join(root, 'server', 'apiRoutes'))); //// Note that we do not need to specify "index.js" inside of the "crud" folder, if file is unspecified "index.js" is default when folder is required
 
-  // Log requests to console
-  if(process.env.NODE_ENV !== 'production')
-    app.use(logger('dev'));
+  // Serve index.html from root
+  app.get('/*', (req, res, next) => res.sendFile('/index.html', {
+    root: path.join(root, 'public')
+  }));
 
-    // Bring in Auth routes from auth folder (must feed in app as middlewares are added at this step)
-    require(path.join(root, 'server', 'auth'))(app);
-    
-  // console.log ( 'process.env.MONGODB_URI' , process.env.MONGODB_URI );
-  // const startDbPromise = require(path.join(root,'db'))(process.env.MONGODB_URI);
-  // startDbPromise.then(() => {
-    // Bring in API routes from crud folder
-    app.use('/api', require(path.join(root, 'server', 'apiRoutes'))); //// Note that we do not need to specify "index.js" inside of the "crud" folder, if file is unspecified "index.js" is default when folder is required
+  // catch 404 and forward to error handler
+  app.use((req, res, next) => {
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
+  // Handle route errors
+  app.use((err, req, res, next) => {
+    console.error(err); // log to back end console
+    res.status(err.status || 500);
+    res.send(err.message); // send error message text to front end
+  });
 
-    // Serve index.html from root
-    app.get('/*', (req, res, next) => res.sendFile('/index.html', {
-      root: path.join(root, 'public')
-    }));
+  app.on('listening', ( e ) => {
+      console.log('ok, server is running', e);
+  });
 
-    // catch 404 and forward to error handler
-    app.use((req, res, next) => {
-      const err = new Error('Not Found');
-      err.status = 404;
-      next(err);
-    });
-
-    // Handle route errors
-    app.use((err, req, res, next) => {
-      console.error(err); // log to back end console
-      res.status(err.status || 500);
-      res.send(err.message); // send error message text to front end
-    });
-
-    app.on('listening', ( e ) => {
-        console.log('ok, server is running', e);
-    });
-
-    // Launch server on port
-    // app.listen(serverPort, (err, res) => err ?
-    //   handleError(err) :
-    //   console.log(`app served on port ${serverPort}`));
-  // })
-  // .catch(err => console.log(err));
+  // Launch server on port
+  // app.listen(serverPort, (err, res) => err ?
+  //   handleError(err) :
+  //   console.log(`app served on port ${serverPort}`));
+// })
+// .catch(err => console.log(err));
 
 
-    // Launch server
-    app.listen(proxyPort, (err, res) =>
-      err ?
-        !console.log(err) && process.kill() :
-        callback && callback() || console.log(`app served on port ${ proxyPort }`));
+  // Launch server
+  app.listen(proxyPort, (err, res) =>
+    err ?
+      !console.log(err) && process.kill() :
+      callback && callback() || console.log(`app served on port ${ proxyPort }`));
 
 
   // Note that I can define "handleError" down here and use it above, this is because "declarations" are hoisted in Javascript (can only be done with functions created with this syntax though)
@@ -130,6 +120,8 @@ function runExpress(callback){
   //       process.exit(1);
   //   }
   // }
+
+  db(process.env.MONGODB_URI)
   
 }
 
