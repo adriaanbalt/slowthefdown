@@ -4,9 +4,6 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Open Sans Condensed', sans-serif;
-  background-color: $color-bg;
-  color: $color-font;
 }
 
 * {
@@ -14,29 +11,4 @@ body {
   -moz-user-select: none;     /* Firefox all */
   -ms-user-select: none;      /* IE 10+ */
   user-select: none;          /* Likely future */  
-}
-
-.wrapper {
-	margin: 1em;
-}
-
-header {
-	a {
-		padding: 1em .5em;
-		&:first-child {
-			padding: 1em .5em 1em 0;
-		}
-	}
-}
-
-h1 {
-	color: #fff;
-    padding: 14px 0;
-}
-
-.logo {
-	position: relative;
-    float: left;
-    width: 60px;
-    
 }
