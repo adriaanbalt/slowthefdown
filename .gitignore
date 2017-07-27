@@ -1,11 +1,9 @@
 .DS_Store
 .sass-cache
-public
-Desktop.ini
+public/js
 node_modules
-app/assets/stylesheets/generated
-*/.env
 .piddev
 .pidprod
+*/.env
 .env
 *.log
