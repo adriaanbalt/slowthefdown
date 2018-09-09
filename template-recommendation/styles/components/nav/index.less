@@ -1,0 +1,42 @@
+@navHeight: 50px;
+
+.nav {
+  align-items: center;
+  background-color: #f7f7f7;
+  box-sizing: border-box;
+  height: @navHeight;
+  display: flex;
+  left: 0;
+  justify-content: space-between;
+  width: 100vw;
+  position: fixed;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 350ms;
+
+  &.visible {
+    opacity: 1;
+  }
+
+  .chevron-icon {
+    height: 100%;
+    margin-right: 5px;
+    transform: rotate(180deg);
+  }
+
+  .nav-button {
+    align-items: center;
+    display: flex;
+    font-size: 13px;
+    height: 100%;
+    line-height: 13px;
+    padding: 0 8%;
+
+    &.next {
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+  }
+
+}
+

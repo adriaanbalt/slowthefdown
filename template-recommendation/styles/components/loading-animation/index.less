@@ -1,0 +1,43 @@
+#loading-animation {
+  position: relative;
+  display: inline-block;
+  height: 200px;
+  overflow-y: hidden;
+
+  #container {
+    overflow-y: scroll;
+    height: 200px;
+  }
+
+  .flex-wrapper {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+
+    .row {
+      display: flex;
+      flex-grow: 1;
+      height: 33.33333%;
+    }
+
+    section {
+      display: inline-block;
+      margin: 10px;
+      width: 100%;
+      height: auto;
+      background-color: #BFBFBF;
+      box-sizing: border-box;
+      transform: translateY(-100%);
+      will-change: transform;
+      opacity: 0.0;
+
+      &.set {
+        transform: translateY(0%);
+        opacity: 1;
+        transition: transform 200ms ease-in, opacity 200ms ease-in;
+      }
+    }
+  }
+}

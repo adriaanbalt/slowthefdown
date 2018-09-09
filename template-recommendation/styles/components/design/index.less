@@ -1,0 +1,60 @@
+#design {
+    .labels {
+        width: 100%;
+    }
+    .title-container {
+        margin: 20px 0;
+        padding: 0 20px;
+        width: auto !important;
+    }
+    .subtitle {
+        margin: 20px 0;
+        padding: 0 20px;
+    }
+    .slider-container {
+        padding: 0 5%;
+    }
+    .slider {
+        width: 100%;
+        height: 60px;
+        margin: 0 0 50px 0;
+        .handle {
+            width: 28px;
+            height: 28px;
+            background: gray;
+            -moz-border-radius: 14px;
+            -webkit-border-radius: 14px;
+            border-radius: 14px;
+            display: inline-block;
+            position: absolute;
+            background: #FFFFFF;
+            box-shadow: 0 5px 20px 0 rgba(0,0,0,0.07);
+            z-index: 1;
+        }
+        .bar {
+            width: 100%;
+            background: #000;
+            height: 1px;
+            opacity: 0.2;
+            background: #000000;
+            margin-top: 4px;
+            border-top: 10px solid #F7F7F7; // makes the click area nice and thicc
+            border-bottom: 10px solid #F7F7F7;
+        }
+        .low {
+            font-weight: 700;
+            font-size: 13px;
+            color: #222222;
+            letter-spacing: 0;
+            line-height: 26px;
+        }
+        .high {
+            float: right;
+            font-weight: 700;
+            font-size: 13px;
+            color: #222222;
+            letter-spacing: 0;
+            line-height: 26px;
+        }
+    }
+}

@@ -1,0 +1,37 @@
+
+.recommendations-screen {
+  .preview-link {
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: #1c1c1c;
+    }
+  }
+
+  .gathering-recommendations {
+    .screen-transition();
+    .stretch-to-fit();
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: -40px;
+    background: @appBackground;
+    z-index: 1;
+
+    h3 {
+      margin-top: 40px;
+    }
+  }
+
+
+  &.is-gathering .gathering-recommendations {
+    opacity: 1;
+  }
+}

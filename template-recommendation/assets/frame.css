@@ -1,0 +1,118 @@
+body {
+    user-select: none;
+}
+.squarespace-nine-outline {
+    position: relative;
+}
+.squarespace-nine-outline::before { 
+    content: ' ';
+    border: solid 5px rgba(65,207,255,1) !important;
+    border-radius: 15px;
+    width: 98%;
+    height: 95%;
+    top: -2px;
+    left: -2px;
+    position: absolute;
+    z-index: 100;
+    cursor: pointer;
+    transition: all 500ms;
+}
+/*
+.squarespace-nine-outline::before { 
+    content: "Click to edit";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin-left: -50px;
+    width: 100px;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    background: #41CFFF;
+    padding: 0;
+    letter-spacing: 0;
+    color: #FFFFFF;
+    line-height: 17px;
+    font-weight: 500;
+    z-index: 100;
+}
+*/
+a, button {
+    cursor: default;
+}
+
+
+[data-style="button-1"] {
+    display: inline-block;
+    background: #272727 !important;
+    color: #fff !important;
+    font-family: 'proxima-nova' !important;
+    font-size: 15px;
+    border: 0 !important;
+    border-radius: 0;
+    padding-bottom: 21px;
+    padding-left: 34px;
+    padding-right: 34px;
+    padding-top: 21px;
+    text-transform: uppercase;
+}
+[data-style="button-2"] {
+    display: inline-block;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: 'proxima-nova' !important;
+    font-size: 15px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.15) !important;
+    border-radius: 0;
+    padding-bottom: 21px;
+    padding-left: 34px;
+    padding-right: 34px;
+    padding-top: 21px;
+    text-transform: uppercase;
+}
+[data-style="button-3"] {
+    display: inline-block;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: 'proxima-nova' !important;;
+    font-size: 15px;
+    border: 1px solid #000 !important;
+    border-radius: 0;
+    padding-bottom: 21px;
+    padding-left: 34px;
+    padding-right: 34px;
+    padding-top: 21px;
+    text-transform: uppercase;
+}
+
+[data-style="headline-1"] {
+    font-family: 'ltc-bodoni-175';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 32px;
+    color: #000000;
+    letter-spacing: 0;
+    line-height: 1em;
+    text-transform: none;
+}
+[data-style="headline-2"] {
+    font-family: Helvetica;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 32px;
+    color: #000000;
+    letter-spacing: 0;
+    line-height: 1em;
+    text-transform: none;
+}
+[data-style="headline-2"] {
+    font-family: Helvetica;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 32px;
+    color: #000000;
+    letter-spacing: 0;
+    line-height: 1em;
+    text-transform: none;
+}

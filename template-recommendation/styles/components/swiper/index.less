@@ -1,0 +1,60 @@
+#swiper {
+  margin-bottom: 28px;
+
+  .preview-image {
+    height: 100%;
+  }
+}
+
+.dislike {
+	opacity: 0;
+  // overrides translate prop from lib swiper so they swipe fully offscreen
+	transform: translateX(-150vw) rotate(-15deg) !important;
+}
+.like {
+	opacity: 0;
+  // overrides translate prop from lib swiper so they swipe fully offscreen
+	transform: translateX(150vw) rotate(15deg) !important;
+}
+
+.icon-background {
+  background: white;
+  position: absolute;
+  box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.07);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.hidden {
+    top: 50%;
+    opacity: 0;
+    transition: all 500ms ease-in-out;
+    z-index: 100;
+  }
+
+  &.visible {
+    margin: 0 20px;
+    position: relative;
+    opacity: 1;
+  }
+
+  &.no {
+    left: 10px;
+  }
+
+  &.yes {
+    right: 10px;
+  }
+
+  .swipe-icon {
+    transform: translate(-19px, -15px);
+  }
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+}

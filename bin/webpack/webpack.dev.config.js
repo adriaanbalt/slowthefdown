@@ -5,7 +5,7 @@ const path = require('path')
 const ROOT_PATH = path.join(__dirname, '../../' )
 const NODE_MODULES_PATH = path.join(__dirname, '../../node_modules' )
 const DIST_PATH = path.join(__dirname, '../../public' )
-const SOURCE_PATH = path.join(__dirname, '../../source' )
+const SOURCE_PATH = path.join(__dirname, '../../old' )
 if(!process.env.RUNNING_IN_HEROKU) require('dotenv').load({
   path: ROOT_PATH + '.env'
 });

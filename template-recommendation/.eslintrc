@@ -1,0 +1,29 @@
+{
+  "extends": "@sqs/eslint-config-www",
+  "rules": {
+    "import/unambiguous": "off",
+    "no-debugger": "off",
+    "react/jsx-max-props-per-line": "warn",
+    "no-case-declarations": "off",
+    "require-jsdoc": "off",
+    "arrow-parens": "off",
+    "object-shorthand": [
+      "error",
+      "always",
+      {
+        "avoidQuotes": true
+      }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "env": {
+    "jest": true
+  }
+}

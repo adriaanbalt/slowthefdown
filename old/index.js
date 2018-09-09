@@ -27,7 +27,7 @@ import { configureStore } from './redux/Store';
 import { render } from 'react-dom';
 
 // React's front end routing handler
-import { Router, Route, browserHistory } from 'react-router';
+import { BrowserRouter, Link, Route } from "react-router-dom";
 
 import App from './App';
 import Config from './lib/Config';
@@ -41,6 +41,8 @@ import Home from './pages/HomePage';
 // our client-side state with it here
 // const store = configureStore(window.__INITIAL_STATE__ || { user: null, posts: []});
 const store = configureStore();
+
+console.log("browserHistory", browserHistory);
 
 render((
     <Provider store={store}>

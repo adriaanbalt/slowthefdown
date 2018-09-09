@@ -1,0 +1,16 @@
+
+@keyframes pop-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
+
+@bounce: cubic-bezier(0, 0, 0.16, 1.88);
+
+.checkmark {
+  will-change: transform;
+  animation: 160ms pop-in @bounce 0ms 1 forwards;
+}

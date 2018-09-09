@@ -1,0 +1,18 @@
+{
+  "plugins": ["transform-runtime"],
+  "presets": [
+    "react",
+    "stage-0",
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": [
+            "last 3 major versions",
+            "not ie <= 10"
+          ]
+        }
+      }
+    ]
+  ]
+}

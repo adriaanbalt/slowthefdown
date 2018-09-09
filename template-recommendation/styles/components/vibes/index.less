@@ -1,0 +1,101 @@
+@keyframes pop-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
+
+@bounce: cubic-bezier(0, 0, 0.16, 1.88);
+
+@grid-padding: 6px;
+
+.vibes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+  // this lets the images have 6px padding without taking up left or right space
+  width: calc(~'100% + @{grid-padding} + @{grid-padding}');
+  margin-left: -@grid-padding;
+}
+
+.vibe {
+  box-sizing: border-box;
+  position: relative;
+  padding: 6px;
+  width: 50%;
+  min-width: 150px;
+
+  .vibe-image {
+    background-size: cover;
+    padding-top: 100%; // 1:1 aspect ratio
+    width: 100%;
+  }
+
+  &:nth-child(5n + 0){
+    width: 100%;
+    .vibe-image {
+      padding-top: 50%; // 2:1 aspect ratio
+    }
+  }
+
+  .checkmark-wrapper {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    transform: scale(1.2);
+    transform-origin: top right;
+    svg {
+      will-change: transform;
+      animation: 160ms pop-in @bounce 0ms 1 forwards;
+    }
+  }
+}
+
+.vibes-search-container {
+  border-bottom: 1px solid #CCC;
+  position: relative;
+}
+
+.vibes-search-bar {
+  font-size: 20px;
+  border: none;
+  height: 20px;
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+  outline: none;
+  background-color: transparent;
+
+  /* clears the 'X' from Internet Explorer */
+  &[type=search]::-ms-clear {  display: none; width : 0; height: 0; }
+  &[type=search]::-ms-reveal {  display: none; width : 0; height: 0; }
+
+  /* clears the 'X' from Chrome */
+  &[type="search"]::-webkit-search-decoration,
+  &[type="search"]::-webkit-search-cancel-button,
+  &[type="search"]::-webkit-search-results-button,
+  &[type="search"]::-webkit-search-results-decoration { display: none; }
+
+  @input-placeholder-color: rgba(34, 34, 34, 0.1);
+
+  &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: @input-placeholder-color; /* Firefox */
+  }
+
+  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: @input-placeholder-color;
+  }
+
+  &::-ms-input-placeholder { /* Microsoft Edge */
+    color: @input-placeholder-color;
+  }
+}
+
+.vibes-search-icon {
+  position: absolute;
+  right: 0px;
+  bottom: 5px;
+}

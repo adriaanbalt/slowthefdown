@@ -1,0 +1,18 @@
+.screen {
+  box-sizing: border-box;
+  height: 100%;
+  margin-top: 0;
+  overflow-x: hidden;
+  padding: 0 8%;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+
+  transition: height 350ms ease-in-out 350ms,
+    margin-top 350ms ease-in-out 350ms;
+
+  &.has-nav-padding {
+    height: ~"calc(100% - @{navHeight} - @{progressIndicatorHeight})";
+    margin-top: @navHeight + @progressIndicatorHeight;
+  }
+}

@@ -1,0 +1,59 @@
+.font-style-title {
+  color: @grey;
+  font-size: 9pt;
+  font-weight: 500;
+  letter-spacing: 3pt;
+  line-height: 10pt;
+  margin-bottom: 12pt;
+  text-transform: uppercase;
+}
+
+.font-button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 67px;
+}
+
+.font-button {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  color: #ccc;
+  font-size: 11px;
+  line-height: 26px;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  padding: 0;
+  outline: none;
+  text-transform: uppercase;
+  width: 50%;
+  transition: color .30s cubic-bezier(0.51, 0.03, 0.46, 1.01);
+
+  &:after {
+    background: black;
+    height: 1px;
+    content: '';
+    display: block;
+    position: relative;
+    top: 1px;
+    transition: transform .30s cubic-bezier(0.51, 0.03, 0.46, 1.01);
+    transition-delay: .05s;
+    width: 100%;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  &:first-child:after {
+    transform-origin: right;
+  }
+
+  &.active {
+    color: black;
+
+    &:after {
+      transition-delay: 0s;
+      transform: scaleX(1);
+    }
+  }
+}
