@@ -1,9 +1,4 @@
 .DS_Store
-.sass-cache
-public/js
 node_modules
-.piddev
-.pidprod
-*/.env
 .env
 *.log
