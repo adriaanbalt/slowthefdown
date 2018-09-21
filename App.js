@@ -1,20 +1,17 @@
 import Expo from "expo";
 import React from "react";
-import Shader from "./Shaders/Shader";
-import MovingLetter from "./Shaders/MovingLetter";
 import { Dimensions, View, Animated, PanResponder } from "react-native";
+import ExpoTHREE, { THREE } from "expo-three"; // Version can be specified in package.json
 
-// import THREEJS from "three";
-import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
+import MeshContainer from "./MeshContainer";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       pan: new Animated.ValueXY(),
-      mouse: new THREE.Vector2(),
+      mouse: new THREE.Vector2(-1,1),
     };
-    // Turn off extra warnings
     THREE.suppressExpoWarnings(true);
   }
 
@@ -25,7 +22,6 @@ export default class App extends React.Component {
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gesture) => true,
       onPanResponderGrant: (e, gesture) => {
-        // console.log("onPanResponderGrant", this._val.x);
         this.state.pan.setOffset({
           x: this._val.x,
           y: this._val.y
@@ -33,9 +29,10 @@ export default class App extends React.Component {
         this.state.pan.setValue({ x: -1, y: -1 });
       },
       onPanResponderMove: ({ nativeEvent }, gestureState) => {
-        this.state.mouse.x = nativeEvent.locationX;
-        this.state.mouse.y = nativeEvent.locationY;
-        // console.log("pandresponder move", this.state.mouse.x, this.state.mouse.y );
+        if ( this.state.gl ) {
+          this.state.mouse.x = (nativeEvent.locationX / this.state.gl.drawingBufferWidth) * 4 - 1;
+          this.state.mouse.y = -(nativeEvent.locationY / this.state.gl.drawingBufferHeight) * 4 + 1;
+        }
       },
     });
 
@@ -60,121 +57,51 @@ export default class App extends React.Component {
     );
   }
 
-  // getIntersects = (x, y, camera, objects) => {
-  //   const width = Dimensions.get('window').width;
-  //   const height = Dimensions.get('window').height;
-
-  //   const raycaster = new THREE.Raycaster();
-  //   const position = new THREE.Vector2();
-
-  //   position.set((x / width) * 2 - 1, -(y / height) * 2 + 1);
-  //   raycaster.setFromCamera(position, camera);
-
-  //   return raycaster.intersectObjects(objects);
-  // }
-
   _onGLContextCreate = async gl => {
+    this.state.gl = gl;
+
     const scene = new THREE.Scene();
 
-    const raycaster = new THREE.Raycaster();
-
-    console.log ('raycaster', raycaster)
-
-    // const light = new THREE.PointLight(0xff0000, 1, 100);
-    // light.position.set(50, 50, 50);
-    // scene.add(light);
+    const raycaster = new THREE.Raycaster(); // is this correct?
 
     const camera = new THREE.PerspectiveCamera(
       100,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
       1,
       10000
-    );
-
-    // const camera = new THREE.OrthographicCamera(
-    //   gl.drawingBufferWidth / - 2,
-    //   gl.drawingBufferWidth / 2,
-    //   gl.drawingBufferHeight / 2,
-    //   gl.drawingBufferHeight / - 2,
-    //   0.1,
-    //   1000
-    // );
-
-    const frustum = gl.drawingBufferHeight;
-    var aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
-
-    // const camera = new THREE.OrthographicCamera(
-    //   frustum * aspect / - 2,
-    //   frustum * aspect / 2,
-    //   frustum / 2,
-    //   frustum / - 2,
-    //   1,
-    //   1000
-    // );
-
-    // camera.position.z = 1000;
-
+      );
+    camera.position.z = 2;
+    
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-    const texture = await ExpoTHREE.loadTextureAsync({
-      asset: require("./img/stars.jpg")
+    
+    let geometry = new THREE.CircleGeometry(.5, 30);
+    let material = new THREE.MeshBasicMaterial({
+        color: 0xFF00FF,
+        opacity: 1
     });
-    // const background = new Shader(texture);
-    // const backgroundMesh = background.getMesh();
-    // scene.add(backgroundMesh);
-
-    const movingLetter = new MovingLetter();
-    const movineLetterMesh = movingLetter.getMesh();
-    scene.add(movineLetterMesh);
-
-    let objects = []
-    objects.push(movineLetterMesh);
-
-    // console.log("background superName", backgroundMesh.superName);
-    // console.log("movingLetter superName", movingLetter.superName);
-
-    camera.position.z = 2;
-
-    // console.log('objects', objects )
-
-    const startTime = Date.now();
+    let mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    
     let INTERSECTED;
+      
+    // raycaster.setFromCamera( this.state.mouse, camera );
+    // let intersects = raycaster.intersectObjects(scene.children); // this doesn't seem to make any difference
+    // console.log('intersects', scene.children, intersects.length)
 
     const animate = p => {
       requestAnimationFrame(animate);
 
-      // const elapsedMilliseconds = Date.now() - startTime;
-      // const elapsedSeconds = elapsedMilliseconds / 1000;
-
-      // camera.updateMatrixWorld();
-
-      // console.log('this.state.mouse', this.state.mouse)
-      // background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
-      // movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
       raycaster.setFromCamera( this.state.mouse, camera );
-      let intersects = raycaster.intersectObjects( objects );
-      
-      // let mesh = intersects.filter(obj => { 
-      //   // console.log( 'obj', obj )
-      //   return obj.object.superName != 'SpinShader' 
-      // });
-
-      // console.log("scene.children", scene.children);
-      // console.log("intersects.length", intersects);
-
+      // let intersects = raycaster.intersectObjects( objects );
+      let intersects = raycaster.intersectObjects( scene.children ); // this doesn't seem to make any difference
       if ( intersects.length > 0 ) {
-					if ( INTERSECTED != intersects[ 0 ].object ) {
-            // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-            // console.log("INTERSECTED", INTERSECTED);
-						INTERSECTED = intersects[ 0 ].object;
-						// INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-						// INTERSECTED.material.emissive.setHex( 0xff0000 );
-					}
-				} else {
-					// if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-					INTERSECTED = null;
-				}
+            if ( INTERSECTED != intersects[ 0 ].object ) {
+                INTERSECTED = intersects[ 0 ].object;
+            }
+        } else {
+            INTERSECTED = null;
+        }
 
       renderer.render(scene, camera);
 
