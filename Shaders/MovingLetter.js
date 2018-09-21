@@ -1,54 +1,50 @@
+import React from "react";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise';
 
-export default class MovingLetter extends THREE.Object3D {
+export default class MovingLetter extends React.Component {
 
     constructor() {
         super();
 
-        console.log("MovingLetter");
-
-        this.superName = "FText";
-
         this.simplex = new SimplexNoise(Math.random);
 
-        let fontLoader = new THREE.FontLoader();
-        fontLoader.load(
-          "../assets/HelveticaNeueLTStd_Bold.json",
-          response => {
-            console.log("LOADED THE TEXT !!!!!!");
-            const font = response;
-            const mat = new THREE.MeshPhongMaterial({
-              color: "#FFFFFF",
-              // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
-              shininess: 1
-            });
-            const geo = new THREE.TextGeometry("F", {
-              font: font,
-              size: 25,
-              height: 100,
-              curveSegments: 4,
-              bevelThickness: 1,
-              bevelSize: 0,
-              bevelEnabled: true,
-              material: 0,
-              extrudeMaterial: 0
-            });
-            const fTxt = new THREE.Mesh(geo, mat);
-            this.add(fTxt);
-          }
-        );
+        // let fontLoader = new THREE.FontLoader();
+        // fontLoader.load(
+        //   "../assets/HelveticaNeueLTStd_Bold.json",
+        //   response => {
+        //     console.log("LOADED THE TEXT !!!!!!");
+        //     const font = response;
+        //     const mat = new THREE.MeshPhongMaterial({
+        //       color: "#FFFFFF",
+        //       // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
+        //       shininess: 1
+        //     });
+        //     const geo = new THREE.TextGeometry("F", {
+        //       font: font,
+        //       size: 25,
+        //       height: 100,
+        //       curveSegments: 4,
+        //       bevelThickness: 1,
+        //       bevelSize: 0,
+        //       bevelEnabled: true,
+        //       material: 0,
+        //       extrudeMaterial: 0
+        //     });
+        //     const fTxt = new THREE.Mesh(geo, mat);
+        //     this.add(fTxt);
+        //   }
+        // );
 
-        console.log("fontLoader", fontLoader);
         let geometry = new THREE.CircleGeometry(.25, 10);
         let hitMaterial = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
+          color: 0xFF00FF,
           opacity: 1
         });
-        const circle = new THREE.Mesh(geometry, hitMaterial);
-        circle.position.x = 0;
-        circle.position.y = 0;
-        this.add(circle);
+        this.mesh = new THREE.Mesh(geometry, hitMaterial);
+        this.mesh.superName = "FText";
+        this.mesh.position.x = 0;
+        this.mesh.position.y = 0;
 
         this.overProgress = 0;
         this.progress = 0;
@@ -59,16 +55,16 @@ export default class MovingLetter extends THREE.Object3D {
         this.speed = .15;
         this.isOver = false;
 
-        this.position.set(50, 50, 0);
+        // this.mesh.position.set(50, 50, 0);
     }
 
-    update(time) {
+    update(time, mouseX, mouseY, isOver = false ) {
         // console.log("time", time, this.progress )
         this.noise = this.simplex.noise2D(this.progress, 0);
         this.dx = (Math.cos((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
         this.dy = (Math.sin((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // Y distance from center - movement with speed over time
-        this.position.x = this.dx;
-        this.position.y = this.dy;
+        this.mesh.position.x = this.dx;
+        this.mesh.position.y = this.dy;
 
         // this.rotation.x += 0.1;
         // this.rotation.y += 0.1;
@@ -132,11 +128,17 @@ export default class MovingLetter extends THREE.Object3D {
     }
 
     setDepth(newZ) {
-        this.position.z = newZ;
+        this.mesh.position.z = newZ;
     }
 
     setRadius(newRadius) {
         this.radius = newRadius;
+    }
+
+
+    getMesh() {
+        // this.mesh.superName = 'MovingLetter'
+        return this.mesh
     }
 
 }

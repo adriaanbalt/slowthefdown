@@ -94,16 +94,17 @@ export default class SpinShader extends React.Component {
         });
 
         this.mesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+        this.mesh.superName = "SpinShader";
 
         this.shaderMat = backgroundMaterial;
         this.pulse = 0;
         this.speed = 3;
         this.progress = 1;
-        this.superName = "SpinShader";
         this.textPosition = { x: -1, y: -1 }
     }
 
     getMesh() {
+        this.mesh.superName = 'SpinShader'
         return this.mesh;
     }
 
