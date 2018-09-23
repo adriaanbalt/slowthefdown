@@ -9,42 +9,39 @@ export default class MovingLetter extends React.Component {
 
         this.simplex = new SimplexNoise(Math.random);
 
-        // let fontLoader = new THREE.FontLoader();
-        // fontLoader.load(
-        //   "../assets/HelveticaNeueLTStd_Bold.json",
-        //   response => {
-        //     console.log("LOADED THE TEXT !!!!!!");
-        //     const font = response;
-        //     const mat = new THREE.MeshPhongMaterial({
-        //       color: "#FFFFFF",
-        //       // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
-        //       shininess: 1
-        //     });
-        //     const geo = new THREE.TextGeometry("F", {
-        //       font: font,
-        //       size: 25,
-        //       height: 100,
-        //       curveSegments: 4,
-        //       bevelThickness: 1,
-        //       bevelSize: 0,
-        //       bevelEnabled: true,
-        //       material: 0,
-        //       extrudeMaterial: 0
-        //     });
-        //     const fTxt = new THREE.Mesh(geo, mat);
-        //     this.add(fTxt);
-        //   }
-        // );
+        let fontLoader = new THREE.FontLoader();
+        fontLoader.load(
+          "../assets/HelveticaNeueLTStd_Bold.json",
+          response => {
+            console.log("LOADED THE TEXT !!!!!!");
+            const font = response;
+            const mat = new THREE.MeshPhongMaterial({
+              color: "#00FF00",
+              // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
+              shininess: 1
+            });
+            const geo = new THREE.TextGeometry("F", {
+              font: font,
+              size: 25,
+              height: 100,
+              curveSegments: 4,
+              bevelThickness: 1,
+              bevelSize: 0,
+              bevelEnabled: true,
+              material: 0,
+              extrudeMaterial: 0
+            });
+            const fTxt = new THREE.Mesh(geo, mat);
+            this.add(fTxt);
+          }
+        );
 
         let geometry = new THREE.CircleGeometry(.25, 10);
         let hitMaterial = new THREE.MeshBasicMaterial({
-          color: 0xFF00FF,
+        //   color: 0xFF00FF,
           opacity: 1
         });
         this.mesh = new THREE.Mesh(geometry, hitMaterial);
-        this.mesh.superName = "FText";
-        this.mesh.position.x = 0;
-        this.mesh.position.y = 0;
 
         this.overProgress = 0;
         this.progress = 0;
@@ -54,8 +51,6 @@ export default class MovingLetter extends React.Component {
         this.noiseAccum = 0;
         this.speed = .15;
         this.isOver = false;
-
-        // this.mesh.position.set(50, 50, 0);
     }
 
     update(time, mouseX, mouseY, isOver = false ) {
@@ -135,6 +130,14 @@ export default class MovingLetter extends React.Component {
         this.radius = newRadius;
     }
 
+    over() {
+        this.mesh.material.color.setHex(0xff00ff);
+    }
+
+    out() {
+        this.mesh.material.color.setHex(0xffffff);
+    }
+    
 
     getMesh() {
         // this.mesh.superName = 'MovingLetter'
