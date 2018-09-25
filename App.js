@@ -1,8 +1,10 @@
 import Expo from "expo";
+import { FileSystem, Asset } from "expo";
 import React from "react";
 import { Dimensions, View, Animated, PanResponder } from "react-native";
 import Shader from "./Shaders/Shader";
 import MovingLetter from "./Shaders/MovingLetter";
+import SVGLoader from "./lib/SVGLoader";
 
 // import THREEJS from "three";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
@@ -64,6 +66,40 @@ export default class App extends React.Component {
     );
   }
 
+  async _loadSVGGeometry(svgAsset) {
+    await svgAsset.downloadAsync();
+    const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri);
+    const loader = new SVGLoader();
+    const shapePaths = loader.load(svgText);
+    const geometry = new THREE.Geometry();
+    for (let i = 0; i < shapePaths.length; i++) {
+      const shapes = shapePaths[i].toShapes();
+      for (let j = 0; j < shapes.length; j++) {
+        geometry.merge(
+          new THREE.ExtrudeGeometry(shapes[j], {
+            bevelEnabled: false,
+            amount: 2,
+          })
+        );
+      }
+    }
+    return geometry;
+  }
+
+  async _loadSVGMesh() {
+    const svgAsset = await Asset.fromModule(require(`./assets/F.svg`));
+
+    const geometry = await this._loadSVGGeometry(svgAsset);
+    const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
+    const mesh = new THREE.Mesh(geometry, material);
+
+    // mesh.scale.x = -0.075;
+    mesh.scale.y = -1;
+    // mesh.scale.z = -100;
+
+    return mesh;
+  }
+
   _onGLContextCreate = async gl => {
     this.state.gl = gl;
     
@@ -95,7 +131,14 @@ export default class App extends React.Component {
     const movineLetterMesh = movingLetter.getMesh();
     
     // scene.add(backgroundMesh);
-    scene.add(movineLetterMesh);
+    // scene.add(movineLetterMesh);
+
+    const svg = await this._loadSVGMesh();
+    svg.translateX(0);
+    svg.translateY(0);
+    svg.translateZ(-150);
+    console.log("svg", svg.position, svg.scale);
+    scene.add( svg );
 
     camera.position.z = 2;
 
