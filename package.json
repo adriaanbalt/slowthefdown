@@ -11,5 +11,9 @@
     "react": "16.0.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-24.0.0.tar.gz",
     "simplex-noise": "^2.4.0"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-plugin-module-alias": "^1.6.0"
   }
 }
