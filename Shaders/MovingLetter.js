@@ -1,48 +1,32 @@
+import { FileSystem, Asset } from "expo";
 import React from "react";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise';
+import SVGLoader from '../lib/SVGLoader'
 
 export default class MovingLetter extends React.Component {
 
     constructor() {
         super();
+        this.setup();
+    }
 
+    async setup () {
+        console.log("setup")
         this.simplex = new SimplexNoise(Math.random);
 
-        let fontLoader = new THREE.FontLoader();
-        fontLoader.load(
-          "../assets/HelveticaNeueLTStd_Bold.json",
-          response => {
-            console.log("LOADED THE TEXT !!!!!!");
-            const font = response;
-            const mat = new THREE.MeshPhongMaterial({
-              color: "#00FF00",
-              // map: THREE.ImageUtils.loadTexture('assets/textures/uv.jpg'),
-              shininess: 1
-            });
-            const geo = new THREE.TextGeometry("F", {
-              font: font,
-              size: 25,
-              height: 100,
-              curveSegments: 4,
-              bevelThickness: 1,
-              bevelSize: 0,
-              bevelEnabled: true,
-              material: 0,
-              extrudeMaterial: 0
-            });
-            const fTxt = new THREE.Mesh(geo, mat);
-            this.add(fTxt);
-          }
-        );
-
+        
         let geometry = new THREE.CircleGeometry(.25, 10);
         let hitMaterial = new THREE.MeshBasicMaterial({
-        //   color: 0xFF00FF,
-          opacity: 1
+            //   color: 0xFF00FF,
+            opacity: .5
         });
-        this.mesh = new THREE.Mesh(geometry, hitMaterial);
-
+        const hit = new THREE.Mesh(geometry, hitMaterial);
+        
+        //create a group and add the two cubes
+        //These cubes can now be rotated / scaled etc as a group
+        this.mesh = new THREE.Group();
+        
         this.overProgress = 0;
         this.progress = 0;
         this.velocity = 0.005;
@@ -51,6 +35,55 @@ export default class MovingLetter extends React.Component {
         this.noiseAccum = 0;
         this.speed = .15;
         this.isOver = false;
+
+        // light
+        this.light = new THREE.PointLight(0xffffff, 2.0, 500);
+        this.light.position.set(0, 5, 0);
+        this.mesh.add(this.light);
+        
+        // SVG mesh
+        const svg = await this._loadSVGMesh();
+        svg.translateX(-38);
+        svg.translateY(5);
+        svg.translateZ(-200);
+        console.log( 'svg', svg );
+
+        // this.mesh.add(hit);
+        this.mesh.add(svg)
+    }
+
+    async _loadSVGGeometry(svgAsset) {
+        await svgAsset.downloadAsync();
+        const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri);
+        const loader = new SVGLoader();
+        const shapePaths = loader.load(svgText);
+        const geometry = new THREE.Geometry();
+        for (let i = 0; i < shapePaths.length; i++) {
+            const shapes = shapePaths[i].toShapes();
+            for (let j = 0; j < shapes.length; j++) {
+                geometry.merge(
+                    new THREE.ExtrudeGeometry(shapes[j], {
+                        bevelEnabled: false,
+                        amount: 2,
+                    })
+                );
+            }
+        }
+        return geometry;
+    }
+
+    async _loadSVGMesh() {
+        const svgAsset = await Asset.fromModule(require(`../assets/F.svg`));
+
+        const geometry = await this._loadSVGGeometry(svgAsset);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.scale.x = 0.075;
+        mesh.scale.y = 0.075;
+        mesh.scale.z = 1;
+        
+        return mesh;
     }
 
     update(time, mouseX, mouseY, isOver = false ) {
@@ -131,11 +164,11 @@ export default class MovingLetter extends React.Component {
     }
 
     over() {
-        this.mesh.material.color.setHex(0xff00ff);
+        // this.mesh.children[0].color.setHex(0xff00ff);
     }
 
     out() {
-        this.mesh.material.color.setHex(0xffffff);
+        // this.mesh.children[0].color.setHex(0xffffff);
     }
     
 

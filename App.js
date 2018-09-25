@@ -1,8 +1,8 @@
 import Expo from "expo";
 import React from "react";
+import { Dimensions, View, Animated, PanResponder } from "react-native";
 import Shader from "./Shaders/Shader";
 import MovingLetter from "./Shaders/MovingLetter";
-import { Dimensions, View, Animated, PanResponder } from "react-native";
 
 // import THREEJS from "three";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
@@ -66,61 +66,36 @@ export default class App extends React.Component {
 
   _onGLContextCreate = async gl => {
     this.state.gl = gl;
-
+    
     const scene = new THREE.Scene();
-
+    
     const raycaster = new THREE.Raycaster();
-
+    
     const light = new THREE.PointLight(0xff0000, 1, 100);
     light.position.set(50, 50, 50);
     scene.add(light);
-
+    
     const camera = new THREE.PerspectiveCamera(
       100,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
       1,
       10000
     );
-
-    // const camera = new THREE.OrthographicCamera(
-    //   gl.drawingBufferWidth / - 2,
-    //   gl.drawingBufferWidth / 2,
-    //   gl.drawingBufferHeight / 2,
-    //   gl.drawingBufferHeight / - 2,
-    //   0.1,
-    //   1000
-    // );
-
-    // const frustum = gl.drawingBufferHeight;
-    // var aspect = gl.drawingBufferWidth / gl.drawingBufferHeight;
-
-    // const camera = new THREE.OrthographicCamera(
-    //   frustum * aspect / - 2,
-    //   frustum * aspect / 2,
-    //   frustum / 2,
-    //   frustum / - 2,
-    //   1,
-    //   1000
-    // );
-
-    // camera.position.z = 1000;
-
+    
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-
+    
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("./img/stars.jpg")
     });
     const background = new Shader(texture);
     const backgroundMesh = background.getMesh();
-    scene.add(backgroundMesh);
-
+    
     const movingLetter = new MovingLetter();
     const movineLetterMesh = movingLetter.getMesh();
+    
+    // scene.add(backgroundMesh);
     scene.add(movineLetterMesh);
-
-    let objects = []
-    objects.push(movineLetterMesh);
 
     camera.position.z = 2;
 
@@ -138,7 +113,7 @@ export default class App extends React.Component {
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
       movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
       raycaster.setFromCamera( this.state.mouse, camera );
-      let intersects = raycaster.intersectObjects( objects );
+      let intersects = raycaster.intersectObjects( scene.children );
       
       // let mesh = intersects.filter(obj => { 
       //   // console.log( 'obj', obj )
