@@ -61,6 +61,10 @@ export default class App extends React.Component {
   _onGLContextCreate = async gl => {
     this.state.gl = gl;
 
+    //create a group and add the two cubes
+    //These cubes can now be rotated / scaled etc as a group
+    const group = new THREE.Object3D();
+
     const scene = new THREE.Scene();
 
     const raycaster = new THREE.Raycaster(); // is this correct?
@@ -88,14 +92,16 @@ export default class App extends React.Component {
         color: 0xFF00FF,
         opacity: 1
     });
-    this.shape = new THREE.Mesh(geometry, material);
+    const shape = new THREE.Mesh(geometry, material);
 
     const movingLetter = new MovingLetter();
     const movingLetterMesh = movingLetter.getMesh();
     movingLetterMesh.position.z = 0;
 
     scene.add(movingLetterMesh);
-    scene.add(this.shape);
+    group.add(shape);
+    scene.add(group);
+
 
     let INTERSECTED;
       
@@ -108,10 +114,10 @@ export default class App extends React.Component {
 
       raycaster.setFromCamera( this.state.mouse, camera );
       // let intersects = raycaster.intersectObjects( objects );
-      let intersects = raycaster.intersectObjects( scene.children ); // this doesn't seem to make any difference
+      let intersects = raycaster.intersectObjects( scene.children, true ); // this doesn't seem to make any difference
       console.log(intersects.length, this.state.mouse);
       
-      this.shape.position.x += .001;
+      shape.position.x += .001;
       if ( intersects.length > 0 ) {
             if ( INTERSECTED != intersects[ 0 ].object ) {
                 INTERSECTED = intersects[ 0 ].object;

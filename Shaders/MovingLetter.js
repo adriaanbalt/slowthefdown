@@ -55,7 +55,6 @@ export default class MovingLetter extends React.Component {
         this.createText("F");
     }
 
-
     loadFont = async () => {
         const font = require("../assets/fonts/HelveticaNeueLTStd_Bold.json");
         return this.loadFontFromJson(font);
