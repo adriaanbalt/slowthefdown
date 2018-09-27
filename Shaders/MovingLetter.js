@@ -20,7 +20,8 @@ export default class MovingLetter extends React.Component {
         let geometry = new THREE.CircleGeometry(.5, 10);
         let hitMaterial = new THREE.MeshBasicMaterial({
             color: 0xFFFFFF,
-            opacity: 1
+            opacity: .2,
+            transparent: true
         });
         const hit = new THREE.Mesh(geometry, hitMaterial);
         hit.position.set(.05,.35,0);
@@ -31,12 +32,12 @@ export default class MovingLetter extends React.Component {
         this.mesh = new THREE.Group();
         
         this.overProgress = 0;
-        this.progress = 0;
+        this.progress = .00001;
         this.velocity = 0.005;
         // this.velocity = .04;// + .0001 * (1 - window.innerWidth/2000);
         this.radius = 1;
         this.noiseAccum = 0;
-        this.speed = .15;
+        this.speed = 5;
         this.isOver = false;
 
         // light
@@ -91,8 +92,8 @@ export default class MovingLetter extends React.Component {
         textMesh.position.x = centerOffset;
     };
 
-    update(time, mouseX, mouseY, isOver = false ) {
-        // console.log("time", time, this.progress )
+    update(time, mouseX, mouseY) {
+        console.log( 'moving letter ', this.speed, this.progress )
         this.noise = this.simplex.noise2D(this.progress, 0);
         this.dx = (Math.cos((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
         this.dy = (Math.sin((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // Y distance from center - movement with speed over time
@@ -102,7 +103,8 @@ export default class MovingLetter extends React.Component {
         // this.rotation.x += 0.1;
         // this.rotation.y += 0.1;
         // this.rotation.z += 0.1;
-        this.progress += this.velocity * this.speed / time;
+        // this.progress += this.velocity * this.speed / time;
+        this.progress += this.velocity * this.speed;
         this.noiseAccum += 0.01 * this.noiseSpeed;
 
         // if ( this.isOver ) {
@@ -162,13 +164,13 @@ export default class MovingLetter extends React.Component {
         this.radius = newRadius;
     }
     over() {
+        this.speed = .5;
         // this.mesh.children[0].color.setHex(0xff00ff);
     }
     out() {
-        // this.mesh.children[0].color.setHex(0xffffff);
+        this.speed = 5;
     }
     getMesh() {
-        // this.mesh.superName = 'MovingLetter'
         return this.mesh
     }
 
