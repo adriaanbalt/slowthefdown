@@ -83,6 +83,7 @@ export default class App extends React.Component {
       1,
       10000
     );
+    camera.position.z = 2;
     
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
