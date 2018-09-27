@@ -2,6 +2,7 @@ import Expo from "expo";
 import React from "react";
 import { Dimensions, View, Animated, PanResponder } from "react-native";
 import ExpoTHREE, { THREE } from "expo-three"; // Version can be specified in package.json
+import MovingLetter from "./Shaders/MovingLetter";
 
 import MeshContainer from "./MeshContainer";
 
@@ -71,10 +72,10 @@ export default class App extends React.Component {
       10000
       );
     camera.position.z = 2;
-    
+
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-    
+
     let geometry = new THREE.PlaneGeometry(gl.drawingBufferWidth, gl.drawingBufferHeight);
     let material = new THREE.MeshBasicMaterial({
       color: 0x00FFFF,
@@ -88,8 +89,14 @@ export default class App extends React.Component {
         opacity: 1
     });
     this.shape = new THREE.Mesh(geometry, material);
+
+    const movingLetter = new MovingLetter();
+    const movingLetterMesh = movingLetter.getMesh();
+    movingLetterMesh.position.z = 0;
+
+    scene.add(movingLetterMesh);
     scene.add(this.shape);
-    
+
     let INTERSECTED;
       
     // raycaster.setFromCamera( this.state.mouse, camera );
