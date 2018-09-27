@@ -87,8 +87,8 @@ export default class App extends React.Component {
         color: 0xFF00FF,
         opacity: 1
     });
-    let mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    this.shape = new THREE.Mesh(geometry, material);
+    scene.add(this.shape);
     
     let INTERSECTED;
       
@@ -103,6 +103,8 @@ export default class App extends React.Component {
       // let intersects = raycaster.intersectObjects( objects );
       let intersects = raycaster.intersectObjects( scene.children ); // this doesn't seem to make any difference
       console.log(intersects.length, this.state.mouse);
+      
+      this.shape.position.x += .001;
       if ( intersects.length > 0 ) {
             if ( INTERSECTED != intersects[ 0 ].object ) {
                 INTERSECTED = intersects[ 0 ].object;
