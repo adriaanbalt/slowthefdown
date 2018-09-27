@@ -41,7 +41,7 @@ export default class App extends React.Component {
       },
       onPanResponderRelease: ({ nativeEvent }, gestureState) => {
         this.state.mouse.x = -1;
-        this.state.mouse.x = -1;
+        this.state.mouse.y = -1;
       }
     });
 
@@ -98,7 +98,7 @@ export default class App extends React.Component {
     const movingLetterMesh = movingLetter.getMesh();
     movingLetterMesh.position.z = 0;
     
-    // scene.add(backgroundMesh);
+    scene.add(backgroundMesh);
     scene.add(movingLetterMesh);
 
     camera.position.z = 2;
@@ -115,10 +115,10 @@ export default class App extends React.Component {
       camera.updateMatrixWorld();
 
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
-      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
+      // movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
       raycaster.setFromCamera( this.state.mouse, camera );
       let intersects = raycaster.intersectObjects( scene.children );
-      
+
       // let mesh = intersects.filter(obj => { 
       //   // console.log( 'obj', obj )
       //   return obj.object.superName != 'SpinShader' 
@@ -126,7 +126,7 @@ export default class App extends React.Component {
 
       console.log("intersects", this.state.mouse, intersects.length);
       if ( intersects.length > 0 ) {
-        movingLetter.over()
+        // movingLetter.over()
         if ( INTERSECTED != intersects[ 0 ].object ) {
           // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
           console.log("INTERSECTED", INTERSECTED);
@@ -135,7 +135,7 @@ export default class App extends React.Component {
           // INTERSECTED.material.emissive.setHex( 0xff0000 );
         }
       } else {
-        movingLetter.out();
+        // movingLetter.out();
         // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
         INTERSECTED = null;
       }
