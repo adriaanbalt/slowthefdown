@@ -66,40 +66,6 @@ export default class App extends React.Component {
     );
   }
 
-  async _loadSVGGeometry(svgAsset) {
-    await svgAsset.downloadAsync();
-    const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri);
-    const loader = new SVGLoader();
-    const shapePaths = loader.load(svgText);
-    const geometry = new THREE.Geometry();
-    for (let i = 0; i < shapePaths.length; i++) {
-      const shapes = shapePaths[i].toShapes();
-      for (let j = 0; j < shapes.length; j++) {
-        geometry.merge(
-          new THREE.ExtrudeGeometry(shapes[j], {
-            bevelEnabled: false,
-            amount: 2,
-          })
-        );
-      }
-    }
-    return geometry;
-  }
-
-  async _loadSVGMesh() {
-    const svgAsset = await Asset.fromModule(require(`./assets/F.svg`));
-
-    const geometry = await this._loadSVGGeometry(svgAsset);
-    const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
-    const mesh = new THREE.Mesh(geometry, material);
-
-    // mesh.scale.x = -0.075;
-    mesh.scale.y = -1;
-    // mesh.scale.z = -100;
-
-    return mesh;
-  }
-
   _onGLContextCreate = async gl => {
     this.state.gl = gl;
     
@@ -107,8 +73,8 @@ export default class App extends React.Component {
     
     const raycaster = new THREE.Raycaster();
     
-    const light = new THREE.PointLight(0xff0000, 1, 100);
-    light.position.set(50, 50, 50);
+    const light = new THREE.PointLight(0xFFFFFF, 1, -1);
+    light.position.set(0, 50, 50);
     scene.add(light);
     
     const camera = new THREE.PerspectiveCamera(
@@ -120,7 +86,8 @@ export default class App extends React.Component {
     
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-    
+    // renderer.setClearColor(0x000000, 1.0);
+
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("./img/stars.jpg")
     });
@@ -128,17 +95,11 @@ export default class App extends React.Component {
     const backgroundMesh = background.getMesh();
     
     const movingLetter = new MovingLetter();
-    const movineLetterMesh = movingLetter.getMesh();
+    const movingLetterMesh = movingLetter.getMesh();
+    movingLetterMesh.position.z = 0;
     
     // scene.add(backgroundMesh);
-    // scene.add(movineLetterMesh);
-
-    const svg = await this._loadSVGMesh();
-    svg.translateX(0);
-    svg.translateY(0);
-    svg.translateZ(-150);
-    console.log("svg", svg.position, svg.scale);
-    scene.add( svg );
+    scene.add(movingLetterMesh);
 
     camera.position.z = 2;
 
@@ -163,12 +124,12 @@ export default class App extends React.Component {
       //   return obj.object.superName != 'SpinShader' 
       // });
 
+      console.log("intersects", this.state.mouse, intersects.length);
       if ( intersects.length > 0 ) {
         movingLetter.over()
-        // console.log('intersects', intersects[0])
         if ( INTERSECTED != intersects[ 0 ].object ) {
           // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-          // console.log("INTERSECTED", INTERSECTED);
+          console.log("INTERSECTED", INTERSECTED);
           INTERSECTED = intersects[ 0 ].object;
           // INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
           // INTERSECTED.material.emissive.setHex( 0xff0000 );

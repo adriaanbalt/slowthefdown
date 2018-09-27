@@ -3,6 +3,7 @@ import React from "react";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise';
 import SVGLoader from '../lib/SVGLoader'
+    
 
 export default class MovingLetter extends React.Component {
 
@@ -16,12 +17,14 @@ export default class MovingLetter extends React.Component {
         this.simplex = new SimplexNoise(Math.random);
 
         
-        let geometry = new THREE.CircleGeometry(.25, 10);
+        let geometry = new THREE.CircleGeometry(.5, 10);
         let hitMaterial = new THREE.MeshBasicMaterial({
-            //   color: 0xFF00FF,
-            opacity: .5
+            color: 0xFFFFFF,
+            opacity: 1
         });
         const hit = new THREE.Mesh(geometry, hitMaterial);
+        hit.position.set(.05,.35,0);
+        // hit.position.z = 10;
         
         //create a group and add the two cubes
         //These cubes can now be rotated / scaled etc as a group
@@ -37,54 +40,56 @@ export default class MovingLetter extends React.Component {
         this.isOver = false;
 
         // light
-        this.light = new THREE.PointLight(0xffffff, 2.0, 500);
+        this.light = new THREE.PointLight(0xffffff, 1.0, -1);
         this.light.position.set(0, 5, 0);
         this.mesh.add(this.light);
         
-        // SVG mesh
-        const svg = await this._loadSVGMesh();
-        svg.translateX(-38);
-        svg.translateY(5);
-        svg.translateZ(-200);
-        console.log( 'svg', svg );
+        // // SVG mesh
+        // const svg = await this._loadSVGMesh();
+        // svg.translateX(5);
+        // svg.translateY(0);
+        // svg.translateZ(-150);
 
-        // this.mesh.add(hit);
-        this.mesh.add(svg)
+        this.mesh.add(hit);
+        // this.mesh.add(svg)
+
+        this.fontData = await this.loadFont();
+        this.createText("F");
     }
 
-    async _loadSVGGeometry(svgAsset) {
-        await svgAsset.downloadAsync();
-        const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri);
-        const loader = new SVGLoader();
-        const shapePaths = loader.load(svgText);
-        const geometry = new THREE.Geometry();
-        for (let i = 0; i < shapePaths.length; i++) {
-            const shapes = shapePaths[i].toShapes();
-            for (let j = 0; j < shapes.length; j++) {
-                geometry.merge(
-                    new THREE.ExtrudeGeometry(shapes[j], {
-                        bevelEnabled: false,
-                        amount: 2,
-                    })
-                );
-            }
-        }
-        return geometry;
-    }
 
-    async _loadSVGMesh() {
-        const svgAsset = await Asset.fromModule(require(`../assets/F.svg`));
+    loadFont = async () => {
+        const font = require("../assets/fonts/HelveticaNeueLTStd_Bold.json");
+        return this.loadFontFromJson(font);
+        // return this.loadFontFromUri(uri);
+    };
 
-        const geometry = await this._loadSVGGeometry(svgAsset);
-        const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
-        const mesh = new THREE.Mesh(geometry, material);
+    loadFontFromJson = json => new THREE.FontLoader().parse(json);
 
-        mesh.scale.x = 0.075;
-        mesh.scale.y = 0.075;
-        mesh.scale.z = 1;
-        
-        return mesh;
-    }
+    createText = text => {
+        const textGeo = new THREE.TextBufferGeometry(text, {
+            font: this.fontData,
+            size: 0.7,
+            height: 0.0,
+            curveSegments: 12,
+            bevelThickness: 0.0,
+            bevelSize: 0.0,
+            bevelEnabled: true,
+            material: 0,
+            extrudeMaterial: 0,
+        });
+        textGeo.computeBoundingBox();
+        textGeo.computeVertexNormals();
+
+        const materials = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+        const textMesh = new THREE.Mesh(textGeo, materials);
+        textMesh.position.set( 0,0,0 )
+        this.mesh.add(textMesh);
+
+        let centerOffset =
+            -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+        textMesh.position.x = centerOffset;
+    };
 
     update(time, mouseX, mouseY, isOver = false ) {
         // console.log("time", time, this.progress )
@@ -135,46 +140,72 @@ export default class MovingLetter extends React.Component {
         }
     }
 
-
     setScale(scale) {
         this.scale.x = scale;
         this.scale.y = scale;
     }
-
     setVelocity(newVelocity) {
         this.velocity = newVelocity;
     }
-
     setSpeed(newSpeed, isOver, overProgress) {
         this.speed = newSpeed;
         this.isOver = isOver;
         this.overProgress = overProgress;
     }
-
     setNoiseSpeed(newSpeed) {
         this.noiseSpeed = newSpeed;
     }
-
     setDepth(newZ) {
         this.mesh.position.z = newZ;
     }
-
     setRadius(newRadius) {
         this.radius = newRadius;
     }
-
     over() {
         // this.mesh.children[0].color.setHex(0xff00ff);
     }
-
     out() {
         // this.mesh.children[0].color.setHex(0xffffff);
     }
-    
-
     getMesh() {
         // this.mesh.superName = 'MovingLetter'
         return this.mesh
     }
+
+/*
+    async _loadSVGGeometry(svgAsset) {
+        await svgAsset.downloadAsync();
+        const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri);
+        const loader = new SVGLoader();
+        const shapePaths = loader.load(svgText);
+        const geometry = new THREE.Geometry();
+        for (let i = 0; i < shapePaths.length; i++) {
+            const shapes = shapePaths[i].toShapes();
+            for (let j = 0; j < shapes.length; j++) {
+                geometry.merge(
+                    new THREE.ExtrudeGeometry(shapes[j], {
+                        bevelEnabled: false,
+                        amount: 2,
+                    })
+                );
+            }
+        }
+        return geometry;
+    }
+
+    async _loadSVGMesh() {
+        const svgAsset = await Asset.fromModule(require(`../assets/F.svg`));
+
+        const geometry = await this._loadSVGGeometry(svgAsset);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        // mesh.scale.x = -0.075;
+        mesh.scale.y = -1;
+    // mesh.scale.z = -100;
+
+        return mesh;
+    }
+*/
 
 }
