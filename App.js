@@ -116,27 +116,20 @@ export default class App extends React.Component {
       camera.updateMatrixWorld();
 
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
-      // movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
+      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y );
       raycaster.setFromCamera( this.state.mouse, camera );
-      let intersects = raycaster.intersectObjects( scene.children );
+      let intersects = raycaster.intersectObjects( scene.children, true );
 
-      // let mesh = intersects.filter(obj => { 
-      //   // console.log( 'obj', obj )
-      //   return obj.object.superName != 'SpinShader' 
-      // });
-
-      console.log("intersects", this.state.mouse, intersects.length);
-      if ( intersects.length > 0 ) {
-        // movingLetter.over()
+      if ( intersects.length > 1 ) {
+        movingLetter.over()
         if ( INTERSECTED != intersects[ 0 ].object ) {
           // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-          console.log("INTERSECTED", INTERSECTED);
           INTERSECTED = intersects[ 0 ].object;
           // INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
           // INTERSECTED.material.emissive.setHex( 0xff0000 );
         }
       } else {
-        // movingLetter.out();
+        movingLetter.out();
         // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
         INTERSECTED = null;
       }
