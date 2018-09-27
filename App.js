@@ -75,8 +75,15 @@ export default class App extends React.Component {
     const renderer = new ExpoTHREE.Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
     
-    let geometry = new THREE.CircleGeometry(.5, 30);
+    let geometry = new THREE.PlaneGeometry(gl.drawingBufferWidth, gl.drawingBufferHeight);
     let material = new THREE.MeshBasicMaterial({
+      color: 0x00FFFF,
+    });
+    let bg = new THREE.Mesh(geometry, material);
+    scene.add(bg);
+
+    geometry = new THREE.CircleGeometry(.5, 30);
+    material = new THREE.MeshBasicMaterial({
         color: 0xFF00FF,
         opacity: 1
     });
@@ -95,6 +102,7 @@ export default class App extends React.Component {
       raycaster.setFromCamera( this.state.mouse, camera );
       // let intersects = raycaster.intersectObjects( objects );
       let intersects = raycaster.intersectObjects( scene.children ); // this doesn't seem to make any difference
+      console.log(intersects.length, this.state.mouse);
       if ( intersects.length > 0 ) {
             if ( INTERSECTED != intersects[ 0 ].object ) {
                 INTERSECTED = intersects[ 0 ].object;
