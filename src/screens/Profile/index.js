@@ -58,7 +58,7 @@ class Profile extends React.Component {
             loading: true
         };
 
-        this.presses = [];
+        this.props.loadHighscores();
     }
 
     componentDidMount() {

@@ -21,6 +21,15 @@ export default dispatch => (() => {
     return dispatch(actions.set(path, value));
   };
 
+  const loadHighscores = () => {
+    return newRequest()
+      .get("/highscores")
+      .then(({ data }) => {
+        console.log ('highscores', data )
+        set("/highscores", data);
+      });
+  };
+
   const logout = () => {
     // Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
     //   set('/user/fbAccessToken', null);
@@ -97,7 +106,8 @@ export default dispatch => (() => {
     setFacebookAccessToken,
     setProfileFields,
     logout,
-    startFacebookLogin
+    startFacebookLogin,
+    loadHighscores,
   };
 });
 
