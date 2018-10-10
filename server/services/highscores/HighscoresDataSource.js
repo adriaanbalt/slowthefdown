@@ -1,7 +1,7 @@
 
 class HighscoresDataSource {
   constructor() {
-    this.highscores = require('../../config/movies.json');
+    this.highscores = require('../../config/highscores.json');
   }
 
   getById(id) {
