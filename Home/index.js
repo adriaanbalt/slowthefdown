@@ -1,14 +1,26 @@
-import Expo from "expo";
-import { FileSystem, Asset } from "expo";
-import React from "react";
+import Expo, { KeepAwake, FileSystem, Asset } from "expo";
+import React from 'react';
+import { connect } from 'react-redux';
 import {
-  Dimensions,
+  ScrollView,
+  StyleSheet,
   View,
   Animated,
-  PanResponder,
   Text,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Dimensions,
+  PanResponder,
   TouchableOpacity
 } from "react-native";
+
+import Dispatchers from '../redux/dispatchers';
+import { isAuthenticated } from '../redux/selectors';
+import Waiting from '../components/Waiting';
+import StyledButton from '../components/StyledButton';
 import Shader from "./Shaders/Shader";
 import MovingLetter from "./Shaders/MovingLetter";
 import SVGLoader from "./lib/SVGLoader";
@@ -16,16 +28,37 @@ import SVGLoader from "./lib/SVGLoader";
 // import THREEJS from "three";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 
-export default class App extends React.Component {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  contentContainer: {
+    // backgroundColor: 'white'
+  },
+});
+
+class HomeScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+    headerTitle: 'Home'
+  };
+
   constructor(props) {
     super(props);
+
     this.state = {
+      fadeOutAnim: new Animated.Value(1),
+      loading: true,
       pan: new Animated.ValueXY(),
       mouse: new THREE.Vector2(-1, -1),
       deltaTime: 0,
     };
     // Turn off extra warnings
     THREE.suppressExpoWarnings(true);
+  }
+  componentDidMount() {
+    this.setState({ loading: true });
   }
 
   componentWillMount() {
@@ -54,49 +87,10 @@ export default class App extends React.Component {
         this.state.mouse.y = -1;
       }
     });
-
   }
 
   gotoProfile() {
     console.log("gotoProfile");
-  }
-
-  render() {
-    var { height, width } = Dimensions.get('window');
-    return (
-      <View
-        {...this.panResponder.panHandlers}
-        style={[
-          {
-            width,
-            height,
-          }
-        ]}
-      >
-        <TouchableOpacity 
-          style={{
-            position: 'absolute',
-            zIndex: 1000,
-            top: height - 60,
-            left: 0,
-            height: 30,
-            backgroundColor: 'transparent'
-          }}
-          onPress={this.gotoProfile}>
-          <Text style={{
-            color: '#fff',
-            fontSize: 16,
-            width,
-            lineHeight: 30,
-            textAlign: 'center'
-          }}>{this.state.deltaTime}</Text>
-        </TouchableOpacity>
-        <Expo.GLView
-          style={{ flex: 1 }}
-          onContextCreate={this._onGLContextCreate}
-        />
-      </View>
-    );
   }
 
   loadFont = async () => {
@@ -202,5 +196,61 @@ export default class App extends React.Component {
     animate();
   }
 
+  renderGame() {
+    var { height, width } = Dimensions.get('window');
+    return (
+      <View
+        {...this.panResponder.panHandlers}
+        style={[
+          {
+            width,
+            height,
+          }
+        ]}
+      >
+        <TouchableOpacity 
+          style={{
+            position: 'absolute',
+            zIndex: 1000,
+            top: height - 60,
+            left: 0,
+            height: 30,
+            backgroundColor: 'transparent'
+          }}
+          onPress={this.gotoProfile}>
+          <Text style={{
+            color: '#fff',
+            fontSize: 16,
+            width,
+            lineHeight: 30,
+            textAlign: 'center'
+          }}>{this.state.deltaTime}</Text>
+        </TouchableOpacity>
+        <Expo.GLView
+          style={{ flex: 1 }}
+          onContextCreate={this._onGLContextCreate}
+        />
+      </View>
+    );
+  }
+
+  render() {
+    const {
+      errorMessage
+    } = this.props;
+    
+    return this.renderGame();
+
+    if (this.state.loading || errorMessage) {
+      return (
+        <Waiting loading={this.state.loading} errorMessage={errorMessage} />
+      );
+    }
+
+  }
 
 }
+
+export default connect(state => ({
+  isAuthenticated: isAuthenticated(state)
+}), Dispatchers)(HomeScreen);

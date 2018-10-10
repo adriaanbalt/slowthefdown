@@ -44,6 +44,7 @@ class HomeScreen extends React.Component {
       fadeOutAnim: new Animated.Value(1),
       loading: true
     };
+
   }
   componentDidMount() {
     this.setState({ loading: true });
