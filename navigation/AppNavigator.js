@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from 'react-navigation';
 
 import HomeScreen from "../screens/Home";
-import ProfileScreen from '../screens/ProfileScreen';
+import ProfileScreen from '../screens/Profile';
 
 const AppNavigator = createStackNavigator(
   {
