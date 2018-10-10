@@ -7,3 +7,7 @@
 5. Start server open server folder `/server` on command line: `npm run start`
 6. Start ngrok tunnel in different terminal window `ngrok http -subdomain=slowitdown 4337`
 7. On your mobile device, open Expo and load project (having an Expo login helps)
+
+## To publish to Apple store
+
+1. will add this soon...
