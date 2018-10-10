@@ -80,6 +80,7 @@ export default class App extends React.Component {
             top: height - 60,
             left: 0,
             height: 30,
+            backgroundColor: 'transparent'
           }}
           onPress={this.gotoProfile}>
           <Text style={{
@@ -99,7 +100,7 @@ export default class App extends React.Component {
   }
 
   loadFont = async () => {
-    const font = require("./assets/fonts/HelveticaNeueLT-Std_Bold");
+    const font = require("../assets/fonts/HelveticaNeueLT-Std_Bold");
     return this.loadFontFromJson(font);
     // return this.loadFontFromUri(uri);
   };
@@ -132,7 +133,7 @@ export default class App extends React.Component {
     const font = await this.loadFont();
     
     const texture = await ExpoTHREE.loadTextureAsync({
-      asset: require("./img/stars.jpg")
+      asset: require("../assets/images/stars.jpg")
     });
     const background = new Shader(texture);
     const backgroundMesh = background.getMesh();
