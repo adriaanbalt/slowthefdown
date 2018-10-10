@@ -20,7 +20,7 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
-    initialRouteName: "Highscores"
+    initialRouteName: "Home"
   }
 );
 
