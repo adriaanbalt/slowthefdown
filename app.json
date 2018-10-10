@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "slowthefdown",
+    "name": "slowdown",
     "description": "Adriaan Balt",
-    "slug": "snack-BylrJGm_Q",
+    "slug": "snack-slowdown",
     "privacy": "unlisted",
     "sdkVersion": "24.0.0",
-    "version": "2.0.0",
+    "version": "3.0.1",
     "orientation": "portrait",
     "primaryColor": "#000000",
     "icon": "./assets/expo-icon.png",
@@ -25,7 +25,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.balt.slowthefdown"
+      "bundleIdentifier": "com.balt.slowdown"
     }
   }
 }
