@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "slowdown",
+    "name": "Slow it Down",
     "description": "Adriaan Balt",
     "slug": "snack-slowdown",
     "privacy": "unlisted",
     "sdkVersion": "24.0.0",
-    "version": "3.0.1",
+    "version": "4.0.0",
     "orientation": "portrait",
     "primaryColor": "#000000",
     "icon": "./assets/expo-icon.png",
@@ -27,5 +27,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.balt.slowdown"
     }
-  }
+  },
+  "facebookScheme": "fb331867204038135",
+  "facebookAppId": "331867204038135",
+  "facebookDisplayName": "Slow it Down"
 }
