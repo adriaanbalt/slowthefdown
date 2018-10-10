@@ -92,7 +92,7 @@ class HomeScreen extends React.Component {
     });
   }
 
-  gotoHighscores = () => {
+  navigateToHighscores = () => {
     this.props.navigation.navigate('Highscores', {});
   }
 
@@ -220,7 +220,7 @@ class HomeScreen extends React.Component {
             height: 30,
             backgroundColor: 'transparent'
           }}
-          onPress={this.gotoHighscores}>
+          onPress={this.navigateToHighscores}>
           <Text style={{
             color: '#fff',
             fontSize: 16,

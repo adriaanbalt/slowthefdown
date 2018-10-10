@@ -6,15 +6,8 @@ import {
     StyleSheet,
     Text,
     View,
-    TextInput,
-    KeyboardAvoidingView,
-    Keyboard,
-    TouchableWithoutFeedback,
-    TouchableNativeFeedback,
     TouchableOpacity,
-    Image,
-    Alert,
-    Platform
+    Dimensions
 } from 'react-native';
 import {
   isAuthenticated,
@@ -24,14 +17,19 @@ import Dispatchers from '../../redux/dispatchers';
 import StyledButton from '../../shared/StyledButton';
 import Waiting from '../../shared/Waiting';
 import Colors from '../../constants/Colors';
+import { translate } from 'gl-matrix/src/gl-matrix/mat4';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 0,
+        padding: 20,
+        transform: [
+        { translateY: Dimensions.get('window').height * 0.24 },
+        ],
         // backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        // alignItems: 'center',
+        // justifyContent: 'center',
         // backgroundColor: Colors.buttonBackgroundColor
     },
 
@@ -50,7 +48,6 @@ class HighscoresScreen extends React.Component {
     static navigationOptions = {
         header: null,
     };
-
 
     constructor(props) {
         super(props);
@@ -72,50 +69,27 @@ class HighscoresScreen extends React.Component {
           });
     }
 
-    renderLoggedIn() {
-        const {
-            profile
-        } = this.props;
-
-        // show highscore
-        // show log out
-        return (<ScrollView style={styles.scrollContainer}>
-        </ScrollView>);
+    navigateToGame = () => {
+        this.props.navigation.navigate("Home", {});
     }
-
-    startFacebookLogin = () => {
-        this.props.startFacebookLogin().catch(e => console.log(e.message));
+    navigateToProfile = () => {
+        this.props.navigation.navigate("Profile", {});
     }
 
     render() {
         const {
-            errorMessage
+            errorMessage,
+            highscores
         } = this.props;
-
-        console.log ( 'highscores render', this.props.highscores)
         
-
-        // if (this.state.loading || errorMessage) {
-        //   return (
-        //     <Waiting style={styles.waiting} loading={this.state.loading} errorMessage={errorMessage} onReset={this.props.resetPhoneNumberVerification} />
-        //   );
-        // }
-
-        // if (this.props.isAuthenticated && this.props.profile) {
-        //   return this.renderLoggedIn();
-        // }
-
-        // return (
-        //   <TouchableWithoutFeedback onPress={() => this.handleTester()}>
-        //     <View style={styles.container}>
-        //       <StyledButton title="Login with Facebook" onPress={this.startFacebookLogin} />
-        //     </View>
-        //   </TouchableWithoutFeedback>
-        // );
-
-        return (
-            <View><Text>Highscores</Text></View>
-        )
+        return <ScrollView style={styles.container}>
+            <Text>Highscores</Text>
+            {highscores.map((obj, i) => (
+              <Text key={`highscore-${i}`}>{obj.highscore}</Text>
+            ))}
+            <StyledButton title="Go To Game" onPress={this.navigateToGame} />
+            <StyledButton title="Go To Your Profile" onPress={this.navigateToProfile} />
+          </ScrollView>;
     }
 }
 

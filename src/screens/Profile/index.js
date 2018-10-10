@@ -6,15 +6,7 @@ import {
     StyleSheet,
     Text,
     View,
-    TextInput,
-    KeyboardAvoidingView,
-    Keyboard,
-    TouchableWithoutFeedback,
-    TouchableNativeFeedback,
-    TouchableOpacity,
-    Image,
-    Alert,
-    Platform
+    Dimensions
 } from 'react-native';
 import Dispatchers from '../../redux/dispatchers';
 import StyledButton from '../../shared/StyledButton';
@@ -26,10 +18,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 0,
-        // backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        // backgroundColor: Colors.buttonBackgroundColor
+        padding: 20,
+        transform: [
+            { translateY: Dimensions.get('window').height * 0.24 },
+        ],
     },
 
     waiting: {
@@ -45,7 +37,7 @@ const styles = StyleSheet.create({
 
 class ProfileScreen extends React.Component {
   static navigationOptions = {
-    header: null,
+    header: null
   };
 
   constructor(props) {
@@ -62,28 +54,22 @@ class ProfileScreen extends React.Component {
       .loadUser()
       .then(user => {
         this.setState({ loading: false });
-
-        // if (this.props.dates.length > 0) {
-        //   this.props.navigation.navigate('Dates');
-        // }
       })
       .catch(() => {
         this.setState({ loading: false });
       });
   }
 
-  renderLoggedIn() {
-    const { profile } = this.props;
-
-    // show highscore
-    // show log out
-    return <ScrollView style={styles.scrollContainer} />;
-  }
-
   startFacebookLogin = () => {
     this.props.startFacebookLogin().catch(e => console.log(e.message));
   };
 
+  navigateToGame = () => {
+    this.props.navigation.navigate("Home", {});
+  };
+  navigateToHighscores = () => {
+    this.props.navigation.navigate("Highscores", {});
+  };
   render() {
     const { errorMessage } = this.props;
 
@@ -106,9 +92,14 @@ class ProfileScreen extends React.Component {
     // );
 
     return (
-      <View>
+      <ScrollView style={styles.container}>
         <Text>Profile</Text>
-      </View>
+        <StyledButton title="Go To Game" onPress={this.navigateToGame} />
+        <StyledButton
+          title="Go To Your Highscores"
+          onPress={this.navigateToHighscores}
+        />
+      </ScrollView>
     );
   }
 }
