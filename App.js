@@ -1,10 +1,10 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Provider } from 'react-redux';
 import { KeepAwake, AppLoading, Asset, Font, Notifications } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
-import AppNavigator from './navigation/AppNavigator';
-import store from './redux/store';
-import { Provider } from 'react-redux';
+import store from './src/redux/store';
+import AppNavigator from './src/navigation/AppNavigator';
 
 const styles = StyleSheet.create({
   container: {
@@ -69,13 +69,13 @@ export default class App extends React.Component {
 
   }
 
-  _loadResourcesAsync = async () => {
-    return Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/stars.jpg'),
-      ]),
-    ]);
-  };
+  // _loadResourcesAsync = async () => {
+  //   return Promise.all([
+  //     Asset.loadAsync([
+  //       require('./assets/images/stars.jpg'),
+  //     ]),
+  //   ]);
+  // };
 
   _handleLoadingError = error => {
     // In this case, you might want to report the error to your error
