@@ -6,12 +6,14 @@
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
+    "axios": "^0.18.0",
     "expo": "^24.0.0",
     "expo-three": "3.0.0-alpha.4",
     "react": "16.0.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-24.0.0.tar.gz",
     "react-navigation": "^2.17.0",
     "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
     "simplex-noise": "^2.4.0"
   },
   "devDependencies": {
