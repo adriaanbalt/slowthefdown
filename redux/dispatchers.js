@@ -4,7 +4,7 @@ import axios from 'axios';
 import store from './store';
 import registerForPushNotifications from '../api/registerForPushNotifications';
 import BASE_URL from '../BASE_URL';
-const SECURE_STORE_FACEBOOK_TOKEN = 'e69b06b8b35a9cbf3824ef0a1d3a78fb';
+const FACEBOOK_APP_ID = "331867204038135";
 
 export default dispatch => (() => {
 
@@ -22,14 +22,18 @@ export default dispatch => (() => {
   };
 
   const logout = () => {
-    Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-      set('/user/fbAccessToken', null);
-    });
+    // Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
+    //   set('/user/fbAccessToken', null);
+    // });
   };
 
   const loadUser = () => {
-    return Expo.SecureStore.getItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(token => {
+    return Expo.Facebook.logInWithReadPermissionsAsync(FACEBOOK_APP_ID).then( res => {
+      const {
+        token
+      } = res
       set('/user/fbAccessToken', token);
+      console.log ( 'token', token )
 
       if (!token) {
         return;
@@ -62,10 +66,10 @@ export default dispatch => (() => {
   };
 
   const setFacebookAccessToken = token => {
-    return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
-      set('/user/fbAccessToken', token);
-      return loadUser();
-    });
+    // return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
+    //   set('/user/fbAccessToken', token);
+    //   return loadUser();
+    // });
   };
 
   const setProfileFields = (fields) => {
