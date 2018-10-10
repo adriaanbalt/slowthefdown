@@ -19,12 +19,12 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import Dispatchers from '../redux/dispatchers';
-import { isAuthenticated } from '../redux/selectors';
+import Dispatchers from '../../redux/dispatchers';
+import { isAuthenticated } from '../../redux/selectors';
 
-import Waiting from '../shared/Waiting';
-import StyledButton from '../shared/StyledButton';
-import ShareTheNavigation from "../shared/shareTheNavigation"
+import Waiting from '../../shared/Waiting';
+import StyledButton from '../../shared/StyledButton';
+import ShareTheNavigation from "../../shared/shareTheNavigation"
 
 import Shader from "./components/Shader";
 import MovingLetter from "./components/MovingLetter";
@@ -48,7 +48,6 @@ class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log("HomeScreen", props )
 
     this.state = {
       fadeOutAnim: new Animated.Value(1),
@@ -94,13 +93,13 @@ class HomeScreen extends React.Component {
     });
   }
 
-  gotoProfile() {
+  gotoProfile = () => {
     console.log("gotoProfile" , this.props );
-    // this.props.navigation.navigate('Profile', {});
+    this.props.navigation.navigate('Profile', {});
   }
 
   loadFont = async () => {
-    const font = require("../assets/fonts/HelveticaNeueLT-Std_Bold");
+    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold");
     return this.loadFontFromJson(font);
     // return this.loadFontFromUri(uri);
   };
@@ -133,7 +132,7 @@ class HomeScreen extends React.Component {
     const font = await this.loadFont();
     
     const texture = await ExpoTHREE.loadTextureAsync({
-      asset: require("../assets/images/stars.jpg")
+      asset: require("../../assets/images/stars.jpg")
     });
     const background = new Shader(texture);
     const backgroundMesh = background.getMesh();
@@ -244,7 +243,7 @@ class HomeScreen extends React.Component {
     const {
       errorMessage
     } = this.props;
-    
+
     return this.renderGame();
 
     if (this.state.loading || errorMessage) {
