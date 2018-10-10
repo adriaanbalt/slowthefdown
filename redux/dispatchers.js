@@ -4,7 +4,7 @@ import axios from 'axios';
 import store from './store';
 import registerForPushNotifications from '../api/registerForPushNotifications';
 import BASE_URL from '../BASE_URL';
-const SECURE_STORE_FACEBOOK_TOKEN = 'FACEBOOK_ACCESS_TOKEN';
+const SECURE_STORE_FACEBOOK_TOKEN = 'e69b06b8b35a9cbf3824ef0a1d3a78fb';
 
 export default dispatch => (() => {
 
