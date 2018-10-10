@@ -17,8 +17,8 @@ import {
   Platform
 } from 'react-native';
 import Dispatchers from '../redux/dispatchers';
-import StyledButton from '../components/StyledButton';
-import Waiting from '../components/Waiting';
+import StyledButton from '../shared/StyledButton';
+import Waiting from '../shared/Waiting';
 import Colors from '../constants/Colors';
 import { isAuthenticated, profile } from '../redux/selectors';
 import BASE_URL from '../BASE_URL';

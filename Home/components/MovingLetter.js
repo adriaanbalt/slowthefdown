@@ -2,7 +2,7 @@ import { FileSystem, Asset } from "expo";
 import React from "react";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise';
-import SVGLoader from '../lib/SVGLoader'
+import SVGLoader from './SVGLoader'
     
 
 export default class MovingLetter extends React.Component {

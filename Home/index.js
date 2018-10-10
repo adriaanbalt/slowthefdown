@@ -1,4 +1,6 @@
 import Expo, { KeepAwake, FileSystem, Asset } from "expo";
+import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
+// import THREEJS from "three";
 import React from 'react';
 import { connect } from 'react-redux';
 import {
@@ -19,14 +21,14 @@ import {
 
 import Dispatchers from '../redux/dispatchers';
 import { isAuthenticated } from '../redux/selectors';
-import Waiting from '../components/Waiting';
-import StyledButton from '../components/StyledButton';
-import Shader from "./Shaders/Shader";
-import MovingLetter from "./Shaders/MovingLetter";
-import SVGLoader from "./lib/SVGLoader";
 
-// import THREEJS from "three";
-import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
+import Waiting from '../shared/Waiting';
+import StyledButton from '../shared/StyledButton';
+import ShareTheNavigation from "../shared/shareTheNavigation"
+
+import Shader from "./components/Shader";
+import MovingLetter from "./components/MovingLetter";
+import SVGLoader from "./components/SVGLoader";
 
 const styles = StyleSheet.create({
   container: {
@@ -46,6 +48,7 @@ class HomeScreen extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log("HomeScreen", props )
 
     this.state = {
       fadeOutAnim: new Animated.Value(1),
@@ -56,6 +59,8 @@ class HomeScreen extends React.Component {
     };
     // Turn off extra warnings
     THREE.suppressExpoWarnings(true);
+
+    ShareTheNavigation.set(props.navigation);
   }
   componentDidMount() {
     this.setState({ loading: true });
@@ -90,7 +95,8 @@ class HomeScreen extends React.Component {
   }
 
   gotoProfile() {
-    console.log("gotoProfile");
+    console.log("gotoProfile" , this.props );
+    // this.props.navigation.navigate('Profile', {});
   }
 
   loadFont = async () => {
