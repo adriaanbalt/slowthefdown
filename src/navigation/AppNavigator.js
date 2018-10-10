@@ -5,6 +5,7 @@ import { createStackNavigator } from 'react-navigation';
 
 import HomeScreen from "../screens/Home";
 import ProfileScreen from '../screens/Profile';
+import HighscoresScreen from "../screens/Highscores";
 
 const AppNavigator = createStackNavigator(
   {
@@ -14,9 +15,12 @@ const AppNavigator = createStackNavigator(
     Profile: {
       screen: ProfileScreen
     },
+    Highscores: {
+      screen: HighscoresScreen
+    }
   },
   {
-    initialRouteName: 'Home'
+    initialRouteName: "Highscores"
   }
 );
 

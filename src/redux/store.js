@@ -9,6 +9,7 @@ const defaultState = {
   accessToken: null,
   user: {},
   users: {},
+  highscores: [],
 };
 
 function handleSetAction(state, action) {
@@ -31,6 +32,14 @@ function handleSetAction(state, action) {
         ...state.user,
         profile: value
       }
+    };
+  }
+
+
+  if (path === '/highscores') {
+    return {
+      ...state,
+      highscores: value
     };
   }
 

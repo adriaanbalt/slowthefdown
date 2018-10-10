@@ -22,3 +22,7 @@ export function userById(state, userId) {
 export function userHighscore(state) {
   return state.user.highscore;
 }
+
+export function highscores(state) {
+  return state.highscores;
+}

@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
 class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
-    headerTitle: 'Home'
   };
 
   constructor(props) {
@@ -93,9 +92,8 @@ class HomeScreen extends React.Component {
     });
   }
 
-  gotoProfile = () => {
-    console.log("gotoProfile" , this.props );
-    this.props.navigation.navigate('Profile', {});
+  gotoHighscores = () => {
+    this.props.navigation.navigate('Highscores', {});
   }
 
   loadFont = async () => {
@@ -222,7 +220,7 @@ class HomeScreen extends React.Component {
             height: 30,
             backgroundColor: 'transparent'
           }}
-          onPress={this.gotoProfile}>
+          onPress={this.gotoHighscores}>
           <Text style={{
             color: '#fff',
             fontSize: 16,
