@@ -22,13 +22,16 @@ export default dispatch => (() => {
     return dispatch(actions.set(path, value));
   };
 
-  const loadHighscores = () => {
-    return newRequest()
-      .get("/highscores")
-      .then(({ data }) => {
-        console.log ('highscores', data )
-        set("/highscores", data);
+  const getHighscores = () => {
+    // https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot#forEach
+    var query = firebase.database().ref("users").orderByKey();
+    const highscores = query.once("value")
+      .then(function (snapshot) {
+        return snapshot
       });
+    
+    console.log('getHighscores', highscores)
+    return highscores;
   };
 
 
@@ -90,7 +93,7 @@ export default dispatch => (() => {
     setFacebookAccessToken,
     logout,
     startFacebookLogin,
-    loadHighscores,
+    getHighscores,
   };
 });
 
