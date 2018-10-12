@@ -1,11 +1,31 @@
-const HighScoresDataSource = require('./HighScoresDataSource');
+const { MongoClient } = require('mongodb');
+const {
+    MONGO_URL, 
+    HIGHSCORES_COLLECTION
+} = require('../../config/mongo');
 
-module.exports = function*(HighScoresId) {
-  const HighScores = HighScoresDataSource.getById(HighScoresId);
+function* getHighscoreById(id, user, db) {
+  const response = yield db.collection(HIGHSCORES_COLLECTION).findOne({
+    id: id
+  });
 
-  if (!HighScores) {
-    throw console.error(`Invalid HighScores ID: ${HighScoresId}`);
+  if (!response) {
+    return [];
   }
 
-  return HighScores;
+  return response;
+}
+
+module.exports = function* (id, user) {
+    let highscore;
+
+    // connect to the DB (probably could just do this once?)
+    const db = yield MongoClient.connect(MONGO_URL);
+    try {
+        highscore = yield getHighscoreById(id, user, db);
+    } finally {
+        db.close();
+    }
+
+    return highscore;
 }
