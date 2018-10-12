@@ -49,9 +49,10 @@ export default dispatch => (() => {
 
 
   const logout = () => {
-    // Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-    //   set('/user/fbAccessToken', null);
-    // });
+    Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
+      set('/user/fbAccessToken', null);
+    });
+    firebase.auth().signOut();
   };
 
   const setFacebookAccessToken = token => {
