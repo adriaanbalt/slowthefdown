@@ -32,7 +32,7 @@ export default dispatch => (() => {
   };
 
 
-  const storeHighScore = (user, score) => {
+  const setHighscoreByUser = (user, score) => {
     if (user != null) {
       firebase.database().ref('users/' + user.uid).set({
         highscore: score
@@ -40,7 +40,7 @@ export default dispatch => (() => {
     }
   }
 
-  const setupHighscoreListener = (userId) => {
+  const listenHighscoreByUser = (userId) => {
     firebase.database().ref('users/' + userId).on('value', (snapshot) => {
       const highscore = snapshot.val().highscore;
       console.log("New high score: " + highscore);
@@ -60,7 +60,7 @@ export default dispatch => (() => {
     });
   };
 
-  const startFacebookLogin = async () => {
+  const login = async () => {
     const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
       FACEBOOK_APP_ID,
       { permissions: ["public_profile"] }

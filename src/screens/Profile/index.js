@@ -51,7 +51,7 @@ class ProfileScreen extends React.Component {
   componentDidMount() {
     this.setState({ loading: true });
     this.props
-      .startFacebookLogin()
+      .login()
       .then(user => {
         this.setState({ loading: false });
       })
@@ -59,10 +59,6 @@ class ProfileScreen extends React.Component {
         this.setState({ loading: false });
       });
   }
-
-  startFacebookLogin = () => {
-    this.props.startFacebookLogin().catch(e => console.log(e.message));
-  };
 
   navigateToGame = () => {
     this.props.navigation.navigate("Home", {});
@@ -86,7 +82,7 @@ class ProfileScreen extends React.Component {
     // return (
     //   <TouchableWithoutFeedback onPress={() => this.handleTester()}>
     //     <View style={styles.container}>
-    //       <StyledButton title="Login with Facebook" onPress={this.startFacebookLogin} />
+    //       <StyledButton title="Login with Facebook" onPress={this.login} />
     //     </View>
     //   </TouchableWithoutFeedback>
     // );
