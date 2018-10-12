@@ -5,6 +5,7 @@ import store from './store';
 import registerForPushNotifications from '../api/registerForPushNotifications';
 import BASE_URL from '../BASE_URL';
 const FACEBOOK_APP_ID = "331867204038135";
+const SECURE_STORE_FACEBOOK_TOKEN = "FACEBOOK_ACCESS_TOKEN";
 
 export default dispatch => (() => {
 
@@ -36,75 +37,39 @@ export default dispatch => (() => {
     // });
   };
 
-  const loadUser = () => {
-    return Expo.Facebook.logInWithReadPermissionsAsync(FACEBOOK_APP_ID).then( res => {
-      const {
-        token
-      } = res
+  const setFacebookAccessToken = token => {
+    return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
       set('/user/fbAccessToken', token);
-      console.log ( 'token', token )
-
-      if (!token) {
-        return;
-      }
-
-      let user = null;
-
-      return Promise.all([
-        newRequest(token).get('/user').catch(error => {
-          if (error.response.status === 401) {
-            logout();
-          }
-
-          throw error;
-        }).then(({ data }) => {
-          user = data;
-          set('/user/profile', data);
-
-          
-          //return loadDates(data._id, token);
-        }),
-        newRequest(token).get('/phone-number').then(({ data }) => set('/user/phoneNumber', data.phoneNumber))
-      ]).then(() => {
-
-        registerForPushNotifications(token);
-
-        return user;
-      });
     });
   };
 
-  const setFacebookAccessToken = token => {
-    // return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
-    //   set('/user/fbAccessToken', token);
-    //   return loadUser();
-    // });
-  };
+  const startFacebookLogin = async () => {
+    const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
+      FACEBOOK_APP_ID,
+      { permissions: ["public_profile"] }
+    );
 
-  const setProfileFields = (fields) => {
-    for (let key in fields) {
-      set(`/user/profile/${key}`, fields[key]);
-    }
+    console.log("startFacebookLogin token", type, token);
 
-    return newRequest(fbAccessToken()).put('/user', fields).then(() => loadUser());
-  };
-
-  const startFacebookLogin = () => Expo.Facebook.logInWithReadPermissionsAsync('______', {
-    permissions: ['public_profile', 'user_birthday'],
-    behavior: Expo.Constants.appOwnership === 'standalone' ? 'browser' : 'web'
-  }).then(({ type, token }) => {
     if (type === 'success') {
-      return setFacebookAccessToken(token);
-    }
-    throw new Error('Could not login!');
+      // store the token in redux reducer
+      setFacebookAccessToken( token )
 
-  });
+      // Build Firebase credential with the Facebook access token.
+      const credential = firebase.auth.FacebookAuthProvider.credential(token);
+      console.log( "firebase login to facebook ", credential)
+      // Sign in with credential from the Facebook user.
+      firebase.auth().signInWithCredential(credential).catch((error) => {
+        // Handle Errors here.
+      });
+      
+      registerForPushNotifications(token);
+    }
+  }
 
   return {
     set,
-    loadUser,
     setFacebookAccessToken,
-    setProfileFields,
     logout,
     startFacebookLogin,
     loadHighscores,
