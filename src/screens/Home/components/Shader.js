@@ -70,7 +70,7 @@ export default class SpinShader extends React.Component {
         }
 
         // const texture = await ExpoTHREE.loadAsync(someRemoteUrl);
-        const backgroundGeometry = new THREE.PlaneGeometry(3, 5);
+        const backgroundGeometry = new THREE.PlaneBufferGeometry(3, 5);
 
         var tuniform = {
             iTime: { type: 'f', value: 1 },
