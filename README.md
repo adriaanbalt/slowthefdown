@@ -8,6 +8,10 @@
 6. Start ngrok tunnel in different terminal window `ngrok http -subdomain=slowitdown 4337`
 7. On your mobile device, open Expo and load project (having an Expo login helps)
 
-## To publish to Apple store
+## How to publish to Apple store
 
 1. will add this soon...
+
+## Expo + Firebase
+
+[Reference](https://docs.expo.io/versions/latest/guides/using-firebase)
