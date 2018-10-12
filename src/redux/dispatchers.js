@@ -31,6 +31,23 @@ export default dispatch => (() => {
       });
   };
 
+
+  const storeHighScore = (user, score) => {
+    if (user != null) {
+      firebase.database().ref('users/' + user.uid).set({
+        highscore: score
+      });
+    }
+  }
+
+  const setupHighscoreListener = (userId) => {
+    firebase.database().ref('users/' + userId).on('value', (snapshot) => {
+      const highscore = snapshot.val().highscore;
+      console.log("New high score: " + highscore);
+    });
+  }
+
+
   const logout = () => {
     // Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
     //   set('/user/fbAccessToken', null);
