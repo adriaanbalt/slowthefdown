@@ -1,19 +1,13 @@
 import * as firebase from 'firebase'
 import BASE_URL from '../BASE_URL'
+import FIREBASE_CONSTANTS from '../constants/firebase'
 const FACEBOOK_APP_ID = "331867204038135"
 
 class API {
   
   constructor() {
     // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgip9A7gS0lGXFjhQApa_s4fVgcuDoBs8",
-      authDomain: "slowitdown-d1ac8.firebaseio.com",
-      databaseURL: "https://slowitdown-d1ac8.firebaseio.com",
-      storageBucket: "slowitdown-d1ac8.appspot.com"
-    }
-    
-    firebase.initializeApp(firebaseConfig)
+    firebase.initializeApp(FIREBASE_CONSTANTS)
 
     // Listen for authentication state to change.
     firebase.auth().onAuthStateChanged((user) => {
