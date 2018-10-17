@@ -20,7 +20,7 @@ import {
 } from "react-native";
 
 import Dispatchers from '../../redux/dispatchers';
-import { isAuthenticated } from '../../redux/selectors';
+import { isAuthenticated, getCurrentUserHighscore } from '../../redux/selectors';
 
 import Waiting from '../../shared/Waiting';
 import StyledButton from '../../shared/StyledButton';
@@ -59,9 +59,20 @@ class HomeScreen extends React.Component {
     THREE.suppressExpoWarnings(true);
 
     ShareTheNavigation.set(props.navigation);
+    this.props.initialize();
   }
   componentDidMount() {
     this.setState({ loading: true });
+    // this.props.getHighscores();
+    this.props
+      .login()
+      .then(res => {
+        console.log( 'home res from login', res )
+        // this.setState({ loading: false });
+      })
+      .catch(() => {
+        // this.setState({ loading: false });
+      });
   }
 
   componentWillMount() {
@@ -152,23 +163,32 @@ class HomeScreen extends React.Component {
     let elapsedMilliseconds;
     
     const over = () => {
+      this.elapsedHowLongHeldMilliseconds = Date.now();
       let deltaTime = (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds);
       if (this.startHowLongHeldMilliseconds === null) {
         this.startHowLongHeldMilliseconds = Date.now()
       } else {
         this.setState({ deltaTime });
       }
-      this.elapsedHowLongHeldMilliseconds = Date.now();
       movingLetter.over()
       background.over( deltaTime, this.state.mouse )
     }
     const out = () => {
+      // speed up letter
       movingLetter.out();
+      // speed up background shader
       background.out()
 
+      // reset constants
       this.elapsedHowLongHeldMilliseconds = Date.now();
-      let deltaTime = 0;
+      let deltaTime = (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds);
+      // let deltaTime = 0;
       this.startHowLongHeldMilliseconds = null;
+
+      // console.log("deltaTime", deltaTime );
+
+      // set highscore
+      // this.props.setHighscore( this.elapsedHowLongHeldMilliseconds )
     }
 
     const animate = p => {
@@ -184,10 +204,11 @@ class HomeScreen extends React.Component {
       
       raycaster.setFromCamera( this.state.mouse, camera );
       intersects = raycaster.intersectObjects( scene.children, true );
-      
+      // console.log("intersects.length", intersects.length);
       if ( intersects.length > 1 ) {
         over()
-      } else {
+      }
+      else {
         out()
       }
 
@@ -197,6 +218,7 @@ class HomeScreen extends React.Component {
     };
 
     animate();
+    this.setState({ loading: false });
   }
 
   renderGame() {
@@ -224,11 +246,31 @@ class HomeScreen extends React.Component {
           <Text style={{
             color: '#fff',
             fontSize: 16,
-            width,
             lineHeight: 30,
+            width,
             textAlign: 'center'
           }}>{this.state.deltaTime}</Text>
         </TouchableOpacity>
+        {
+          this.state.loading
+          &&
+          <View style={{
+            position: 'absolute',
+            width,
+            height,
+            backgroundColor: '#000',
+            zIndex: 10000,
+          }}
+          >
+          <Text style={{
+            color: '#fff',
+            fontSize: 16,
+            lineHeight: 30,
+            left: '50%',
+            top: '50%',
+          }}>Loading</Text>
+          </View>
+        }
         <Expo.GLView
           style={{ flex: 1 }}
           onContextCreate={this._onGLContextCreate}
@@ -255,5 +297,6 @@ class HomeScreen extends React.Component {
 }
 
 export default connect(state => ({
-  isAuthenticated: isAuthenticated(state)
+  isAuthenticated: isAuthenticated(state),
+  getCurrentUserHighscore: getCurrentUserHighscore(state),
 }), Dispatchers)(HomeScreen);

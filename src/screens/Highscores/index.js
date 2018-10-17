@@ -25,12 +25,8 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         padding: 20,
         transform: [
-        { translateY: Dimensions.get('window').height * 0.24 },
+            { translateY: Dimensions.get('window').height * 0.24 },
         ],
-        // backgroundColor: '#fff',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // backgroundColor: Colors.buttonBackgroundColor
     },
 
     waiting: {
@@ -59,14 +55,14 @@ class HighscoresScreen extends React.Component {
 
     componentDidMount() {
         this.setState({ loading: true });
-        this.props
-          .loadHighscores()
-          .then(highscores => {
-            this.setState({ loading: false });
-          })
-          .catch(() => {
-            this.setState({ loading: false });
-          });
+        // this.props
+        //   .getHighscores()
+        //   .then(highscores => {
+        //     this.setState({ loading: false });
+        //   })
+        //   .catch(() => {
+        //     this.setState({ loading: false });
+        //   });
     }
 
     navigateToGame = () => {
@@ -82,14 +78,16 @@ class HighscoresScreen extends React.Component {
             highscores
         } = this.props;
         
-        return <ScrollView style={styles.container}>
-            <Text>Highscores</Text>
-            {highscores.map((obj, i) => (
-              <Text key={`highscore-${i}`}>{obj.highscore}</Text>
-            ))}
-            <StyledButton title="Go To Game" onPress={this.navigateToGame} />
-            <StyledButton title="Go To Your Profile" onPress={this.navigateToProfile} />
-          </ScrollView>;
+        return (
+            <ScrollView style={styles.container}>
+                <Text>Highscores</Text>
+                {highscores.map((obj, i) => (
+                <Text key={`highscore-${i}`}>{obj.highscore}</Text>
+                ))}
+                <StyledButton title="Go To Game" onPress={this.navigateToGame} />
+                <StyledButton title="Go To Your Profile" onPress={this.navigateToProfile} />
+            </ScrollView>
+        );
     }
 }
 
