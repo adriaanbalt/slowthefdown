@@ -19,7 +19,7 @@ export function userById(state, userId) {
   return Object.values(users(state)).find(({ _id }) => _id === userId);
 }
 
-export function userHighscore(state) {
+export function getCurrentUserHighscore(state) {
   return state.user.highscore;
 }
 
