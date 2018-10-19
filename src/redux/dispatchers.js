@@ -13,7 +13,7 @@ export default dispatch => (() => {
 
   // used to set values to the reducer
   const set = (path, value) => {
-    console.log( 'set', path, value )
+    // console.log( 'set', path, value )
     return dispatch(actions.set(path, value))
   }
 
@@ -27,15 +27,25 @@ export default dispatch => (() => {
 
     // // Listen for authentication state to change.
     firebase.auth().onAuthStateChanged(user => {
-      console.log("user", user.uid);
       if (user != null) {
         // console.log("user", user);
 
         // set("/user", user);
         setupUserData( user ) 
-        
+
+        var query = firebase.database().ref("users").orderByKey();
+        query.once("value")
+          .then(( snapshot ) => {
+            snapshot.forEach(( childSnapshot ) => {
+              // childData will be the actual contents of the child
+              var childData = childSnapshot.val();
+              console.log("childData", childData.highscore);
+            });
+          });
+
         firebase.database().ref('users/' + user.uid).on('value', (snapshot) => {
-          const hs = snapshot.val().highscore
+          const hs = snapshot.val() && snapshot.val().highscore
+          console.log( 'hs', hs )
           set("/user/highscore", hs );
         })
         // this.listenHighscoreByUser(firebase.auth().currentUser.highscore);
@@ -86,12 +96,14 @@ export default dispatch => (() => {
 
   const logout = () => {
     Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
+      console.log( 'remove access token from state')
       set('/user/fbAccessToken', null)
     })
     firebase.auth().signOut()
   }
 
   const setFacebookAccessToken = token => {
+    console.log("setFacebookAccessToken", token);
     return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
       set('/user/fbAccessToken', token)
     })

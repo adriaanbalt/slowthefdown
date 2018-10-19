@@ -236,7 +236,7 @@ class HomeScreen extends React.Component {
           style={{
             position: 'absolute',
             zIndex: 1000,
-            top: height - 60,
+            top: 30,
             left: 0,
             height: 30,
             backgroundColor: 'transparent'
@@ -245,10 +245,17 @@ class HomeScreen extends React.Component {
           <Text style={{
             color: '#fff',
             fontSize: 16,
-            lineHeight: 30,
+            lineHeight: 25,
             width,
             textAlign: 'center'
           }}>{this.props.currentUserHighscore}</Text>
+          <Text style={{
+            color: '#fff',
+            fontSize: 16,
+            lineHeight: 25,
+            width,
+            textAlign: 'center'
+          }}>{this.state.deltaTime}</Text>
         </TouchableOpacity>
         {
           this.state.loading

@@ -87,9 +87,20 @@ class ProfileScreen extends React.Component {
     //   </TouchableWithoutFeedback>
     // );
 
+    console.log('this.props.isAuthenticated', this.props.isAuthenticated )
     return (
       <ScrollView style={styles.container}>
         <Text>Profile</Text>
+        {
+          !this.props.isAuthenticated
+          &&
+          <StyledButton title="Login" onPress={this.props.login} />
+        }
+        {
+          this.props.isAuthenticated
+          &&
+          <StyledButton title="Logout" onPress={this.props.logout} />
+        }
         <StyledButton title="Go To Game" onPress={this.navigateToGame} />
         <StyledButton
           title="Go To Your Highscores"
