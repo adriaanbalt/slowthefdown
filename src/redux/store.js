@@ -5,6 +5,7 @@ import {
 } from './actions';
 
 const defaultState = {
+  initialized: false,
   authenticatedUser: null,
   accessToken: null,
   user: {},
@@ -43,7 +44,7 @@ function handleSetAction(state, action) {
     };
   }
 
-  for (const key of ['users']) {
+  for (const key of ['user']) {
     if (path.indexOf(`/${key}/`) === 0) {
       const id = path.slice(`/${key}/`.length);
       return {
