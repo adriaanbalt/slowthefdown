@@ -55,7 +55,6 @@ export default class App extends React.Component {
     //     />
     //   );
     // }
-    console.log('app ', (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) )
     return (
       <Provider store={store}>
         <View style={styles.container}>
