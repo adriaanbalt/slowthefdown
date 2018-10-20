@@ -13,27 +13,37 @@ import Dispatchers from '../../redux/dispatchers';
 import StyledButton from '../../shared/StyledButton';
 import Waiting from '../../shared/Waiting';
 import Colors from '../../constants/Colors';
+import NavigationUI from '../../shared/NavigationUI'
+import Header from "../../shared/Header";
 import { isAuthenticated, profile } from '../../redux/selectors';
 
+var { height, width } = Dimensions.get('window') 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: 0,
-        padding: 20,
-        transform: [
-            { translateY: Dimensions.get('window').height * 0.24 },
-        ],
+      width,
+      height,
+      flex: 1,
+      paddingTop: 50,
+      padding: 20,
+      backgroundColor: Colors.backgroundColor,
     },
-
-    waiting: {
-        backgroundColor: Colors.buttonBackgroundColor
+    textDisplayName: {
+      paddingTop: 10,
+      paddingBottom: 10,
+      color: Colors.fontColor,
+      fontSize: 25,
     },
-
-    scrollContainer: {
-        flex: 1,
-        backgroundColor: Colors.buttonBackgroundColor
+    textHighscore: {
+      paddingTop: 10,
+      paddingBottom: 10,
+      color: Colors.fontColor,
+      fontSize: 20,
     },
-
+    picture: {
+      alignSelf: 'flex-end',
+      width: 75,
+      height: 75,
+    }
 });
 
 class ProfileScreen extends React.Component {
@@ -62,7 +72,7 @@ class ProfileScreen extends React.Component {
   }
 
   navigateToGame = () => {
-    this.props.navigation.navigate("Home", {});
+    this.props.navigation.navigate("Game", {});
   };
   navigateToHighscores = () => {
     this.props.navigation.navigate("Highscores", {});
@@ -70,42 +80,56 @@ class ProfileScreen extends React.Component {
   render() {
     const { errorMessage } = this.props;
     return (
-      <ScrollView style={styles.container}>
-        <Text>Profile</Text>
-        {
-          this.props.isAuthenticated
-          &&
-          this.props.profile
-          &&
-          <View>
-            {
-              this.props.profile.photoURL
-              &&
-              <Image
-                style={{ width: 50, height: 50 }}
-                source={{ uri: this.props.profile.photoURL }}
-              />
-            }
-            <Text>{ this.props.profile.displayName }</Text>
-            <Text>Highscore: { this.props.profile.highscore }</Text>
+      <View style={styles.container}>
+        <View>
+          <Header>Profile</Header>
+          <View style={{
+            justifyContent: 'space-between',
+            alignContent: 'space-between',
+            flexDirection: 'column',
+          }}>
+          {
+            this.props.isAuthenticated
+            &&
+            this.props.profile
+            &&
+            <View style={{
+              paddingBottom: 20,
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+            }}>
+              <View>
+                <Text style={styles.textDisplayName}>{ this.props.profile.displayName }</Text>
+                <Text style={styles.textHighscore}>Highscore: { this.props.profile.highscore }</Text>
+              </View>
+              {
+                this.props.profile.photoURL
+                &&
+                <Image
+                  style={styles.picture}
+                  source={{ uri: this.props.profile.photoURL }}
+                />
+              }
+            </View>
+          }
+          {
+            !this.props.isAuthenticated
+            &&
+            <StyledButton title="Login" onPress={this.props.login} />
+          }
+          {
+            this.props.isAuthenticated
+            &&
+            <StyledButton title="Logout" onPress={this.props.logout} />
+          }
           </View>
-        }
-        {
-          !this.props.isAuthenticated
-          &&
-          <StyledButton title="Login" onPress={this.props.login} />
-        }
-        {
-          this.props.isAuthenticated
-          &&
-          <StyledButton title="Logout" onPress={this.props.logout} />
-        }
-        <StyledButton title="Go To Game" onPress={this.navigateToGame} />
-        <StyledButton
-          title="Go To Your Highscores"
-          onPress={this.navigateToHighscores}
-        />
-      </ScrollView>
+        </View>
+        <NavigationUI 
+          leftButtonIcon={'Game'}
+          leftButtonClick={this.navigateToGame}
+          rightButtonIcon={'Highscores'}
+          rightButtonClick={this.navigateToHighscores} />
+      </View>
     );
   }
 }

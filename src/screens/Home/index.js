@@ -25,6 +25,7 @@ import { isAuthenticated, getCurrentUserHighscore } from '../../redux/selectors'
 import Waiting from '../../shared/Waiting'
 import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
+import NavigationUI from '../../shared/NavigationUI'
 
 import Shader from "./components/Shader"
 import MovingLetter from "./components/MovingLetter"
@@ -210,7 +211,12 @@ class HomeScreen extends React.Component {
     animate()
     this.setState({ loading: false })
   }
-
+  navigateToHighscores = () => {
+      this.props.navigation.navigate("Highscores", {});
+  }
+  navigateToProfile = () => {
+      this.props.navigation.navigate("Profile", {});
+  }
   renderGame() {
     var { height, width } = Dimensions.get('window')
     return (
@@ -222,32 +228,7 @@ class HomeScreen extends React.Component {
             height,
           }
         ]}
-      >
-        <TouchableOpacity 
-          style={{
-            position: 'absolute',
-            zIndex: 1000,
-            top: 30,
-            left: 0,
-            height: 30,
-            backgroundColor: 'transparent'
-          }}
-          onPress={this.navigateToHighscores}>
-          <Text style={{
-            color: '#fff',
-            fontSize: 16,
-            lineHeight: 25,
-            width,
-            textAlign: 'center'
-          }}>{this.props.currentUserHighscore}</Text>
-          <Text style={{
-            color: '#fff',
-            fontSize: 16,
-            lineHeight: 25,
-            width,
-            textAlign: 'center'
-          }}>{this.state.deltaTime}</Text>
-        </TouchableOpacity>
+        >
         {
           this.state.loading
           &&
@@ -268,6 +249,44 @@ class HomeScreen extends React.Component {
             textAlign: 'center'
           }}>Loading</Text>
           </View>
+        }
+        {
+          !this.state.loading
+          &&
+          <TouchableOpacity 
+            style={{
+              position: 'absolute',
+              zIndex: 1000,
+              top: 30,
+              left: 0,
+              height: 30,
+              backgroundColor: 'transparent'
+            }}
+            onPress={this.navigateToHighscores}>
+            <Text style={{
+              color: '#fff',
+              fontSize: 16,
+              lineHeight: 25,
+              width,
+              textAlign: 'center'
+            }}>{this.props.currentUserHighscore}</Text>
+            <Text style={{
+              color: '#fff',
+              fontSize: 16,
+              lineHeight: 25,
+              width,
+              textAlign: 'center'
+            }}>{this.state.deltaTime}</Text>
+          </TouchableOpacity>
+        }
+        {
+          !this.state.loading
+          &&
+          <NavigationUI 
+              leftButtonIcon={'Highscores'}
+              leftButtonClick={this.navigateToHighscores}
+              rightButtonIcon={'Profile'}
+            rightButtonClick={this.navigateToProfile} />
         }
         <Expo.GLView
           style={{ flex: 1 }}

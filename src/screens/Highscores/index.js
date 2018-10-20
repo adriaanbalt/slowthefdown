@@ -15,22 +15,28 @@ import {
 } from "../../redux/selectors";
 import Dispatchers from '../../redux/dispatchers';
 import StyledButton from '../../shared/StyledButton';
-import Waiting from '../../shared/Waiting';
 import Colors from '../../constants/Colors';
+import NavigationUI from '../../shared/NavigationUI'
+import Header from '../../shared/Header'
 import { translate } from 'gl-matrix/src/gl-matrix/mat4';
+
+var { height, width } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
     container: {
+        width,
+        height,
         flex: 1,
-        paddingTop: 0,
+        paddingTop: 50,
         padding: 20,
-        transform: [
-            { translateY: Dimensions.get('window').height * 0.24 },
-        ],
+        backgroundColor: Colors.backgroundColor,
     },
 
-    waiting: {
-        backgroundColor: Colors.buttonBackgroundColor
+    highscoreRow: {
+        height: 40,
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        flexDirection: 'row',
     },
 
     scrollContainer: {
@@ -66,7 +72,7 @@ class HighscoresScreen extends React.Component {
     }
 
     navigateToGame = () => {
-        this.props.navigation.navigate("Home", {});
+        this.props.navigation.navigate("Game", {});
     }
     navigateToProfile = () => {
         this.props.navigation.navigate("Profile", {});
@@ -77,33 +83,31 @@ class HighscoresScreen extends React.Component {
             errorMessage,
             highscores
         } = this.props;
-        var { height, width } = Dimensions.get('window')
         
         return (
             <View style={styles.container}>
-                <Text style={{
-                    textAlign: 'center'
-                }}>Highscores</Text>
-                {highscores.sort( (a,b) => {
-                    if ( a.highscore < b.highscore ) return 1
-                    if ( a.highscore > b.highscore ) return -1
-                    return 0;
-                }).map((obj, i) => (
-                    <View
-                        style={{
-                            flexWrap: 'wrap',
-                            alignItems: 'flex-start',
-                            flexDirection: 'row',
-                        }} 
-                        key={`highscore-${i}`}>
-                        <Text style={{
-                            width,
-                            textAlign: 'center'
-                        }}>{obj.displayName} - {obj.highscore}</Text>
-                    </View>
-                ))}
-                <StyledButton title="Go To Game" onPress={this.navigateToGame} />
-                <StyledButton title="Go To Your Profile" onPress={this.navigateToProfile} />
+                <View>
+                    <Header>Highscores</Header>
+                    {highscores.sort( (a,b) => {
+                        if ( a.highscore < b.highscore ) return 1
+                        if ( a.highscore > b.highscore ) return -1
+                        return 0;
+                    }).map((obj, i) => (
+                        <View
+                            style={styles.highscoreRow} 
+                            key={`highscore-${i}`}>
+                            <Text style={{
+                                textAlign: 'center',
+                                color: Colors.fontColor,
+                            }}>{i+1}. {obj.displayName} - {obj.highscore}</Text>
+                        </View>
+                    ))}
+                </View>
+                <NavigationUI 
+                    leftButtonIcon={'Game'}
+                    leftButtonClick={this.navigateToGame}
+                    rightButtonIcon={'Profile'}
+                    rightButtonClick={this.navigateToProfile} />
             </View>
         );
     }
