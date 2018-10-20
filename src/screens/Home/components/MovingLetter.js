@@ -84,14 +84,11 @@ export default class MovingLetter extends React.Component {
     }
 
     update(time, mouseX, mouseY) {
-        // console.log( 'moving letter ', this.speed, this.progress )
         this.noise = this.simplex.noise2D(this.progress, 0);
         this.dx = (Math.cos((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // X distance from center - movement with speed
         this.dy = (Math.sin((this.progress)) * (this.radius * (this.noise)));//  + (Math.sin( (time * (1 * this.speed) )) * 200) ; // Y distance from center - movement with speed over time
         this.mesh.position.x = this.dx;
         this.mesh.position.y = this.dy;
-
-        // console.log("time", time, this.progress );
 
         // this.rotation.x += 0.1;
         // this.rotation.y += 0.1;

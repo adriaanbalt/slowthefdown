@@ -96,7 +96,6 @@ export default dispatch => (() => {
   }
 
   const setFacebookAccessToken = token => {
-    console.log("setFacebookAccessToken", token);
     return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
       set('/user/fbAccessToken', token)
     })
@@ -106,7 +105,6 @@ export default dispatch => (() => {
   }
   const logout = () => {
     Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-      console.log( 'remove access token from state')
       set('/user/fbAccessToken', null)
     })
     firebase.auth().signOut()

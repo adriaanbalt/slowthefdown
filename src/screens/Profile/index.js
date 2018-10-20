@@ -69,26 +69,6 @@ class ProfileScreen extends React.Component {
   };
   render() {
     const { errorMessage } = this.props;
-
-    // if (this.state.loading || errorMessage) {
-    //   return (
-    //     <Waiting style={styles.waiting} loading={this.state.loading} errorMessage={errorMessage} onReset={this.props.resetPhoneNumberVerification} />
-    //   );
-    // }
-
-    // if (this.props.isAuthenticated && this.props.profile) {
-    //   return this.renderLoggedIn();
-    // }
-
-    // return (
-    //   <TouchableWithoutFeedback onPress={() => this.handleTester()}>
-    //     <View style={styles.container}>
-    //       <StyledButton title="Login with Facebook" onPress={this.login} />
-    //     </View>
-    //   </TouchableWithoutFeedback>
-    // );
-
-    console.log('this.props.profile', this.props.profile )
     return (
       <ScrollView style={styles.container}>
         <Text>Profile</Text>

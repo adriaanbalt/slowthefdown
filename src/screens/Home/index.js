@@ -59,7 +59,6 @@ class HomeScreen extends React.Component {
     THREE.suppressExpoWarnings(true)
 
     ShareTheNavigation.set(props.navigation)
-    console.log( 'initialize' )
     this.props.initialize()
   }
   componentDidMount() {
@@ -67,13 +66,6 @@ class HomeScreen extends React.Component {
     // this.props.getHighscores()
     this.props
       .login()
-      .then(res => {
-        console.log( 'home res from login', res )
-        // this.setState({ loading: false })
-      })
-      .catch(() => {
-        // this.setState({ loading: false })
-      })
   }
 
   componentWillMount() {
@@ -203,7 +195,6 @@ class HomeScreen extends React.Component {
       
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
-      // console.log("intersects.length", intersects.length)
       if ( intersects.length > 1 ) {
         over()
       }
