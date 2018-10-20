@@ -5,7 +5,7 @@
     "slug": "snack-slowdown",
     "privacy": "unlisted",
     "sdkVersion": "24.0.0",
-    "version": "5.0.0",
+    "version": "6.0.0",
     "orientation": "portrait",
     "primaryColor": "#000000",
     "icon": "./assets/expo-icon.png",
