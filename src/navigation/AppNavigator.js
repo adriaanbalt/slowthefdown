@@ -9,7 +9,7 @@ import HighscoresScreen from "../screens/Highscores";
 
 const AppNavigator = createStackNavigator(
   {
-    Home: {
+    Game: {
       screen: HomeScreen
     },
     Profile: {
@@ -20,7 +20,7 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
-    initialRouteName: "Home"
+    initialRouteName: "Game"
   }
 );
 
