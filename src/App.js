@@ -46,15 +46,15 @@ export default class App extends React.Component {
   // ---- END NOTIFICIATION BINDING --- //
 
   render() {
-    // if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
-    //   return (
-    //     <AppLoading
-    //       startAsync={this._loadResourcesAsync}
-    //       onError={this._handleLoadingError}
-    //       onFinish={this._handleFinishLoading}
-    //     />
-    //   );
-    // }
+    if (!this.state.isLoadingComplete) {
+      return (
+        <AppLoading
+          startAsync={this._loadResourcesAsync}
+          onError={this._handleLoadingError}
+          onFinish={this._handleFinishLoading}
+        />
+      );
+    }
     return (
       <Provider store={store}>
         <View style={styles.container}>
@@ -68,13 +68,19 @@ export default class App extends React.Component {
 
   }
 
-  // _loadResourcesAsync = async () => {
-  //   return Promise.all([
-  //     Asset.loadAsync([
-  //       require('./assets/images/stars.jpg'),
-  //     ]),
-  //   ]);
-  // };
+  _loadResourcesAsync = async () => {
+    return Promise.all([
+      Asset.loadAsync([
+      ]),
+      Font.loadAsync({
+        // This is the font that we are using for our tab bar
+        ...Ionicons.font,
+        // We include SpaceMono because we use it in HomeScreen.js. Feel free
+        // to remove this if you are not using it in your app
+      }),
+    ]);
+  };
+
 
   _handleLoadingError = error => {
     // In this case, you might want to report the error to your error
