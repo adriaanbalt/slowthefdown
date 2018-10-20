@@ -272,8 +272,9 @@ class HomeScreen extends React.Component {
             color: '#fff',
             fontSize: 16,
             lineHeight: 30,
-            left: '50%',
             top: '50%',
+            width,
+            textAlign: 'center'
           }}>Loading</Text>
           </View>
         }

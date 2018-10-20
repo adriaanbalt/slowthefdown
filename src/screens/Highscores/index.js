@@ -77,16 +77,34 @@ class HighscoresScreen extends React.Component {
             errorMessage,
             highscores
         } = this.props;
+        var { height, width } = Dimensions.get('window')
         
         return (
-            <ScrollView style={styles.container}>
-                <Text>Highscores</Text>
-                {highscores.map((obj, i) => (
-                <Text key={`highscore-${i}`}>{obj.highscore}</Text>
+            <View style={styles.container}>
+                <Text style={{
+                    textAlign: 'center'
+                }}>Highscores</Text>
+                {highscores.sort( (a,b) => {
+                    if ( a.highscore < b.highscore ) return 1
+                    if ( a.highscore > b.highscore ) return -1
+                    return 0;
+                }).map((obj, i) => (
+                    <View
+                        style={{
+                            flexWrap: 'wrap',
+                            alignItems: 'flex-start',
+                            flexDirection: 'row',
+                        }} 
+                        key={`highscore-${i}`}>
+                        <Text style={{
+                            width,
+                            textAlign: 'center'
+                        }}>{obj.displayName} - {obj.highscore}</Text>
+                    </View>
                 ))}
                 <StyledButton title="Go To Game" onPress={this.navigateToGame} />
                 <StyledButton title="Go To Your Profile" onPress={this.navigateToProfile} />
-            </ScrollView>
+            </View>
         );
     }
 }

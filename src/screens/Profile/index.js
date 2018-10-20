@@ -6,7 +6,8 @@ import {
     StyleSheet,
     Text,
     View,
-    Dimensions
+    Dimensions,
+    Image,
 } from 'react-native';
 import Dispatchers from '../../redux/dispatchers';
 import StyledButton from '../../shared/StyledButton';
@@ -87,10 +88,28 @@ class ProfileScreen extends React.Component {
     //   </TouchableWithoutFeedback>
     // );
 
-    console.log('this.props.isAuthenticated', this.props.isAuthenticated )
+    console.log('this.props.profile', this.props.profile )
     return (
       <ScrollView style={styles.container}>
         <Text>Profile</Text>
+        {
+          this.props.isAuthenticated
+          &&
+          this.props.profile
+          &&
+          <View>
+            {
+              this.props.profile.photoURL
+              &&
+              <Image
+                style={{ width: 50, height: 50 }}
+                source={{ uri: this.props.profile.photoURL }}
+              />
+            }
+            <Text>{ this.props.profile.displayName }</Text>
+            <Text>Highscore: { this.props.profile.highscore }</Text>
+          </View>
+        }
         {
           !this.props.isAuthenticated
           &&

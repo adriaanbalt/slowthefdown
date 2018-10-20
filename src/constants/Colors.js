@@ -12,6 +12,6 @@ export default {
   noticeBackground: tintColor,
   noticeText: '#fff',
 
-  buttonBackgroundColor: '#F2647A',
+  buttonBackgroundColor: '#999',
   buttonForegroundColor: '#fff'
 };

@@ -4,7 +4,7 @@ export function isAuthenticated(state) {
 }
 
 export function profile(state) {
-  return state.user.profile;
+  return state.user;
 }
 
 export function fbAccessToken(state) {
