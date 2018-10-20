@@ -26,6 +26,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.balt.slowdown"
+    },
+    "splash": {
+      "backgroundColor": "#000000"
     }
   },
   "facebookScheme": "fb331867204038135",
