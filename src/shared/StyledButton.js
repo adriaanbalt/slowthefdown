@@ -19,6 +19,7 @@ class StyledButton extends React.Component {
 
       return <View style={{
         borderWidth: 1,
+        marginBottom: 10,
         borderColor: Colors.fontColor,
       }}>{this.renderButton(buttonProps)}</View>;
     }
