@@ -33,15 +33,12 @@ const styles = StyleSheet.create({
     },
 
     highscoreRow: {
-        height: 40,
-        flexWrap: 'wrap',
-        alignItems: 'flex-start',
+        flexWrap: 'nowrap',
         flexDirection: 'row',
-    },
-
-    scrollContainer: {
-        flex: 1,
-        backgroundColor: Colors.buttonBackgroundColor
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderBottomColor: "#FFF",
+        borderBottomWidth: 1,
     },
 
 });
@@ -83,33 +80,50 @@ class HighscoresScreen extends React.Component {
             errorMessage,
             highscores
         } = this.props;
+        const dname = "Adriaan Balt Louis Scholvinck"
         
-        return (
-            <View style={styles.container}>
-                <View>
-                    <Header>Highscores</Header>
-                    {highscores.sort( (a,b) => {
-                        if ( a.highscore < b.highscore ) return 1
-                        if ( a.highscore > b.highscore ) return -1
-                        return 0;
-                    }).map((obj, i) => (
-                        <View
-                            style={styles.highscoreRow} 
-                            key={`highscore-${i}`}>
-                            <Text style={{
-                                textAlign: 'center',
-                                color: Colors.fontColor,
-                            }}>{i+1}. {obj.displayName} - {obj.highscore}</Text>
-                        </View>
-                    ))}
-                </View>
-                <NavigationUI 
-                    leftButtonIcon={'Game'}
-                    leftButtonClick={this.navigateToGame}
-                    rightButtonIcon={'Profile'}
-                    rightButtonClick={this.navigateToProfile} />
+        return <View style={styles.container}>
+            <View>
+              <Header>Top 10 Highscores</Header>
+              {highscores
+                .sort((a, b) => {
+                  if (a.highscore < b.highscore) return 1;
+                  if (a.highscore > b.highscore) return -1;
+                  return 0;
+                })
+                .slice(0,10)
+                .map((obj, i) => (
+                  <View
+                    style={styles.highscoreRow}
+                    key={`highscore-${i}`}
+                  >
+                    <Text
+                      style={{
+                        fontSize: i === 0 ? 22 : 16,
+                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                      }}
+                    >{i + 1}. </Text>
+                    <Text
+                      style={{
+                        fontSize: i === 0 ? 22 : 16,
+                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                      }}
+                    >{obj.displayName.substring(0,20)} </Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: i === 0 ? 22 : 16,
+                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                        textAlign: "right",
+                        justifyContent: "flex-end",
+                        alignSelf: "flex-end"
+                      }}
+                    >{obj.highscore}</Text>
+                  </View>
+                ))}
             </View>
-        );
+            <NavigationUI leftButtonIcon={"Game"} leftButtonClick={this.navigateToGame} rightButtonIcon={"Profile"} rightButtonClick={this.navigateToProfile} />
+          </View>;
     }
 }
 
