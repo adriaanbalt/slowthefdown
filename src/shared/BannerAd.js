@@ -17,7 +17,7 @@ var { height, width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     container: {
-        paddingBottom: 20
+        paddingBottom: 0
     },
 });
 
@@ -28,13 +28,17 @@ class BannerAd extends React.Component {
     }
 
   render() {
+    const { height, width } = Dimensions.get('window') 
+    let bannerSize = "fullBanner"
+    if ( width <= 320 ) {
+        bannerSize = "banner"
+    }
     return (
       <View style={styles.container}>
         <AdMobBanner
-          bannerSize="fullBanner"
+          bannerSize={bannerSize} // depends on device size
           adUnitID={AdMob.bannerAdUnitId} // Test ID, Replace with your-admob-unit-id
           onDidFailToReceiveAdWithError={this.bannerError}
-          testDevices="SIMULATOR"
         />
       </View>
     );

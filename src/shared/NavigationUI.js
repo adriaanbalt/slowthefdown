@@ -28,7 +28,7 @@ class NavigationUI extends React.Component {
           {
             position: 'absolute',
             zIndex: 1000,
-            bottom: 100,
+            top: height-120, // avoid the banner
             width,
             height: 80,
             padding: 20,

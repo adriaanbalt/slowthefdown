@@ -10,11 +10,7 @@ import BannerAd from './shared/BannerAd'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  statusBarUnderlay: {
-    height: 24,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: '#000',
   },
 });
 
@@ -59,8 +55,6 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />}
           <KeepAwake />
           <AppNavigator />
           <BannerAd></BannerAd>
