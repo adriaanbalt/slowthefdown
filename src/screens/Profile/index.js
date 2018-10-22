@@ -62,7 +62,7 @@ class ProfileScreen extends React.Component {
   componentDidMount() {
     this.setState({ loading: true });
     this.props
-      .login()
+      .checkUserAccessToken()
       .then(user => {
         this.setState({ loading: false });
       })

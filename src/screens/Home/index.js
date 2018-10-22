@@ -64,9 +64,6 @@ class HomeScreen extends React.Component {
   }
   componentDidMount() {
     this.setState({ loading: true })
-    // this.props.getHighscores()
-    this.props
-      .login()
   }
 
   componentWillMount() {

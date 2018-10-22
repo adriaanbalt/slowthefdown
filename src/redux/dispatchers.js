@@ -1,12 +1,12 @@
-import Expo from 'expo'
-const actions = require("./actions");
-import axios from 'axios'
-import store from './store'
-import registerForPushNotifications from '../api/registerForPushNotifications'
-import API from '../api'
-import * as firebase from "firebase";
-import FIREBASE_CONSTANTS from "../constants/firebase";
-const FACEBOOK_APP_ID = "331867204038135";
+import Expo from "expo"
+const actions = require("./actions")
+import axios from "axios"
+import store from "./store"
+import registerForPushNotifications from "../api/registerForPushNotifications"
+import API from "../api"
+import * as firebase from "firebase"
+import FIREBASE_CONSTANTS from "../constants/firebase"
+const FACEBOOK_APP_ID = "331867204038135"
 const SECURE_STORE_FACEBOOK_TOKEN = "FACEBOOK_ACCESS_TOKEN"
 
 export default dispatch => (() => {
@@ -19,62 +19,76 @@ export default dispatch => (() => {
   const initialize = () => {
     // Initialize Firebase
     if ( !store.getState().initialized ){
-      firebase.initializeApp(FIREBASE_CONSTANTS);
-      set('/initialized', true)
+      firebase.initializeApp(FIREBASE_CONSTANTS)
+      set("/initialized", true)
     }
 
+    getHighscores()
+    
     // // Listen for authentication state to change.
     firebase.auth().onAuthStateChanged(user => {
       if (user != null) {
         setupUserData( user ) 
 
-        getHighscores()
 
-        // get the current user's highscore
-        firebase.database().ref('users/' + user.uid).on('value', (snapshot) => {
+        // get the current user"s highscore
+        firebase.database().ref("users/" + user.uid).on("value", (snapshot) => {
           const hs = snapshot.val() && snapshot.val().highscore
-          set("/user/highscore", hs );
+          set("/user/highscore", hs )
         })
       }
       // Do other things
-    });
+    })
   }
     
   const setupUserData = ( user ) => {
     setUserToDb( user )
-    set("/user/highscore", user.highscore);
+    set("/user/highscore", user.highscore)
     set("/user/email", user.email )
-    set("/user/displayName", user.displayName)
-    set("/user/lastLoginAt", Date.now() );
-    set("/user/phoneNumber",user.phoneNumber )
+    set("/user/displayName", user.displayName )
+    set("/user/lastLoginAt", Date.now() )
+    set("/user/phoneNumber", user.phoneNumber )
     set("/user/photoURL", user.photoURL )
+  }
+
+  const clearUserData = () => {
+    set("/user/highscore", null )
+    set("/user/email", null )
+    set("/user/displayName", null )
+    set("/user/lastLoginAt", null )
+    set("/user/phoneNumber", null )
+    set("/user/photoURL", null )
   }
 
   const fbAccessToken = () => store.getState().user.fbAccessToken
 
   const getHighscores = () => {
-    // get all users' highscores
-    var query = firebase.database().ref("users");
+    // get all users" highscores
+    var query = firebase.database().ref("users")
     query.once("value")
       .then((snapshot) => {
         let highscores = []
         snapshot.forEach((childSnapshot) => {
-          highscores.push(childSnapshot.val());
-        });
-        set("/highscores", highscores);
-      });
+          highscores.push(childSnapshot.val())
+        })
+        set("/highscores", highscores)
+      })
   }
 
   const setHighscore = (score) => {
-    const user = firebase.auth().currentUser;
-    const highscore = store.getState().user.highscore;
-    if (user != null && highscore < score) {
+    const user = firebase.auth().currentUser
+    const highscore = store.getState().user.highscore
+    // if the user is defined
+    // if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
+    // if the user"s highscore is less than the score sent, then it shoudl be set to the score
+    if (user != null && (highscore === undefined || highscore < score)) {
       firebase
         .database()
         .ref("users/" + user.uid)
         .update({ 
           highscore: score
-        });
+        })
+      set("/user/highscore", score)
     }
     getHighscores()
   }
@@ -88,7 +102,7 @@ export default dispatch => (() => {
         lastLoginAt: Date.now(),
         email: user.email,
         photoURL: user.photoURL,
-      });
+      })
   }
 
   const listenHighscoreByUser = (userId) => {
@@ -97,22 +111,37 @@ export default dispatch => (() => {
 
   const setFacebookAccessToken = token => {
     return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
-      set('/user/fbAccessToken', token)
+      set("/user/fbAccessToken", token)
     })
   }
   const getFacebookAccessToken = () => {
     return Expo.SecureStore.getItemAsync(SECURE_STORE_FACEBOOK_TOKEN)
   }
+  const deleteUserAccount = () => {
+    const user = firebase.auth().currentUser
+    if ( user != null ) {
+      user
+        .delete()
+        .then( (e) => {
+          console.log( "deleted user", e)
+          set("/user", null)
+        })
+        .catch( (error) => {
+          // An error happened.
+          console.log( "error deleting user" )
+        })
+    }
+  }
   const logout = () => {
     Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-      set('/user/fbAccessToken', null)
+      clearUserData()
     })
     firebase.auth().signOut()
   }
   const login = async () => {
-    let accessToken = await getFacebookAccessToken();
+    let accessToken = await getFacebookAccessToken()
 
-    // if hadn't logged in already and the user's fb token isnt store in the app's secure store
+    // if hadn"t logged in already and the user"s fb token isnt store in the app"s secure store
     if ( !accessToken ) {
       // we must use facebook to login and get the access token
       const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
@@ -123,10 +152,16 @@ export default dispatch => (() => {
       setFacebookAccessToken( accessToken )
     }
     // if you are already a user and have automatically logged in, then we need to update the state to include your access token for authentication verification
-    set("/user/fbAccessToken", accessToken);
+    set("/user/fbAccessToken", accessToken)
 
-    const credential = firebase.auth.FacebookAuthProvider.credential(accessToken);
-    firebase.auth().signInAndRetrieveDataWithCredential(credential);
+    const credential = firebase.auth.FacebookAuthProvider.credential(accessToken)
+    firebase.auth().signInAndRetrieveDataWithCredential(credential)
+  }
+  const checkUserAccessToken = async () => {
+    let accessToken = await getFacebookAccessToken()
+    if ( accessToken ) {
+      set("/user/fbAccessToken", accessToken)
+    }
   }
 
   return {
@@ -134,6 +169,8 @@ export default dispatch => (() => {
     set,
     login,
     logout,
+    deleteUserAccount,
+    checkUserAccessToken,
     getHighscores,
     setHighscore,
     listenHighscoreByUser,

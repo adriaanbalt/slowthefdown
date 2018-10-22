@@ -16,6 +16,13 @@ const defaultState = {
 function handleSetAction(state, action) {
   const { path, value } = action.value;
 
+  if (path === '/user') {
+    return {
+      ...state,
+      user: value
+    };
+  }
+
   if (path === '/user/fbAccessToken') {
     return {
       ...state,
