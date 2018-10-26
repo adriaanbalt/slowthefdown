@@ -82,7 +82,7 @@ class HomeScreen extends React.Component {
       onPanResponderMove: ({ nativeEvent }, gestureState) => {
         if ( this.state.gl ) {
           // ratio of mouse position to the width of the screen
-          this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1; // 6 for iOS xs & 4 for iOS 5SE
+          this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1;
           this.state.mouse.y = -(nativeEvent.locationY / height) * 2 + 1;
         }
       },
