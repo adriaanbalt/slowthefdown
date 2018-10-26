@@ -27,13 +27,13 @@ const styles = StyleSheet.create({
       padding: 20,
       backgroundColor: Colors.backgroundColor,
     },
-    textDisplayName: {
+    displayName: {
       paddingTop: 10,
       paddingBottom: 10,
       color: Colors.fontColor,
       fontSize: 25,
     },
-    textHighscore: {
+    body: {
       paddingTop: 10,
       paddingBottom: 10,
       color: Colors.fontColor,
@@ -104,8 +104,8 @@ class ProfileScreen extends React.Component {
               flexDirection: 'row',
             }}>
               <View>
-                <Text style={styles.textDisplayName}>{ this.props.profile.displayName }</Text>
-                <Text style={styles.textHighscore}>Highscore: { this.props.profile.highscore }</Text>
+                <Text style={styles.displayName}>{ this.props.profile.displayName }</Text>
+                <Text style={styles.body}>Highscore: { this.props.profile.highscore }</Text>
               </View>
               {
                 this.props.profile.photoURL
