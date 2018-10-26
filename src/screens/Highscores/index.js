@@ -75,6 +75,29 @@ class HighscoresScreen extends React.Component {
         this.props.navigation.navigate("Profile", {});
     }
 
+    renderRow( obj, i ) {
+        return (
+            <View>
+                <Text style={{
+                    fontSize: i === 0 ? 22 : 16,
+                    color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                }}>{i + 1}. </Text>
+                <Text style={{
+                    fontSize: i === 0 ? 22 : 16,
+                    color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                }}>{obj.displayName.substring(0, 20)} </Text>
+                <Text style={{
+                    flex: 1,
+                    fontSize: i === 0 ? 22 : 16,
+                    color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
+                    textAlign: "right",
+                    justifyContent: "flex-end",
+                    alignSelf: "flex-end"
+                }}>{obj.highscore}</Text>
+            </View>
+        )
+    }
+
     render() {
         const {
             errorMessage,
@@ -97,28 +120,19 @@ class HighscoresScreen extends React.Component {
                     style={styles.highscoreRow}
                     key={`highscore-${i}`}
                   >
-                    <Text
-                      style={{
-                        fontSize: i === 0 ? 22 : 16,
-                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
-                      }}
-                    >{i + 1}. </Text>
-                    <Text
-                      style={{
-                        fontSize: i === 0 ? 22 : 16,
-                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
-                      }}
-                    >{obj.displayName.substring(0,20)} </Text>
-                    <Text
-                      style={{
-                        flex: 1,
-                        fontSize: i === 0 ? 22 : 16,
-                        color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
-                        textAlign: "right",
-                        justifyContent: "flex-end",
-                        alignSelf: "flex-end"
-                      }}
-                    >{obj.highscore}</Text>
+                {
+                    i === 0
+                    &&
+                    <TouchableOpacity 
+                        onPress={this.navigateToProfile}>
+                    {this.renderRow( obj, i )}
+                    </TouchableOpacity>
+                }
+                {
+                    i != 0
+                    &&
+                    this.renderRow( obj, i )
+                }
                   </View>
                 ))}
             </View>
