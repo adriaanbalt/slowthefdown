@@ -30,7 +30,7 @@ import NavigationUI from '../../shared/NavigationUI'
 import Shader from "./components/Shader"
 import MovingLetter from "./components/MovingLetter"
 import SVGLoader from "./components/SVGLoader"
-
+const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -81,10 +81,9 @@ class HomeScreen extends React.Component {
       },
       onPanResponderMove: ({ nativeEvent }, gestureState) => {
         if ( this.state.gl ) {
-          let x = (nativeEvent.locationX / this.state.gl.drawingBufferWidth) * 6 - 1 // 6 for iOS xs & 4 for iOS 5SE
-          let y = -(nativeEvent.locationY / this.state.gl.drawingBufferHeight) * 6 + 1
-          this.state.mouse.x = x
-          this.state.mouse.y = y
+          // ratio of mouse position to the width of the screen
+          this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1; // 6 for iOS xs & 4 for iOS 5SE
+          this.state.mouse.y = -(nativeEvent.locationY / height) * 2 + 1;
         }
       },
       onPanResponderRelease: ({ nativeEvent }, gestureState) => {
@@ -215,7 +214,7 @@ class HomeScreen extends React.Component {
       this.props.navigation.navigate("Profile", {});
   }
   renderGame() {
-    var { height, width } = Dimensions.get('window')
+    const { height, width } = Dimensions.get('window')
     return (
       <View
         {...this.panResponder.panHandlers}
