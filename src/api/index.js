@@ -10,7 +10,6 @@ class API {
   //   // Listen for authentication state to change.
   //   firebase.auth().onAuthStateChanged(user => {
   //     if (user != null) {
-  //       console.log("We are authenticated now!", firebase.auth().currentUser.uid);
   //       this.listenHighscoreByUser(firebase.auth().currentUser.uid);
   //     }
   //     // Do other things
@@ -20,7 +19,6 @@ class API {
   setHighscore(score) {
     const user = firebase.auth().currentUser;
     if (user != null) {
-      console.log( "setHighscore", user.uid )
       firebase.database().ref('users/' + user.uid).set({
         highscore: score
       })
@@ -30,7 +28,6 @@ class API {
   listenHighscoreByUser(userId) {
     firebase.database().ref('users/' + userId).on('value', (snapshot) => {
       const highscore = snapshot.val().highscore;
-      console.log("New high score: " + highscore)
     })
   }
 
@@ -42,7 +39,6 @@ class API {
         return snapshot
       })
     
-    console.log('getHighscores', highscores)
     return highscores
   }
 }
