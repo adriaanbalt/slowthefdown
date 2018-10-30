@@ -160,7 +160,7 @@ class HomeScreen extends React.Component {
       } else {
         this.setState({ deltaTime })
       }
-      movingLetter.over()
+      movingLetter.over( deltaTime )
       background.over( deltaTime, this.state.mouse )
     }
     const out = () => {
@@ -278,11 +278,7 @@ class HomeScreen extends React.Component {
         {
           !this.state.loading
           &&
-          <NavigationUI 
-              leftButtonIcon={'Highscores'}
-              leftButtonClick={this.navigateToHighscores}
-              rightButtonIcon={'Profile'}
-            rightButtonClick={this.navigateToProfile} />
+          <NavigationUI navigation={this.props.navigation} />
         }
         <Expo.GLView
           style={{ flex: 1 }}
@@ -309,7 +305,10 @@ class HomeScreen extends React.Component {
 
 }
 
-export default connect(state => ({
-  isAuthenticated: isAuthenticated(state),
-  currentUserHighscore: getCurrentUserHighscore(state),
-}), Dispatchers)(HomeScreen)
+export default connect(
+  state => ({
+    isAuthenticated: isAuthenticated(state),
+    currentUserHighscore: getCurrentUserHighscore(state)
+  }),
+  Dispatchers
+)(HomeScreen);
