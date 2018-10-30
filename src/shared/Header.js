@@ -16,9 +16,6 @@ import { Ionicons } from '@expo/vector-icons';
 var { height, width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  container: {
-    paddingBottom: 20
-  },
   text: {
     color: "#FFF",
     padding: 3,
@@ -32,10 +29,8 @@ class Header extends React.Component {
   render() {
     var { height, width } = Dimensions.get('window')
     return (
-      <View
-        style={styles.container}
-      >
-          <Text style={styles.text}>{this.props.children}</Text>
+      <View style={this.props.style}>
+        <Text style={styles.text}>{this.props.children}</Text>
       </View>
     )
   }
