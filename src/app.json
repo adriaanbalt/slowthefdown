@@ -5,7 +5,7 @@
     "slug": "snack-slowdown",
     "privacy": "unlisted",
     "sdkVersion": "24.0.0",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "orientation": "portrait",
     "primaryColor": "#000000",
     "icon": "./assets/expo-icon.png",
@@ -28,6 +28,7 @@
       "bundleIdentifier": "com.balt.slowdown"
     },
     "splash": {
+      "image": "./assets/splash.png",
       "backgroundColor": "#000000"
     }
   },
