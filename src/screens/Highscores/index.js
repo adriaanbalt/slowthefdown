@@ -20,16 +20,20 @@ import NavigationUI from '../../shared/NavigationUI'
 import Header from '../../shared/Header'
 import { translate } from 'gl-matrix/src/gl-matrix/mat4';
 
-var { height, width } = Dimensions.get('window')
+var { width, height } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
     container: {
         width,
         height,
         flex: 1,
-        paddingTop: 50,
+        paddingTop: height > 600 ? 50 : 10, // for smaller phones
         padding: 20,
         backgroundColor: Colors.backgroundColor,
+    },
+
+    header: {
+        paddingBottom: 0,
     },
 
     highscoreRow: {
@@ -57,27 +61,22 @@ class HighscoresScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ loading: true });
-        // this.props
-        //   .getHighscores()
-        //   .then(highscores => {
-        //     this.setState({ loading: false });
-        //   })
-        //   .catch(() => {
-        //     this.setState({ loading: false });
-        //   });
+        // load the latest highscores when this page loads
+        this.props
+          .getHighscores()
+          .then(highscores => {
+            this.setState({ loading: true });
+          })
+          .catch(() => {
+            this.setState({ loading: false });
+          });
     }
 
-    navigateToGame = () => {
-        this.props.navigation.navigate("Game", {});
-    }
-    navigateToProfile = () => {
-        this.props.navigation.navigate("Profile", {});
-    }
 
     renderRow( obj, i ) {
         return (
-            <View>
+            <View
+                style={styles.highscoreRow}>
                 <Text style={{
                     fontSize: i === 0 ? 22 : 16,
                     color: i === 0 ? Colors.firstPlaceFontColor : Colors.highscoresFontColor,
@@ -100,44 +99,32 @@ class HighscoresScreen extends React.Component {
 
     render() {
         const {
+            highscores,
             errorMessage,
-            highscores
         } = this.props;
         const dname = "Adriaan Balt Louis Scholvinck"
-        
-        return <View style={styles.container}>
-            <View>
-              <Header>Top 10 Highscores</Header>
-              {highscores
-                .sort((a, b) => {
-                  if (a.highscore < b.highscore) return 1;
-                  if (a.highscore > b.highscore) return -1;
-                  return 0;
-                })
-                .slice(0,10)
-                .map((obj, i) => (
-                  <View
-                    style={styles.highscoreRow}
-                    key={`highscore-${i}`}
-                  >
-                {
-                    i === 0
-                    &&
-                    <TouchableOpacity 
-                        onPress={this.navigateToProfile}>
-                    {this.renderRow( obj, i )}
-                    </TouchableOpacity>
-                }
-                {
-                    i != 0
-                    &&
-                    this.renderRow( obj, i )
-                }
-                  </View>
-                ))}
+        return (
+            <View style={styles.container}>
+                <View>
+                    <Header style={styles.header}>Top 10 Highscores</Header>
+                    {highscores
+                    .sort((a, b) => {
+                        if (a.highscore < b.highscore) return 1;
+                        if (a.highscore > b.highscore) return -1;
+                        return 0;
+                    })
+                    .slice(0,10)
+                    .map((obj, i) => (
+                    <View
+                        key={`highscore-${i}`}
+                    >
+                        {this.renderRow( obj, i )}
+                    </View>
+                    ))}
+                </View>
+                <NavigationUI navigation={this.props.navigation} />
             </View>
-            <NavigationUI leftButtonIcon={"Game"} leftButtonClick={this.navigateToGame} rightButtonIcon={"Profile"} rightButtonClick={this.navigateToProfile} />
-          </View>;
+        );
     }
 }
 
