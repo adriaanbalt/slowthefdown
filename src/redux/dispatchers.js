@@ -8,6 +8,8 @@ import * as firebase from "firebase"
 import FIREBASE_CONSTANTS from "../constants/firebase"
 const FACEBOOK_APP_ID = "331867204038135"
 const SECURE_STORE_FACEBOOK_TOKEN = "FACEBOOK_ACCESS_TOKEN"
+const SECURE_STORE_FIRST_TIME = "FIRST_TIME"
+const SECURE_STORE_HIGHSCORE = "SECURE_STORE_HIGHSCORE"
 
 export default dispatch => (() => {
 
@@ -22,23 +24,43 @@ export default dispatch => (() => {
       firebase.initializeApp(FIREBASE_CONSTANTS)
       set("/initialized", true)
     }
-
-    getHighscores()
     
-    // // Listen for authentication state to change.
-    firebase.auth().onAuthStateChanged(user => {
+    // Listen for authentication state to change.
+    firebase.auth().onAuthStateChanged(async user => {
       if (user != null) {
         setupUserData( user ) 
-
-
+        
+        // check if this is the user's first time in the App
+        getUserFirstTime()
+        
+        // get the user's local highscore to compare to the server highscore, take whatever is higher
+        // server is what other users will see but secure store lets users play offline and keep their highscore...
+        // if they play offline they will compete against themselves, but when they go online and they play their new highscore will in fact be updated online
+        // TODO: add this updating online/offline to the ABOUT page
+        const userHsFromSecureStore = await getSecureStoreHighScore()
+        
         // get the current user"s highscore
         firebase.database().ref("users/" + user.uid).on("value", (snapshot) => {
-          const hs = snapshot.val() && snapshot.val().highscore
+          let hs = snapshot.val() && snapshot.val().highscore
+          if ( hs < userHsFromSecureStore) {
+            // if server highscore is less than local highscore, take choose the local highscore
+            hs = userHsFromSecureStore;
+            // since server is not as high as local secure store, also update the server
+            const user = firebase.auth().currentUser;
+            firebase
+              .database()
+              .ref("users/" + user.uid)
+              .update({
+                highscore: hs
+              })
+          }
           set("/user/highscore", hs )
         })
       }
       // Do other things
     })
+
+    getHighscores()
   }
     
   const setupUserData = ( user ) => {
@@ -62,33 +84,62 @@ export default dispatch => (() => {
 
   const fbAccessToken = () => store.getState().user.fbAccessToken
 
-  const getHighscores = () => {
-    // get all users" highscores
-    var query = firebase.database().ref("users")
-    query.once("value")
-      .then((snapshot) => {
-        let highscores = []
-        snapshot.forEach((childSnapshot) => {
-          highscores.push(childSnapshot.val())
-        })
-        set("/highscores", highscores)
-      })
+  const getUserFirstTime = () => {
+    return Expo.SecureStore.getItemAsync(SECURE_STORE_FIRST_TIME)
   }
 
-  const setHighscore = (score) => {
+  const setUserFirstTime = async ( bool ) => {
+    let firstTime = await getUserFirstTime()
+    if ( firstTime || firstTime == undefined ) {
+      set("/user/firstime", bool)
+      return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, JSON.parse(bool))
+    }
+  }
+
+  const getHighscores = () => {
+    // a promise is used here to create a loader
+    return new Promise( (resolve, reject) => {
+      // get all users" highscores
+      var query = firebase.database().ref("users")
+      query.once("value")
+        .then((snapshot) => {
+          let highscores = []
+          snapshot.forEach((childSnapshot) => {
+            highscores.push(childSnapshot.val())
+          })
+          set("/highscores", highscores)
+          resolve( highscores )
+        })
+    })
+  }
+
+  const getSecureStoreHighScore = () => {
+    return Expo.SecureStore.getItemAsync(SECURE_STORE_HIGHSCORE).then( res => {
+      return res
+    })
+  }
+
+  const setUserHighscore = (score) => {
+    const user = firebase.auth().currentUser;
+    firebase
+      .database()
+      .ref("users/" + user.uid)
+      .update({
+        highscore: score
+      })
+    set("/user/highscore", score)
+    Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, JSON.stringify(score))
+  }
+
+  const setHighscore = async (score) => {
     const user = firebase.auth().currentUser
-    const highscore = store.getState().user.highscore
+    let highscore = await getSecureStoreHighScore()
+    highscore = highscore || store.getState().user.highscore
     // if the user is defined
     // if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
     // if the user"s highscore is less than the score sent, then it shoudl be set to the score
     if (user != null && (highscore === undefined || highscore < score)) {
-      firebase
-        .database()
-        .ref("users/" + user.uid)
-        .update({ 
-          highscore: score
-        })
-      set("/user/highscore", score)
+      setUserHighscore( score )
     }
     getHighscores()
   }
@@ -123,7 +174,6 @@ export default dispatch => (() => {
       user
         .delete()
         .then( (e) => {
-          console.log( "deleted user", e)
           set("/user", null)
         })
         .catch( (error) => {
@@ -150,6 +200,7 @@ export default dispatch => (() => {
       )
       accessToken = token
       setFacebookAccessToken( accessToken )
+      setUserFirstTime( false )
     }
     // if you are already a user and have automatically logged in, then we need to update the state to include your access token for authentication verification
     set("/user/fbAccessToken", accessToken)
