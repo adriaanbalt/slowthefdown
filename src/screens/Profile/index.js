@@ -17,28 +17,35 @@ import NavigationUI from '../../shared/NavigationUI'
 import Header from "../../shared/Header";
 import { isAuthenticated, profile } from '../../redux/selectors';
 
-var { height, width } = Dimensions.get('window') 
+var { width, height } = Dimensions.get("window"); 
 const styles = StyleSheet.create({
     container: {
       width,
       height,
       flex: 1,
-      paddingTop: 50,
+      paddingTop: height > 600 ? 50 : 10, // for smaller phones
       padding: 20,
       backgroundColor: Colors.backgroundColor,
     },
+
+    header: {
+        paddingBottom: 20,
+    },
+
     displayName: {
       paddingTop: 10,
       paddingBottom: 10,
       color: Colors.fontColor,
       fontSize: 25,
     },
+
     body: {
       paddingTop: 10,
       paddingBottom: 10,
       color: Colors.fontColor,
       fontSize: 20,
     },
+
     picture: {
       alignSelf: 'flex-end',
       width: 75,
@@ -83,7 +90,7 @@ class ProfileScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View>
-          <Header>Profile</Header>
+          <Header style={styles.header}>Profile</Header>
           <View style={{
             justifyContent: 'space-between',
             alignContent: 'space-between',
@@ -108,6 +115,8 @@ class ProfileScreen extends React.Component {
                 <Text style={styles.body}>Highscore: { this.props.profile.highscore }</Text>
               </View>
               {
+                false
+                &&
                 this.props.profile.photoURL
                 &&
                 <Image
@@ -129,11 +138,7 @@ class ProfileScreen extends React.Component {
           }
           </View>
         </View>
-        <NavigationUI 
-          leftButtonIcon={'Game'}
-          leftButtonClick={this.navigateToGame}
-          rightButtonIcon={'Highscores'}
-          rightButtonClick={this.navigateToHighscores} />
+        <NavigationUI navigation={this.props.navigation} />
       </View>
     );
   }
