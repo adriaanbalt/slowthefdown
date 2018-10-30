@@ -14,12 +14,22 @@ import { Ionicons } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
   text: {
-      padding: 3
+      padding: 3,
+      textAlign: 'center',
   }
 });
 
 class NavigationUI extends React.Component {
 
+  navigateToGame = () => {
+    this.props.navigation.navigate("Game", {});
+  }
+  navigateToProfile = () => {
+    this.props.navigation.navigate("Profile", {});
+  }
+  navigateToHighscores = () => {
+    this.props.navigation.navigate("Highscores", {});
+  }
   render() {
     var { height, width } = Dimensions.get('window')
     return (
@@ -41,19 +51,30 @@ class NavigationUI extends React.Component {
         <TouchableOpacity 
           style={{
             height: 23,
+            width: 100,
             backgroundColor: '#FFF',
           }}
-          onPress={this.props.leftButtonClick}>
-          <Text style={styles.text}>{this.props.leftButtonIcon}</Text>
+          onPress={this.navigateToHighscores}>
+          <Text style={styles.text}>Highscores</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 23,
+            width: 100,
+            backgroundColor: '#FFF',
+          }}
+          onPress={this.navigateToGame}>
+          <Text style={styles.text}>Game</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={{
             height: 23,
             right: 0,
+            width: 100,
             backgroundColor: '#FFF',
           }}
-          onPress={this.props.rightButtonClick}>
-          <Text style={styles.text}>{this.props.rightButtonIcon}</Text>
+          onPress={this.navigateToProfile}>
+          <Text style={styles.text}>Profile</Text>
         </TouchableOpacity>
       </View>
     )
