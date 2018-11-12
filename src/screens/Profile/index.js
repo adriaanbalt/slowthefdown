@@ -67,15 +67,15 @@ class ProfileScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ loading: true });
-    this.props
-      .checkUserAccessToken()
-      .then(user => {
-        this.setState({ loading: false });
-      })
-      .catch(() => {
-        this.setState({ loading: false });
-      });
+      this.setState({ loading: true });
+      this.props
+        .login()
+        .then(user => {
+          this.setState({ loading: false });
+        })
+        .catch(() => {
+          this.setState({ loading: false });
+        });
   }
 
   navigateToGame = () => {
@@ -85,7 +85,6 @@ class ProfileScreen extends React.Component {
     this.props.navigation.navigate("Highscores", {});
   };
   render() {
-    console.log("this.props.isAuthenticated", this.props.isAuthenticated);
     const { errorMessage } = this.props;
     return (
       <View style={styles.container}>
@@ -115,8 +114,6 @@ class ProfileScreen extends React.Component {
                 <Text style={styles.body}>Highscore: { this.props.profile.highscore }</Text>
               </View>
               {
-                false
-                &&
                 this.props.profile.photoURL
                 &&
                 <Image
