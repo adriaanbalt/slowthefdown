@@ -64,6 +64,14 @@ class HomeScreen extends React.Component {
   }
   componentDidMount() {
     this.setState({ loading: true })
+    this.props
+      .checkUserAccessToken()
+      .then(user => {
+        this.setState({ loading: false });
+      })
+      .catch(() => {
+        this.setState({ loading: false });
+      });
   }
 
   componentWillMount() {
