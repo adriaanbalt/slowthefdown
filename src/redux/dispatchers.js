@@ -6,7 +6,7 @@ import registerForPushNotifications from "../api/registerForPushNotifications"
 import API from "../api"
 import * as firebase from "firebase"
 import FIREBASE_CONSTANTS from "../constants/firebase"
-const FACEBOOK_APP_ID = "331867204038135"
+const FACEBOOK_APP_ID = "331867204038135";
 const SECURE_STORE_FACEBOOK_TOKEN = "FACEBOOK_ACCESS_TOKEN"
 const SECURE_STORE_FIRST_TIME = "FIRST_TIME"
 const SECURE_STORE_HIGHSCORE = "SECURE_STORE_HIGHSCORE"
@@ -24,14 +24,24 @@ export default dispatch => (() => {
       firebase.initializeApp(FIREBASE_CONSTANTS)
       set("/initialized", true)
     }
-    
-    // Listen for authentication state to change.
+
+    // load as existing or new user
+      // check if secure store has info?
+      // check if server has info?
+    const firstTimeSecureStore = getUserFirstTimeSecureStore()
+    // whatever the value of first time, set it to the reducer state for internal tracking
+    console.log("firstTimeSecureStore", firstTimeSecureStore);
+    set("/user/firstime", firstTimeSecureStore);
+
+    // check auth login state changes
     firebase.auth().onAuthStateChanged(async user => {
       if (user != null) {
-        setupUserData( user ) 
+        // since user exists, store user data in the reducer
+        console.log('user auth changed', user )
+        setUserDataLocal( user ) 
         
         // check if this is the user's first time in the App
-        getUserFirstTime()
+        // getUserFirstTimeSecureStore()
         
         // get the user's local highscore to compare to the server highscore, take whatever is higher
         // server is what other users will see but secure store lets users play offline and keep their highscore...
@@ -63,7 +73,7 @@ export default dispatch => (() => {
     getHighscores()
   }
     
-  const setupUserData = ( user ) => {
+  const setUserDataLocal = ( user ) => {
     setUserToDb( user )
     set("/user/highscore", user.highscore)
     set("/user/email", user.email )
@@ -73,7 +83,7 @@ export default dispatch => (() => {
     set("/user/photoURL", user.photoURL )
   }
 
-  const clearUserData = () => {
+  const clearUserDataLocal = () => {
     set("/user/highscore", null )
     set("/user/email", null )
     set("/user/displayName", null )
@@ -84,7 +94,7 @@ export default dispatch => (() => {
 
   const fbAccessToken = () => store.getState().user.fbAccessToken
 
-  const getUserFirstTime = () => {
+  const getUserFirstTimeSecureStore = () => {
     return Expo.SecureStore.getItemAsync(SECURE_STORE_FIRST_TIME)
   }
 
@@ -92,7 +102,8 @@ export default dispatch => (() => {
     let firstTime = await getUserFirstTime()
     if ( firstTime || firstTime == undefined ) {
       set("/user/firstime", bool)
-      return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, JSON.parse(bool))
+      console.log( 'set user first time', firstTime)
+      return Expo.SecureStore.setItemAsync(SECURE_STORE_FIRST_TIME, bool );
     }
   }
 
@@ -119,15 +130,20 @@ export default dispatch => (() => {
     })
   }
 
-  const setUserHighscore = (score) => {
+  const setUserAttributeDb = ( obj ) => {
     const user = firebase.auth().currentUser;
     firebase
       .database()
       .ref("users/" + user.uid)
-      .update({
-        highscore: score
-      })
+      .update(obj);
+  }
+
+  const setUserHighscore = (score) => {
+    setUserAttributeDb({
+      highscore: score
+    })
     set("/user/highscore", score)
+    console.log( 'set user highscore' )
     Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, JSON.stringify(score))
   }
 
@@ -161,9 +177,13 @@ export default dispatch => (() => {
   }
 
   const setFacebookAccessToken = token => {
-    return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
-      set("/user/fbAccessToken", token)
-    })
+    console.log("setFacebookAccessToken", token);
+    if ( token ) {
+      console.log( 'here?')
+      return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
+        set("/user/fbAccessToken", token)
+      })
+    }
   }
   const getFacebookAccessToken = () => {
     return Expo.SecureStore.getItemAsync(SECURE_STORE_FACEBOOK_TOKEN)
@@ -184,12 +204,13 @@ export default dispatch => (() => {
   }
   const logout = () => {
     Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-      clearUserData()
+      clearUserDataLocal()
     })
     firebase.auth().signOut()
   }
   const login = async () => {
     let accessToken = await getFacebookAccessToken()
+    console.log("login", accessToken);
 
     // if hadn"t logged in already and the user"s fb token isnt store in the app"s secure store
     if ( !accessToken ) {
@@ -200,16 +221,19 @@ export default dispatch => (() => {
       )
       accessToken = token
       setFacebookAccessToken( accessToken )
-      setUserFirstTime( false )
+      // setUserFirstTime( false )
     }
-    // if you are already a user and have automatically logged in, then we need to update the state to include your access token for authentication verification
-    set("/user/fbAccessToken", accessToken)
-
+    else {
+      // if you are already a user and have automatically logged in, then we need to update the state to include your access token for authentication verification
+      set("/user/fbAccessToken", accessToken)
+    }
+    
     const credential = firebase.auth.FacebookAuthProvider.credential(accessToken)
     firebase.auth().signInAndRetrieveDataWithCredential(credential)
   }
   const checkUserAccessToken = async () => {
     let accessToken = await getFacebookAccessToken()
+    console.log("checkUserAccessToken", accessToken);
     if ( accessToken ) {
       set("/user/fbAccessToken", accessToken)
     }
