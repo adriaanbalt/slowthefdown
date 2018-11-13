@@ -28,16 +28,14 @@ export default dispatch => (() => {
     // load as existing or new user
       // check if secure store has info?
       // check if server has info?
-    const firstTimeSecureStore = getUserFirstTimeSecureStore()
+    // const firstTimeSecureStore = getUserFirstTimeSecureStore()
     // whatever the value of first time, set it to the reducer state for internal tracking
-    console.log("firstTimeSecureStore", firstTimeSecureStore);
-    set("/user/firstime", firstTimeSecureStore);
+    // set("/user/firstime", firstTimeSecureStore);
 
     // check auth login state changes
     firebase.auth().onAuthStateChanged(async user => {
       if (user != null) {
         // since user exists, store user data in the reducer
-        console.log('user auth changed', user )
         setUserDataLocal( user ) 
         
         // check if this is the user's first time in the App
@@ -52,6 +50,7 @@ export default dispatch => (() => {
         // get the current user"s highscore
         firebase.database().ref("users/" + user.uid).on("value", (snapshot) => {
           let hs = snapshot.val() && snapshot.val().highscore
+          console.log( 'higscore login value change', hs, userHsFromSecureStore )
           if ( hs < userHsFromSecureStore) {
             // if server highscore is less than local highscore, take choose the local highscore
             hs = userHsFromSecureStore;
@@ -64,7 +63,8 @@ export default dispatch => (() => {
                 highscore: hs
               })
           }
-          set("/user/highscore", hs )
+          // set the highscore from the server response (incase there is a higher highscore on the server)
+          setHighscore(hs);
         })
       }
       // Do other things
@@ -84,12 +84,15 @@ export default dispatch => (() => {
   }
 
   const clearUserDataLocal = () => {
-    set("/user/highscore", null )
-    set("/user/email", null )
-    set("/user/displayName", null )
-    set("/user/lastLoginAt", null )
-    set("/user/phoneNumber", null )
-    set("/user/photoURL", null )
+    // set("/user", {})
+    set("/user/highscore", 0)
+    set("/user/email", null)
+    set("/user/displayName", null)
+    set("/user/lastLoginAt", null)
+    set("/user/phoneNumber", null)
+    set("/user/photoURL", null)
+    set("/user/fbAccessToken", null)
+    Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, '0');
   }
 
   const fbAccessToken = () => store.getState().user.fbAccessToken
@@ -130,31 +133,30 @@ export default dispatch => (() => {
     })
   }
 
-  const setUserAttributeDb = ( obj ) => {
+  const setUserHighscore = (score) => {
     const user = firebase.auth().currentUser;
     firebase
       .database()
       .ref("users/" + user.uid)
-      .update(obj);
-  }
-
-  const setUserHighscore = (score) => {
-    setUserAttributeDb({
-      highscore: score
-    })
+      .update({
+        highscore: score
+      });
     set("/user/highscore", score)
-    console.log( 'set user highscore' )
-    Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, JSON.stringify(score))
+    console.log("setUserHighscore()", score);
+    Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, String(score))
   }
 
   const setHighscore = async (score) => {
     const user = firebase.auth().currentUser
-    let highscore = await getSecureStoreHighScore()
-    highscore = highscore || store.getState().user.highscore
+    const secureStoreHighscore = await getSecureStoreHighScore()
+    const highscore = secureStoreHighscore || store.getState().user.highscore;
+    
+    console.log("setHighscore() local || hardware || result", score, store.getState().user.highscore, secureStoreHighscore, highscore);
     // if the user is defined
     // if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
     // if the user"s highscore is less than the score sent, then it shoudl be set to the score
-    if (user != null && (highscore === undefined || highscore < score)) {
+    if (user != null && (highscore === undefined || highscore <= score)) {
+      console.log( 'here')
       setUserHighscore( score )
     }
     getHighscores()
@@ -204,8 +206,9 @@ export default dispatch => (() => {
   }
   const logout = () => {
     Expo.SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
-      clearUserDataLocal()
+      console.log( 'done clearing local data ')
     })
+    clearUserDataLocal()
     firebase.auth().signOut()
   }
   const login = async () => {
@@ -217,8 +220,8 @@ export default dispatch => (() => {
       // we must use facebook to login and get the access token
       const { type, token } = await Expo.Facebook.logInWithReadPermissionsAsync(
         FACEBOOK_APP_ID,
-        { permissions: ["public_profile"] }
-      )
+        { permissions: ["public_profile", "email"] }
+      );
       accessToken = token
       setFacebookAccessToken( accessToken )
       // setUserFirstTime( false )
@@ -229,6 +232,7 @@ export default dispatch => (() => {
     }
     
     const credential = firebase.auth.FacebookAuthProvider.credential(accessToken)
+    console.log("credential", credential);
     firebase.auth().signInAndRetrieveDataWithCredential(credential)
   }
   const checkUserAccessToken = async () => {
