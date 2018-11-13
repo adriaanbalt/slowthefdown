@@ -85,6 +85,8 @@ class ProfileScreen extends React.Component {
     this.props.navigation.navigate("Highscores", {});
   };
   render() {
+    console.log("this.props.profile", this.props.isAuthenticated );
+
     const { errorMessage } = this.props;
     return (
       <View style={styles.container}>
@@ -99,8 +101,6 @@ class ProfileScreen extends React.Component {
             this.props.isAuthenticated
             &&
             this.props.profile
-            &&
-            this.props.profile.highscore
             &&
             this.props.profile.displayName
             &&
