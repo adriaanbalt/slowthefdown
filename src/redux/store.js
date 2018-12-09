@@ -43,6 +43,12 @@ function handleSetAction(state, action) {
     };
   }
 
+  if (path === '/deltaTime') {
+    return {
+      ...state,
+      deltaTime: value
+    };
+  }
 
   if (path === '/highscores') {
     return {

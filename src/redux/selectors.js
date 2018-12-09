@@ -23,6 +23,10 @@ export function getCurrentUserHighscore(state) {
   return state.user && state.user.highscore
 }
 
+export function getDeltaTime(state) {
+  return state.deltaTime
+}
+
 export function highscores(state) {
   return state.highscores
 }

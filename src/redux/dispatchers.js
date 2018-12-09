@@ -52,7 +52,7 @@ export default dispatch => (() => {
           let hs = snapshot.val() && snapshot.val().highscore
           console.log( 'higscore login value change', hs, userHsFromSecureStore )
           if ( hs < userHsFromSecureStore) {
-            // if server highscore is less than local highscore, take choose the local highscore
+            // if server highscore is less than secure store hardware highscore, choose the secure store hardware highscore
             hs = userHsFromSecureStore;
             // since server is not as high as local secure store, also update the server
             const user = firebase.auth().currentUser;
@@ -63,7 +63,7 @@ export default dispatch => (() => {
                 highscore: hs
               })
           }
-          // set the highscore from the server response (incase there is a higher highscore on the server)
+          // set the highscore to whatever the server or secure store hardware value is
           setHighscore(hs);
         })
       }
@@ -94,6 +94,8 @@ export default dispatch => (() => {
     set("/user/fbAccessToken", null)
     Expo.SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, '0');
   }
+
+  const setDeltaTime = ( deltaTime ) => set('/deltaTime', deltaTime )
 
   const fbAccessToken = () => store.getState().user.fbAccessToken
 
@@ -151,10 +153,10 @@ export default dispatch => (() => {
     const secureStoreHighscore = await getSecureStoreHighScore()
     const highscore = secureStoreHighscore || store.getState().user.highscore;
     
-    console.log("setHighscore() local || hardware || result", score, store.getState().user.highscore, secureStoreHighscore, highscore);
+    console.log("setHighscore() local || hardware = result", score, store.getState().user.highscore, secureStoreHighscore, highscore);
     // if the user is defined
     // if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
-    // if the user"s highscore is less than the score sent, then it shoudl be set to the score
+    // if the user"s highscore is less than the score sent, then it should be set to the score
     if (user != null && (highscore === undefined || highscore <= score)) {
       console.log( 'here')
       setUserHighscore( score )
@@ -162,6 +164,7 @@ export default dispatch => (() => {
     getHighscores()
   }
 
+  // update the DB user data (happens after each login to ensure redundancy)
   const setUserToDb = (user) => {
     firebase
       .database()
@@ -179,7 +182,6 @@ export default dispatch => (() => {
   }
 
   const setFacebookAccessToken = token => {
-    console.log("setFacebookAccessToken", token);
     if ( token ) {
       console.log( 'here?')
       return Expo.SecureStore.setItemAsync(SECURE_STORE_FACEBOOK_TOKEN, token).then(() => {
@@ -252,6 +254,7 @@ export default dispatch => (() => {
     checkUserAccessToken,
     getHighscores,
     setHighscore,
+    setDeltaTime,
     listenHighscoreByUser,
   }
 })

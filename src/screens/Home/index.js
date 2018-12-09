@@ -20,7 +20,7 @@ import {
 } from "react-native"
 
 import Dispatchers from '../../redux/dispatchers'
-import { isAuthenticated, getCurrentUserHighscore } from '../../redux/selectors'
+import { isAuthenticated, getCurrentUserHighscore, profile, getDeltaTime } from '../../redux/selectors'
 
 import Waiting from '../../shared/Waiting'
 import StyledButton from '../../shared/StyledButton'
@@ -167,6 +167,7 @@ class HomeScreen extends React.Component {
         this.startHowLongHeldMilliseconds = Date.now()
       } else {
         this.setState({ deltaTime })
+        this.props.setDeltaTime( deltaTime )
       }
       movingLetter.over( deltaTime )
       background.over( deltaTime, this.state.mouse )
@@ -316,7 +317,8 @@ class HomeScreen extends React.Component {
 export default connect(
   state => ({
     isAuthenticated: isAuthenticated(state),
-    currentUserHighscore: getCurrentUserHighscore(state)
+    currentUserHighscore: getCurrentUserHighscore(state),
+    deltaTime: getDeltaTime(state)
   }),
   Dispatchers
 )(HomeScreen);
