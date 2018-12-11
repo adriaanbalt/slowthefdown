@@ -3,7 +3,7 @@ import React from "react"
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise'
 import SVGLoader from './SVGLoader'
-    
+import TextMesh from './TextMesh'
 
 export default class MovingLetter extends React.Component {
 
@@ -11,6 +11,8 @@ export default class MovingLetter extends React.Component {
         super()
 
         this.fontData = font
+
+        console.log( "moving letter constructor", this.fontData, typeof this.fontData )
 
         this.setup()
     }
@@ -47,18 +49,73 @@ export default class MovingLetter extends React.Component {
         // this.light.position.set(0, 2, /)
         this.mesh.add(this.light)
         
-        // // SVG mesh
+        // SVG mesh
         // const svg = await this._loadSVGMesh()
         // svg.translateX(5)
         // svg.translateY(0)
         // svg.translateZ(-150)
 
-        this.mesh.add(hit)
         // this.mesh.add(svg)
-        this.createText("F")
+        
+        this.mesh.add(hit)
+        this.createText("F");
+    }
+
+    createTextFontLoader = async text => {
+        var fontLoader = new THREE.FontLoader();
+        console.log('create text font loader', fontLoader)
+        await fontLoader.load("../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
+            console.log ( "FONT LOADER LOADED", font)
+            var textGeo = new THREE.TextGeometry(text, {
+                size: 10,
+                height: 5,
+                curveSegments: 6,
+                font
+            });
+            var color = new THREE.Color();
+            color.setRGB(255, 250, 250);
+            var textMaterial = new THREE.MeshBasicMaterial({ color: color });
+            var text = new THREE.Mesh(textGeo, textMaterial);
+            this.mesh.add(text);
+        })
+
+    }
+
+
+    loadFont = async () => {
+        try {
+            let t = await Font.loadAsync({
+                helvetica: require("../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
+            });
+        } catch (e) {
+            Log.error(e);
+        } finally {
+            console.log("Font.isLoaded", Font.isLoaded("helvetica"), Font)
+            let t = Font.processFontFamily("helvetica");
+            console.log('t', t)
+        }
+    };
+
+    createTextPlugin = text => {
+        const textMesh = new TextMesh();
+        this.mesh.add(textMesh);
+        textMesh.material = new THREE.MeshPhongMaterial({ color: 0x056ecf });
+        textMesh.update({
+          text: text,
+          font: this.fontData, // This accepts json, THREE.Font, or a uri to remote THREE.Font json
+          size: 10, //Size of the text. Default is 100.
+          height: 5, //Thickness to extrude text. Default is 50.
+          curveSegments: 12, // — Integer. Number of points on the curves. Default is 12.
+          bevelEnabled: false, // — Boolean. Turn on bevel. Default is False.
+          bevelThickness: 1, // — Float. How deep into text bevel goes. Default is 10.
+          bevelSize: 0.8, // — Float. How far from text outline is bevel. Default is 8.
+          bevelSegments: 0.3 // — Integer. Number of bevel segments. Default is 3.
+        });
+
     }
 
     createText = text => {
+        console.log( 'this.fontData', this.fontData)
         const textGeo = new THREE.TextBufferGeometry(text, {
             font: this.fontData,
             size: 0.5,
@@ -166,40 +223,38 @@ export default class MovingLetter extends React.Component {
         return this.mesh
     }
 
-/*
-    async _loadSVGGeometry(svgAsset) {
-        await svgAsset.downloadAsync()
-        const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri)
-        const loader = new SVGLoader()
-        const shapePaths = loader.load(svgText)
-        const geometry = new THREE.Geometry()
-        for (let i = 0 i < shapePaths.length i++) {
-            const shapes = shapePaths[i].toShapes()
-            for (let j = 0 j < shapes.length j++) {
-                geometry.merge(
-                    new THREE.ExtrudeGeometry(shapes[j], {
-                        bevelEnabled: false,
-                        amount: 2,
-                    })
-                )
-            }
-        }
-        return geometry
-    }
+    // _loadSVGGeometry = async (svgAsset) => {
+    //     await svgAsset.downloadAsync()
+    //     const svgText = await FileSystem.readAsStringAsync(svgAsset.localUri)
+    //     const loader = new SVGLoader()
+    //     const shapePaths = loader.load(svgText)
+    //     const geometry = new THREE.Geometry()
+    //     for (let i = 0; i < shapePaths.length; i++) {
+    //         const shapes = shapePaths[i].toShapes()
+    //         for (let j = 0; j < shapes.length; j++) {
+    //             geometry.merge(
+    //                 new THREE.ExtrudeGeometry(shapes[j], {
+    //                     bevelEnabled: false,
+    //                     amount: 2,
+    //                 })
+    //             )
+    //         }
+    //     }
+    //     return geometry
+    // }
 
-    async _loadSVGMesh() {
-        const svgAsset = await Asset.fromModule(require(`../assets/F.svg`))
+    // _loadSVGMesh = async() => {
+    //     const svgAsset = await Asset.fromModule(require(`../../../assets/F.svg`))
 
-        const geometry = await this._loadSVGGeometry(svgAsset)
-        const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 })
-        const mesh = new THREE.Mesh(geometry, material)
+    //     const geometry = await this._loadSVGGeometry(svgAsset)
+    //     const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 })
+    //     const mesh = new THREE.Mesh(geometry, material)
 
-        // mesh.scale.x = -0.075
-        mesh.scale.y = -1
-    // mesh.scale.z = -100
+    //     // // mesh.scale.x = -0.075
+    //     // // mesh.scale.y = -1
+    //     // mesh.scale.z = 0
 
-        return mesh
-    }
-*/
+    //     return mesh
+    // }
 
 }

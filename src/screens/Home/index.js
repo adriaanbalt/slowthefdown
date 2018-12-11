@@ -1,4 +1,4 @@
-import Expo, { KeepAwake, FileSystem, Asset } from "expo"
+import Expo, { KeepAwake, FileSystem, Asset, Font  } from "expo"
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 // import THREEJS from "three"
 import React from 'react'
@@ -105,8 +105,31 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
+
+  _loadAssetsAsync = async() => {
+    try {
+      let t = await Font.loadAsync({
+        'helvetica': require("../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
+      });
+      console.log ('loadasset async', t)
+      return t
+    }
+    catch (e) {
+      Log.error(e);
+    }
+    finally {
+      console.log(Font.isLoaded('helvetica'));
+      // console.log(Font.style('helvetica'));
+
+      return Font
+    }
+  }
+
+
   loadFont = async () => {
-    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold")
+
+    // const font = require("../../assets/fonts/neue_haas_unica_pro_medium.json");
+    console.log ('load Font in home', font)
     return this.loadFontFromJson(font)
     // return this.loadFontFromUri(uri)
   }
@@ -136,7 +159,7 @@ class HomeScreen extends React.Component {
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
 
-    const font = await this.loadFont()
+    const font = await this._loadAssetsAsync();
     
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
