@@ -1,4 +1,4 @@
-import Expo, { KeepAwake, FileSystem, Asset, Font  } from "expo"
+import Expo, { KeepAwake, FileSystem, Asset } from "expo"
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 // import THREEJS from "three"
 import React from 'react'
@@ -30,6 +30,7 @@ import NavigationUI from '../../shared/NavigationUI'
 import Shader from "./components/Shader"
 import MovingLetter from "./components/MovingLetter"
 import SVGLoader from "./components/SVGLoader"
+import Particles from "./components/Particles";
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
@@ -105,30 +106,8 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
-
-  _loadAssetsAsync = async() => {
-    try {
-      let t = await Font.loadAsync({
-        'helvetica': require("../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
-      });
-      console.log ('loadasset async', t)
-      return t
-    }
-    catch (e) {
-      Log.error(e);
-    }
-    finally {
-      console.log(Font.isLoaded('helvetica'));
-      // console.log(Font.style('helvetica'));
-
-      return Font
-    }
-  }
-
-
   loadFont = async () => {
-
-    // const font = require("../../assets/fonts/neue_haas_unica_pro_medium.json");
+    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold")
     console.log ('load Font in home', font)
     return this.loadFontFromJson(font)
     // return this.loadFontFromUri(uri)
@@ -159,7 +138,7 @@ class HomeScreen extends React.Component {
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
 
-    const font = await this._loadAssetsAsync();
+    const font = await this.loadFont()
     
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
@@ -171,8 +150,12 @@ class HomeScreen extends React.Component {
     const movingLetterMesh = movingLetter.getMesh()
     movingLetterMesh.position.z = 0
 
+    const particles = new Particles()
+    const particlesMesh = particles.getMesh();
+
     scene.add(backgroundMesh)
     scene.add(movingLetterMesh)
+    scene.add(particlesMesh);
 
     camera.position.z = 2
 
@@ -221,6 +204,7 @@ class HomeScreen extends React.Component {
       
       movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
+      particles.update( elapsedSeconds )
       
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
