@@ -5075,10 +5075,22 @@ text-encoding@^0.6.4:
   resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
   integrity sha1-45mpgiV6J22uQou5KEXLcb3CbRk=
 
+three-bas@^1.1.3:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/three-bas/-/three-bas-2.8.0.tgz#bc0ada34e93f1d534554d6be8461a19547c62300"
+  integrity sha512-sg3TApWDrkrA5qGaLiTfBbFKPLHgbRoZfbeH4p9hMADxMuc2M7UXO4YF2wT7p79wsVj98myLEez4VebnFwwZFQ==
+  dependencies:
+    three "^0.98.0"
+
 three@0.88.0:
   version "0.88.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.88.0.tgz#4256c2fc38e4fb23a0d23eba2b6cce4df8e466d5"
   integrity sha1-QlbC/Djk+yOg0j66K2zOTfjkZtU=
+
+three@^0.98.0:
+  version "0.98.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.98.0.tgz#11d4e3cca4b5d099c7de0ea5afa153b5d20cda84"
+  integrity sha512-fihjYVjCmQbI03zt1+YCl/m+UrZCcDHFNLexgqBOIdPwnO6PYkQaYUsIbqtvNNse+BiMeu+pQWzZn9/NSnIv6A==
 
 throat@^4.1.0:
   version "4.1.0"

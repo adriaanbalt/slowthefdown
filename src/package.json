@@ -16,7 +16,8 @@
     "react-navigation": "^2.17.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "simplex-noise": "^2.4.0"
+    "simplex-noise": "^2.4.0",
+    "three-bas": "^1.1.3"
   },
   "devDependencies": {
     "babel": "^6.23.0",
