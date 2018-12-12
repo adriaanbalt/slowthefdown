@@ -1,5 +1,6 @@
 import { THREE } from "expo-three";
 import { BasicAnimationMaterial } from "three-bas"
+import ParticlePrefabGeometry from './ParticlePrefabGeometry'
 
 export default class Animation {
 
@@ -10,7 +11,7 @@ export default class Animation {
         var prefab = new THREE.TetrahedronGeometry(prefabSize);
 
         // create a geometry where the prefab is repeated 'prefabCount' times
-        var geometry = new SpeedParticleGeometry(prefab, prefabCount);
+        var geometry = new ParticlePrefabGeometry(prefab, prefabCount);
 
         // add a time offset for each prefab, spreading them out along the Z axis
         geometry.createAttribute('aOffset', 1, function (data, i, count) {
@@ -73,16 +74,19 @@ export default class Animation {
                 'transformed += mix(aStartPosition, aEndPosition, tProgress);'
             ]
         });
-
-        THREE.Mesh.call(this, geometry, material);
-        this.frustumCulled = false;
+            
+        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh.frustumCulled = false;
     }
 
+    getMesh() {
+        return this.mesh;
+    }
     update(delta) {
         this.material.uniforms['uTime'].value += delta;
-    };
+    }
     setScale(scale) {
         this.material.uniforms['uScale'].value = scale;
-    };
+    }
     
-};
+}
