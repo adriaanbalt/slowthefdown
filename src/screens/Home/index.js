@@ -29,8 +29,8 @@ import NavigationUI from '../../shared/NavigationUI'
 
 import Shader from "./components/Shader"
 import MovingLetter from "./components/MovingLetter"
-import SVGLoader from "./components/SVGLoader"
 import Particles from "./components/Particles";
+
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
