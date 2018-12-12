@@ -5,23 +5,22 @@ import ParticlePrefabGeometry from './ParticlePrefabGeometry'
 export default class Animation {
 
     //(20, 10, 40, 10000, 0.01 )
-
     constructor(width, height, depth, prefabCount, prefabSize) {
         // create a prefab
         var prefab = new THREE.TetrahedronGeometry(prefabSize);
 
         // create a geometry where the prefab is repeated 'prefabCount' times
-        var geometry = new ParticlePrefabGeometry(prefab, prefabCount);
+        this.geometry = new ParticlePrefabGeometry(prefab, prefabCount);
 
         // add a time offset for each prefab, spreading them out along the Z axis
-        geometry.createAttribute('aOffset', 1, function (data, i, count) {
+        this.geometry.createAttribute('aOffset', 1, function (data, i, count) {
             data[0] = i / count;
         });
 
         // create a start position for each prefab
-        var aStartPosition = geometry.createAttribute('aStartPosition', 3);
+        var aStartPosition = this.geometry.createAttribute('aStartPosition', 3);
         // create an end position for each prefab
-        var aEndPosition = geometry.createAttribute('aEndPosition', 3);
+        var aEndPosition = this.geometry.createAttribute('aEndPosition', 3);
         var x, y, data = [];
 
         // for each prefab
@@ -37,16 +36,16 @@ export default class Animation {
             data[1] = y;
             // all prefabs start at depth * -0.5
             data[2] = depth * -0.5;
-            geometry.setPrefabData(aStartPosition, i, data);
+            this.geometry.setPrefabData(aStartPosition, i, data);
 
             data[0] = x;
             data[1] = y;
             // all prefabs end at depth * 0.5
             data[2] = depth * 0.5;
-            geometry.setPrefabData(aEndPosition, i, data);
+            this.geometry.setPrefabData(aEndPosition, i, data);
         }
 
-        var material = new BasicAnimationMaterial({
+        this.material = new BasicAnimationMaterial({
             side: THREE.DoubleSide,
             uniforms: {
                 uTime: { value: 0.0 },
@@ -75,7 +74,7 @@ export default class Animation {
             ]
         });
             
-        this.mesh = new THREE.Mesh(geometry, material);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.frustumCulled = false;
     }
 
