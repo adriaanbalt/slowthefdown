@@ -38,6 +38,7 @@ export default class ParticlePrefabGeometry extends PrefabBufferGeometry {
           positionBuffer[offset + 2] = p.z
         }
       }
+      super.bufferPositions()
     }
     
 }
