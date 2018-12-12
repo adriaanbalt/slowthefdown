@@ -208,6 +208,8 @@ class HomeScreen extends React.Component {
       
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
+
+      // TODO: once particles are added, maybe intersects will change.
       if ( intersects.length > 1 ) {
         over()
       }
