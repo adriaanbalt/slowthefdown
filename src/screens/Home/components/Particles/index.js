@@ -1,8 +1,8 @@
 import { THREE } from "expo-three";
-import { BasicAnimationMaterial } from "three-bas"
-import ParticlePrefabGeometry from './ParticlePrefabGeometry'
+import { BasicAnimationMaterial, PrefabBufferGeometry } from "three-bas";
+// import ParticlePrefabGeometry from './ParticlePrefabGeometry'
 
-export default class Animation {
+export default class Particles {
 
     //(20, 10, 40, 10000, 0.01 )
     constructor(width, height, depth, prefabCount, prefabSize) {
@@ -10,7 +10,7 @@ export default class Animation {
         var prefab = new THREE.TetrahedronGeometry(prefabSize);
 
         // create a geometry where the prefab is repeated 'prefabCount' times
-        this.geometry = new ParticlePrefabGeometry(prefab, prefabCount);
+        this.geometry = new PrefabBufferGeometry(prefab, prefabCount);
 
         // add a time offset for each prefab, spreading them out along the Z axis
         this.geometry.createAttribute('aOffset', 1, function (data, i, count) {
@@ -50,10 +50,10 @@ export default class Animation {
             uniforms: {
                 uTime: { value: 0.0 },
                 uDuration: { value: 1.0 },
-                uScale: { value: 1.0 }
+                uScale: { value: 0.01 }
             },
             uniformValues: {
-                diffuse: new THREE.Color(0xf1f1f1)
+                diffuse: new THREE.Color(0xFF00FF)
             },
             vertexParameters: [
                 'uniform float uTime;',
@@ -83,9 +83,6 @@ export default class Animation {
     }
     update(delta) {
         this.material.uniforms['uTime'].value += delta;
-    }
-    setScale(scale) {
-        this.material.uniforms['uScale'].value = scale;
     }
     
 }
