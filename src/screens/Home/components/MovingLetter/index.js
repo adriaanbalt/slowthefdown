@@ -23,7 +23,7 @@ export default class MovingLetter extends React.Component {
         let geometry = new THREE.CircleGeometry(.4, 20)
         let hitMaterial = new THREE.MeshBasicMaterial({
             color: 0xFFFFFF,
-            opacity: 0,
+            opacity: 1,
             transparent: true
         })
         const hit = new THREE.Mesh(geometry, hitMaterial)
@@ -57,13 +57,30 @@ export default class MovingLetter extends React.Component {
         // this.mesh.add(svg)
         
         this.mesh.add(hit)
-        this.createText("F");
+        // this.createText("F");
+
+        // this.generateTextGeometry('F', {
+        //     size: 40,
+        //     height: 12,
+        //     font: 'helvetica',
+        //     weight: 'bold',
+        //     style: 'normal',
+        //     curveSegments: 24,
+        //     bevelSize: 2,
+        //     bevelThickness: 2,
+        //     bevelEnabled: true,
+        //     anchor: {
+        //         x: 0.5,
+        //         y: 0.5,
+        //         z: 0.0
+        //     }
+        // });
     }
 
     createTextFontLoader = async text => {
         var fontLoader = new THREE.FontLoader();
         console.log('create text font loader', fontLoader)
-        await fontLoader.load("../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
+        await fontLoader.load("../../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
             console.log ( "FONT LOADER LOADED", font)
             var textGeo = new THREE.TextGeometry(text, {
                 size: 10,
@@ -80,11 +97,10 @@ export default class MovingLetter extends React.Component {
 
     }
 
-
     loadFont = async () => {
         try {
             let t = await Font.loadAsync({
-                helvetica: require("../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
+                helvetica: require("../../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
             });
         } catch (e) {
             Log.error(e);
@@ -117,17 +133,17 @@ export default class MovingLetter extends React.Component {
         console.log( 'this.fontData', this.fontData)
         const textGeo = new THREE.TextBufferGeometry(text, {
             font: this.fontData,
-            size: 0.5,
-            height: 0.0,
-            curveSegments: 12,
-            bevelThickness: .5,
-            bevelSize: 0.01,
-            bevelEnabled: true,
-            material: 0,
-            extrudeMaterial: 2,
+            size: 1,
         })
-        textGeo.computeBoundingBox()
-        textGeo.computeVertexNormals()
+        // textGeo.computeBoundingBox()
+        // textGeo.computeVertexNormals()
+
+        var size = textGeo.boundingBox.size();
+        var anchorX = size.x * -0.5;
+        var anchorY = size.y * -0.5;
+        var anchorZ = size.z * -0;
+        var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ);
+        textGeo.applyMatrix(matrix);
 
         const materials = new THREE.MeshPhongMaterial({ color: 0xFFFFFF })
         const textMesh = new THREE.Mesh(textGeo, materials)
@@ -137,6 +153,25 @@ export default class MovingLetter extends React.Component {
         let centerOffset =
             -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x)
         textMesh.position.x = centerOffset
+    }
+
+    generateTextGeometry(text, params) {
+        var geometry = new THREE.TextGeometry(text, params);
+
+        geometry.computeBoundingBox();
+
+        var size = geometry.boundingBox.size();
+        var anchorX = size.x * -params.anchor.x;
+        var anchorY = size.y * -params.anchor.y;
+        var anchorZ = size.z * -params.anchor.z;
+        var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ);
+
+        geometry.applyMatrix(matrix);
+
+        const materials = new THREE.MeshPhongMaterial({ color: 0xFFFFFF })
+        const textMesh = new THREE.Mesh(geometry, materials)
+        textMesh.position.set( 0,0,0 )
+        this.mesh.add(textMesh)
     }
 
     update(time, mouseX, mouseY) {
