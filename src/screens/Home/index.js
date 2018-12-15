@@ -35,7 +35,7 @@ const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
   },
   contentContainer: {
     // backgroundColor: 'white'
@@ -107,10 +107,12 @@ class HomeScreen extends React.Component {
   }
 
   loadFont = async () => {
-    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold")
+    const font = require("../../assets/fonts/neue_haas_unica_pro_regular.json");
     console.log ('load Font in home', font)
     return this.loadFontFromJson(font)
     // return this.loadFontFromUri(uri)
+
+    
   }
 
   loadFontFromJson = json => new THREE.FontLoader().parse(json)
@@ -129,16 +131,16 @@ class HomeScreen extends React.Component {
     const camera = new THREE.PerspectiveCamera(
       100,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
-      1,
-      10000
+      0.1,
+      200
     )
-    camera.position.z = 2
+    // camera.position.z = 2
     
     const renderer = new ExpoTHREE.Renderer({ gl })
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
 
-    const font = await this.loadFont()
+    const font = await this.loadFont();
     
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
@@ -150,8 +152,10 @@ class HomeScreen extends React.Component {
     const movingLetterMesh = movingLetter.getMesh()
     movingLetterMesh.position.z = 0
 
-    const particles = new Particles()
+    // width, height, depth, prefabCount, prefabSize
+    const particles = new Particles(gl.drawingBufferWidth, gl.drawingBufferHeight, 0, 10000, 0.01);
     const particlesMesh = particles.getMesh();
+    particlesMesh.position.z = 1;
 
     scene.add(backgroundMesh)
     scene.add(movingLetterMesh)
@@ -203,14 +207,16 @@ class HomeScreen extends React.Component {
       camera.updateMatrixWorld()
       
       movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
-      background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
-      particles.update( elapsedSeconds )
+      // background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
+      // particles.update( 1/20 )
       
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
 
+      // console.log("this.state.mouse", this.state.mouse, intersects.length);
+
       // TODO: once particles are added, maybe intersects will change.
-      if ( intersects.length > 1 ) {
+      if ( intersects.length > 10001 ) {
         over()
       }
       else {
