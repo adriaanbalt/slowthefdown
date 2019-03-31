@@ -1,38 +1,15 @@
 {
   "expo": {
     "name": "Slow the F",
-    "description": "Adriaan Balt",
     "slug": "snack-slowthef",
-    "privacy": "unlisted",
-    "sdkVersion": "25.0.0",
+    "sdkVersion": "32.0.0",
     "version": "6.0.4",
-    "orientation": "portrait",
-    "primaryColor": "#000000",
-    "icon": "./assets/expo-icon.png",
-    "loading": {
-      "icon": "./assets/expo-icon.png",
-      "hideExponentText": true
-    },
-    "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4",
-        "otf",
-        "xml",
-        "json",
-        "png"
-      ]
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.balt.slowthef"
     },
-    "splash": {
-      "image": "./assets/splash.png",
-      "backgroundColor": "#000000"
-    }
-  },
-  "facebookScheme": "fb331867204038135",
-  "facebookAppId": "331867204038135",
-  "facebookDisplayName": "Slow the F"
+    "facebookScheme": "fb331867204038135",
+    "facebookAppId": "331867204038135",
+    "facebookDisplayName": "Slow the F"
+  }
 }
