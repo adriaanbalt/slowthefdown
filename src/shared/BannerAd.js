@@ -1,6 +1,7 @@
-import Expo, {
-    AdMobBanner,
-} from "expo"
+// import Expo, {
+//     AdMobBanner,
+// } from "expo"
+import Expo from "expo"
 import React from 'react'
 import { connect } from 'react-redux'
 import {
@@ -33,13 +34,13 @@ class BannerAd extends React.Component {
     if ( width <= 320 ) {
         bannerSize = "banner"
     }
+    // <AdMobBanner
+    //   bannerSize={bannerSize} // depends on device size
+    //   adUnitID={AdMob.bannerAdUnitId} // Test ID, Replace with your-admob-unit-id
+    //   onDidFailToReceiveAdWithError={this.bannerError}
+    // />
     return (
       <View style={styles.container}>
-        <AdMobBanner
-          bannerSize={bannerSize} // depends on device size
-          adUnitID={AdMob.bannerAdUnitId} // Test ID, Replace with your-admob-unit-id
-          onDidFailToReceiveAdWithError={this.bannerError}
-        />
       </View>
     );
   }
