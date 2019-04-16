@@ -1,4 +1,4 @@
-import Expo, { KeepAwake, FileSystem, Asset } from "expo"
+import Expo, { KeepAwake, FileSystem, Asset, GLView } from "expo";
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 // import THREEJS from "three"
 import React from 'react'
@@ -27,9 +27,9 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
-import Shader from "./components/Shader"
-import MovingLetter from "./components/MovingLetter"
 import Particles from "./components/Particles";
+
+import THREERoot from './Root'
 
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -61,7 +61,7 @@ class HomeScreen extends React.Component {
     THREE.suppressExpoWarnings(true)
 
     ShareTheNavigation.set(props.navigation)
-    this.props.initialize()
+    // this.props.initialize()
   }
   componentDidMount() {
     this.setState({ loading: true })
@@ -91,6 +91,7 @@ class HomeScreen extends React.Component {
       onPanResponderMove: ({ nativeEvent }, gestureState) => {
         if ( this.state.gl ) {
           // ratio of mouse position to the width of the screen
+          // todo something is wrong with the sizing
           this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1;
           this.state.mouse.y = -(nativeEvent.locationY / height) * 2 + 1;
         }
@@ -106,62 +107,45 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
-  loadFont = async () => {
-    const font = require("../../assets/fonts/neue_haas_unica_pro_regular.json");
-    console.log ('load Font in home', font)
-    return this.loadFontFromJson(font)
-    // return this.loadFontFromUri(uri)
-
-    
-  }
-
-  loadFontFromJson = json => new THREE.FontLoader().parse(json)
-
   _onGLContextCreate = async gl => {
+    console.log("_onGLContextCreate");
     this.state.gl = gl
-    
-    const scene = new THREE.Scene()
-    
-    const raycaster = new THREE.Raycaster()
-    
-    const light = new THREE.PointLight(0xFFFFFF, 1, -1)
-    light.position.set(0, 50, 50)
-    scene.add(light)
-    
-    const camera = new THREE.PerspectiveCamera(
-      100,
-      gl.drawingBufferWidth / gl.drawingBufferHeight,
-      0.1,
-      200
-    )
-    // camera.position.z = 2
-    
+
+    // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    // gl.clearColor(0, 1, 1, 1);
+
     const renderer = new ExpoTHREE.Renderer({ gl })
+    renderer.setPixelRatio(window.pixelRatio);
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
 
-    const font = await this.loadFont();
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      gl.drawingBufferWidth / gl.drawingBufferHeight,
+      0.1,
+      20000
+    );
+
+    const scene = new THREE.Scene()
+
+    // var axesHelper = new THREE.AxesHelper(5);
+    // scene.add(axesHelper);
     
-    const texture = await ExpoTHREE.loadTextureAsync({
-      asset: require("../../assets/images/stars.jpg")
-    })
-    const background = new Shader(texture)
-    const backgroundMesh = background.getMesh()
-
-    const movingLetter = new MovingLetter( font )
-    const movingLetterMesh = movingLetter.getMesh()
-    movingLetterMesh.position.z = 0
-
+    // const raycaster = new THREE.Raycaster()
+    
     // width, height, depth, prefabCount, prefabSize
-    const particles = new Particles(gl.drawingBufferWidth, gl.drawingBufferHeight, 0, 10000, 0.01);
+    const particles = new Particles(20, 10, 40, 10000, 0.01);
+    particles.setScale( 1000 ); // 100000
     const particlesMesh = particles.getMesh();
-    particlesMesh.position.z = 1;
 
-    scene.add(backgroundMesh)
-    scene.add(movingLetterMesh)
+    // TODO this is the only way i can see anything
+    particlesMesh.position.x = 0;
+    particlesMesh.position.y = -10;
+    particlesMesh.position.z = -1000;
+
+    camera.position.z = 10;
+
     scene.add(particlesMesh);
-
-    camera.position.z = 2
 
     const startTime = Date.now()
     let intersects
@@ -177,10 +161,8 @@ class HomeScreen extends React.Component {
         this.startHowLongHeldMilliseconds = Date.now()
       } else {
         this.setState({ deltaTime })
-        this.props.setDeltaTime( deltaTime )
+        // this.props.setDeltaTime( deltaTime )
       }
-      movingLetter.over( deltaTime )
-      background.over( deltaTime, this.state.mouse )
     }
     const out = () => {
       if ( this.startHowLongHeldMilliseconds !== null ) {
@@ -189,43 +171,34 @@ class HomeScreen extends React.Component {
         // let deltaTime = 0
         this.startHowLongHeldMilliseconds = null
         // set highscore
-        this.props.setHighscore(deltaTime )
+        // this.props.setHighscore(deltaTime )
       }
-      // speed up letter
-      movingLetter.out()
-      // speed up background shader
-      background.out()
-
     }
 
     const animate = p => {
       requestAnimationFrame(animate)
 
-      elapsedMilliseconds = Date.now() - startTime
-      elapsedSeconds = elapsedMilliseconds / 1000
+      // elapsedMilliseconds = Date.now() - startTime
+      // elapsedSeconds = elapsedMilliseconds / 1000
 
-      camera.updateMatrixWorld()
+      // camera.updateMatrixWorld()
       
-      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
-      // background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
-      // particles.update( 1/20 )
+      particles.update( 1/60 )
       
-      raycaster.setFromCamera( this.state.mouse, camera )
-      intersects = raycaster.intersectObjects( scene.children, true )
+      // raycaster.setFromCamera( this.state.mouse, camera )
+      // intersects = raycaster.intersectObjects( scene.children, true )
 
-      // console.log("this.state.mouse", this.state.mouse, intersects.length);
-
-      // TODO: once particles are added, maybe intersects will change.
-      if ( intersects.length > 10001 ) {
-        over()
-      }
-      else {
-        out()
-      }
+      // // TODO: once particles are added, maybe intersects will change.
+      // if ( intersects.length > 1 ) {
+      //   over()
+      // }
+      // else {
+      //   out()
+      // }
 
       renderer.render(scene, camera)
 
-      gl.endFrameEXP()
+      gl.endFrameEXP();
     }
 
     animate()
@@ -304,7 +277,7 @@ class HomeScreen extends React.Component {
           &&
           <NavigationUI navigation={this.props.navigation} />
         }
-        <Expo.GLView
+        <GLView
           style={{ flex: 1 }}
           onContextCreate={this._onGLContextCreate}
         />
