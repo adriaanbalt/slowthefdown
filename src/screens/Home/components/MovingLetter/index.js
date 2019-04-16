@@ -11,7 +11,7 @@ export default class MovingLetter extends React.Component {
 
         this.fontData = font
 
-        console.log( "moving letter constructor", this.fontData, typeof this.fontData )
+        // console.log( "moving letter constructor", this.fontData, typeof this.fontData )
 
         this.setup()
     }
@@ -79,9 +79,9 @@ export default class MovingLetter extends React.Component {
 
     createTextFontLoader = async text => {
         var fontLoader = new THREE.FontLoader();
-        console.log('create text font loader', fontLoader)
+        // console.log('create text font loader', fontLoader)
         await fontLoader.load("../../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
-            console.log ( "FONT LOADER LOADED", font)
+            // console.log ( "FONT LOADER LOADED", font)
             var textGeo = new THREE.TextGeometry(text, {
                 size: 10,
                 height: 5,
@@ -105,9 +105,9 @@ export default class MovingLetter extends React.Component {
         } catch (e) {
             Log.error(e);
         } finally {
-            console.log("Font.isLoaded", Font.isLoaded("helvetica"), Font)
+            // console.log("Font.isLoaded", Font.isLoaded("helvetica"), Font)
             let t = Font.processFontFamily("helvetica");
-            console.log('t', t)
+            // console.log('t', t)
         }
     };
 
@@ -130,7 +130,7 @@ export default class MovingLetter extends React.Component {
     }
 
     createText = text => {
-        console.log( 'this.fontData', this.fontData)
+        // console.log( 'this.fontData', this.fontData)
         const textGeo = new THREE.TextBufferGeometry(text, {
             font: this.fontData,
             size: 1,
