@@ -27,6 +27,8 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
+import Shader from "./components/Shader";
+import MovingLetter from "./components/MovingLetter";
 import Particles from "./components/Particles";
 
 import THREERoot from './Root'
@@ -107,6 +109,13 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
+  loadFont = async () => {
+    const font = require("../../assets/fonts/neue_haas_unica_pro_regular.json");
+    console.log ('load Font in home', font)
+    return this.loadFontFromJson(font)
+  }
+  loadFontFromJson = json => new THREE.FontLoader().parse(json)
+
   _onGLContextCreate = async gl => {
     console.log("_onGLContextCreate");
     this.state.gl = gl
@@ -121,30 +130,32 @@ class HomeScreen extends React.Component {
 
 
     const camera = new THREE.PerspectiveCamera(
-      60,
+      100,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
       0.1,
       20000
     );
 
     const scene = new THREE.Scene()
-
-    // var axesHelper = new THREE.AxesHelper(1);
-    // scene.add(axesHelper);
     
-    // const raycaster = new THREE.Raycaster()
+    const raycaster = new THREE.Raycaster()
+
+    const font = await this.loadFont();
+
+    const texture = await ExpoTHREE.loadTextureAsync({
+      asset: require("../../assets/images/stars.jpg")
+    });
+    const background = new Shader(texture);
+    const backgroundMesh = background.getMesh();
+    const movingLetter = new MovingLetter(font);
+    const movingLetterMesh = movingLetter.getMesh();
+    movingLetterMesh.position.z = 0;
     
     // width, height, depth, prefabCount, prefabSize
     const particles = new Particles(20, 10, 40, 1000, 0.01);
     particles.setScale( 100 ); // 100000
     const particlesMesh = particles.getMesh();
 
-    // TODO this is the only way i can see anything
-    // particlesMesh.position.x = 0;
-    // particlesMesh.position.y = -10;
-    // particlesMesh.position.z = -100;
-
-    camera.position.z = 10;
     camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
 
     scene.add(particlesMesh);
@@ -180,15 +191,15 @@ class HomeScreen extends React.Component {
     const animate = p => {
       requestAnimationFrame(animate)
 
-      // elapsedMilliseconds = Date.now() - startTime
-      // elapsedSeconds = elapsedMilliseconds / 1000
+      elapsedMilliseconds = Date.now() - startTime
+      elapsedSeconds = elapsedMilliseconds / 1000
 
-      // camera.updateMatrixWorld()
+      camera.updateMatrixWorld()
       
       particles.update( 1/60 )
       
-      // raycaster.setFromCamera( this.state.mouse, camera )
-      // intersects = raycaster.intersectObjects( scene.children, true )
+      raycaster.setFromCamera( this.state.mouse, camera )
+      intersects = raycaster.intersectObjects( scene.children, true )
 
       // // TODO: once particles are added, maybe intersects will change.
       // if ( intersects.length > 1 ) {
