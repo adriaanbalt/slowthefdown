@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "expo": "^32.0.0",
-    "expo-three": "3.0.0-alpha.4",
+    "expo-three": "github:adriaanbalt/expo-three",
     "expokit": "32.0.7",
     "firebase": "^5.5.4",
     "react": "16.5.0",
