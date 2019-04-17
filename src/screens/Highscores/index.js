@@ -18,7 +18,6 @@ import StyledButton from '../../shared/StyledButton';
 import Colors from '../../constants/Colors';
 import NavigationUI from '../../shared/NavigationUI'
 import Header from '../../shared/Header'
-import { translate } from 'gl-matrix/src/gl-matrix/mat4';
 
 var { width, height } = Dimensions.get('window')
 
