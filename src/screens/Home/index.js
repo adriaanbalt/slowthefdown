@@ -114,10 +114,11 @@ class HomeScreen extends React.Component {
     // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     // gl.clearColor(0, 1, 1, 1);
 
-    const renderer = new ExpoTHREE.Renderer({ gl })
-    renderer.setPixelRatio(window.pixelRatio);
+    const renderer = new ExpoTHREE.Renderer({ gl, depth: false })
+    renderer.setPixelRatio(window.pixelRatio || 1);
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
+
 
     const camera = new THREE.PerspectiveCamera(
       60,
@@ -128,22 +129,23 @@ class HomeScreen extends React.Component {
 
     const scene = new THREE.Scene()
 
-    // var axesHelper = new THREE.AxesHelper(5);
+    // var axesHelper = new THREE.AxesHelper(1);
     // scene.add(axesHelper);
     
     // const raycaster = new THREE.Raycaster()
     
     // width, height, depth, prefabCount, prefabSize
-    const particles = new Particles(20, 10, 40, 10000, 0.01);
-    particles.setScale( 1000 ); // 100000
+    const particles = new Particles(20, 10, 40, 1000, 0.01);
+    particles.setScale( 100 ); // 100000
     const particlesMesh = particles.getMesh();
 
     // TODO this is the only way i can see anything
-    particlesMesh.position.x = 0;
-    particlesMesh.position.y = -10;
-    particlesMesh.position.z = -1000;
+    // particlesMesh.position.x = 0;
+    // particlesMesh.position.y = -10;
+    // particlesMesh.position.z = -100;
 
     camera.position.z = 10;
+    camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
 
     scene.add(particlesMesh);
 
