@@ -6,7 +6,6 @@ export default class Particles {
 
     //(20, 10, 40, 10000, 0.01 )
     constructor(width, height, depth, prefabCount, prefabSize) {
-        console.log('width, height, depth, prefabCount, prefabSize', width, height, depth, prefabCount, prefabSize)
 
         // create a prefab
         var prefab = new THREE.TetrahedronGeometry(prefabSize);
@@ -77,7 +76,7 @@ export default class Particles {
         });
             
         // super( geometry, material );
-        // this.material = material
+        this.material.renderOrder = 2;
         this.mesh = new THREE.Mesh(geometry, this.material);
         this.frustumCulled = false;
     }
@@ -86,23 +85,9 @@ export default class Particles {
         return this.mesh;
     }
     setScale(scale) {
-        console.log("setscale", scale, this.material.uniforms["uScale"].value);
         this.material.uniforms["uScale"].value = scale;
-        console.log("setscale", scale, this.material.uniforms["uScale"].value);
     }
     update(delta) {
-        // console.log(
-        //   "scale",
-        //   this.material.uniforms["uTime"].value,
-        //   "delta",
-        //   delta);
-
-
-//   console.log("");
-//   console.log("uTime", this.material.uniforms["uTime"].value, delta);
-//   console.log("uDuration", this.material.uniforms["uDuration"].value);
-//   console.log("uScale", this.material.uniforms["uScale"].value);
-
         this.material.uniforms['uTime'].value += delta;
     }
     
