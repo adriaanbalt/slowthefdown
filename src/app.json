@@ -1,23 +1,38 @@
 {
   "expo": {
-    "name": "Slow the F",
+    "name": "Slow Down",
+    "description": "Adriaan Balt",
     "slug": "snack-slowdown",
+    "privacy": "unlisted",
     "sdkVersion": "32.0.0",
     "version": "6.0.4",
+    "orientation": "portrait",
+    "primaryColor": "#000000",
+    "icon": "./assets/expo-icon.png",
+    "loading": {
+      "icon": "./assets/expo-icon.png",
+      "hideExponentText": true
+    },
+    "packagerOpts": {
+      "assetExts": [
+        "ttf",
+        "mp4",
+        "otf",
+        "xml",
+        "json",
+        "png"
+      ]
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.balt.slowdown",
-      "publishBundlePath": "ios/slow-the-f/Supporting/shell-app.bundle",
-      "publishManifestPath": "ios/slow-the-f/Supporting/shell-app-manifest.json"
+      "bundleIdentifier": "com.balt.slwodown"
     },
-    "facebookScheme": "fb331867204038135",
-    "facebookAppId": "331867204038135",
-    "facebookDisplayName": "Slow the F",
-    "scheme": "exp7241015ed0fd48739e1a2e119dd7d168",
-    "android": {
-      "package": "com.balt.slowdown",
-      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
-      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
+    "splash": {
+      "image": "./assets/splash.png",
+      "backgroundColor": "#000000"
     }
-  }
+  },
+  "facebookScheme": "fb331867204038135",
+  "facebookAppId": "331867204038135",
+  "facebookDisplayName": "Slow the F"
 }
