@@ -56,7 +56,7 @@ class HomeScreen extends React.Component {
       fadeOutAnim: new Animated.Value(1),
       loading: true,
       pan: new Animated.ValueXY(),
-      mouse: new THREE.Vector2(-1, -1),
+      mouse: new THREE.Vector2(-10, -10),
       deltaTime: 0,
     }
     // Turn off extra warnings
@@ -88,7 +88,7 @@ class HomeScreen extends React.Component {
           x: this._val.x,
           y: this._val.y
         })
-        this.state.pan.setValue({ x: -1, y: -1 })
+        this.state.pan.setValue({ x: -10, y: -10 })
       },
       onPanResponderMove: ({ nativeEvent }, gestureState) => {
         if ( this.state.gl ) {
@@ -99,8 +99,8 @@ class HomeScreen extends React.Component {
         }
       },
       onPanResponderRelease: ({ nativeEvent }, gestureState) => {
-        this.state.mouse.x = -1
-        this.state.mouse.y = -1
+        this.state.mouse.x = -10
+        this.state.mouse.y = -10
       }
     })
   }
@@ -149,12 +149,13 @@ class HomeScreen extends React.Component {
     const movingLetterMesh = movingLetter.getMesh();
     
     // width, height, depth, prefabCount, prefabSize
-    const particles = new Particles(20, 10, 40, 3000, 0.005);
+    const particles = new Particles(20, 40, 40, 3000, 0.005);
     particles.setScale( 1000 ); // 100000
     const particlesMesh = particles.getMesh();
 
     camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
-    particlesMesh.rotation.x = 0 * Math.PI / 180
+    particlesMesh.position.x = 0;
+    particlesMesh.position.y = -15;
 
     // scene.add(backgroundMesh);
     scene.add(particlesMesh);
@@ -176,6 +177,8 @@ class HomeScreen extends React.Component {
         this.setState({ deltaTime })
         // this.props.setDeltaTime( deltaTime )
       }
+      particles.update(1/240)
+      particles.setScale( 500 )
       movingLetter.over( deltaTime )
       background.over( deltaTime, this.state.mouse )
     }
@@ -188,6 +191,8 @@ class HomeScreen extends React.Component {
         // set highscore
         // this.props.setHighscore(deltaTime )
       }
+      particles.setScale( 1000 )
+      particles.update(1 / 60)
       // speed up letter
       movingLetter.out()
       // speed up background shader
@@ -203,15 +208,27 @@ class HomeScreen extends React.Component {
 
       camera.updateMatrixWorld()
       
-      particles.update( 1/60 )
       movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
 
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
 
+      // adjusting perspective of particles to make it look like it moves versus the finger
+      // console.log( 'this.state.mouse', this.state.mouse )
+      if ( this.state.mouse.y != -10 ) {
+        particlesMesh.rotation.x = (25 * this.state.mouse.y) * Math.PI / 180
+      } else {
+        particlesMesh.rotation.x = (10) * Math.PI / 180
+      }
+      if ( this.state.mouse.x != -10 ) {
+        particlesMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
+      } else {
+        particlesMesh.rotation.y = (0) * Math.PI / 180
+      }
 
-      // TODO: once particles are added, maybe intersects will change.
+      // console.log('this.state.mouse', this.state.mouse)
+
       if ( intersects.length > 0 ) {
         over()
       }
