@@ -54,7 +54,7 @@ export default class Particles {
                 uScale: { value: 0.01 }
             },
             uniformValues: {
-                diffuse: new THREE.Color(0xf1f1f1)
+                diffuse: new THREE.Color(0xEEEEEE)
             },
             vertexParameters: [
                 'uniform float uTime;',
