@@ -1,3 +1,4 @@
+// https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_svg.html
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author zz85 / http://joshuakoo.com/
