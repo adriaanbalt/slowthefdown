@@ -70,7 +70,7 @@ export default class SpinShader extends React.Component {
         }
 
         // const texture = await ExpoTHREE.loadAsync(someRemoteUrl);
-        const backgroundGeometry = new THREE.PlaneBufferGeometry(3, 5);
+        const backgroundGeometry = new THREE.PlaneBufferGeometry(22, 47);
 
         var tuniform = {
             iTime: { type: 'f', value: 1 },
@@ -93,7 +93,9 @@ export default class SpinShader extends React.Component {
             side: THREE.DoubleSide
         });
 
+        backgroundMaterial.renderOrder = 1;
         this.mesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
+        this.mesh.position.set(0, 0, 0);
         this.mesh.superName = "SpinShader";
 
         this.shaderMat = backgroundMaterial;
@@ -125,9 +127,9 @@ export default class SpinShader extends React.Component {
     update(time, mouseX, mouseY, textPosition ) {
         const newTime = time
         // const newSpeed = this.speed * newTime
-        // const newProgress = this.progress * newTime
+        const newProgress = this.progress * newTime
         this.shaderMat.uniforms["iTime"].value = newTime;
-        this.shaderMat.uniforms["iProgress"].value = this.progress;
+        this.shaderMat.uniforms["iProgress"].value = newProgress;
         // this.shaderMat.uniforms['iWaves'].value = this.speed;
         // this.shaderMat.uniforms['iMouseX'].value = textPosition.x / 2;
         // this.shaderMat.uniforms['iMouseY'].value = textPosition.y / 2;
