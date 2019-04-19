@@ -110,8 +110,7 @@ class HomeScreen extends React.Component {
   }
 
   loadFont = async () => {
-    const font = require("../../assets/fonts/neue_haas_unica_pro_regular.json");
-    console.log ('load Font in home', font)
+    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold.json");
     return this.loadFontFromJson(font)
   }
   loadFontFromJson = json => new THREE.FontLoader().parse(json)
@@ -127,7 +126,6 @@ class HomeScreen extends React.Component {
     renderer.setPixelRatio(window.pixelRatio || 1);
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
-
 
     const camera = new THREE.PerspectiveCamera(
       100,
@@ -149,16 +147,18 @@ class HomeScreen extends React.Component {
     const backgroundMesh = background.getMesh();
     const movingLetter = new MovingLetter(font);
     const movingLetterMesh = movingLetter.getMesh();
-    movingLetterMesh.position.z = 0;
     
     // width, height, depth, prefabCount, prefabSize
-    const particles = new Particles(20, 10, 40, 1000, 0.01);
-    particles.setScale( 100 ); // 100000
+    const particles = new Particles(20, 10, 40, 3000, 0.005);
+    particles.setScale( 1000 ); // 100000
     const particlesMesh = particles.getMesh();
 
     camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
+    particlesMesh.rotation.x = 0 * Math.PI / 180
 
+    // scene.add(backgroundMesh);
     scene.add(particlesMesh);
+    scene.add(movingLetterMesh);
 
     const startTime = Date.now()
     let intersects
@@ -176,6 +176,8 @@ class HomeScreen extends React.Component {
         this.setState({ deltaTime })
         // this.props.setDeltaTime( deltaTime )
       }
+      movingLetter.over( deltaTime )
+      background.over( deltaTime, this.state.mouse )
     }
     const out = () => {
       if ( this.startHowLongHeldMilliseconds !== null ) {
@@ -186,7 +188,12 @@ class HomeScreen extends React.Component {
         // set highscore
         // this.props.setHighscore(deltaTime )
       }
+      // speed up letter
+      movingLetter.out()
+      // speed up background shader
+      background.out()
     }
+
 
     const animate = p => {
       requestAnimationFrame(animate)
@@ -197,17 +204,20 @@ class HomeScreen extends React.Component {
       camera.updateMatrixWorld()
       
       particles.update( 1/60 )
-      
+      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
+      background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
+
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
 
-      // // TODO: once particles are added, maybe intersects will change.
-      // if ( intersects.length > 1 ) {
-      //   over()
-      // }
-      // else {
-      //   out()
-      // }
+
+      // TODO: once particles are added, maybe intersects will change.
+      if ( intersects.length > 0 ) {
+        over()
+      }
+      else {
+        out()
+      }
 
       renderer.render(scene, camera)
 
