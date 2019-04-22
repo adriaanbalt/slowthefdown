@@ -72,6 +72,8 @@ export default class Particles {
                 'transformed.z *= uScale;',
                 // translate between start and end position based on progress
                 'transformed += mix(aStartPosition, aEndPosition, tProgress);'
+                // TODO > if u want to change the color you need to adjust that here
+                // varying fragmentColor
             ]
         });
             
