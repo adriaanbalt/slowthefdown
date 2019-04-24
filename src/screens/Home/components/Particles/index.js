@@ -5,7 +5,7 @@ import ParticlePrefabGeometry from './ParticlePrefabGeometry'
 export default class Particles {
 
     //(20, 10, 40, 10000, 0.01 )
-    constructor(width, height, depth, prefabCount, prefabSize) {
+    constructor(width, height, depth, prefabCount, prefabSize, color) {
 
         // create a prefab
         var prefab = new THREE.TetrahedronGeometry(prefabSize);
@@ -54,7 +54,7 @@ export default class Particles {
                 uScale: { value: 0.01 }
             },
             uniformValues: {
-                diffuse: new THREE.Color(0xEEEEEE)
+                diffuse: new THREE.Color(color)
             },
             vertexParameters: [
                 'uniform float uTime;',
@@ -76,7 +76,6 @@ export default class Particles {
         });
             
         // super( geometry, material );
-        this.material.renderOrder = 2;
         this.mesh = new THREE.Mesh(geometry, this.material);
         this.frustumCulled = false;
     }
