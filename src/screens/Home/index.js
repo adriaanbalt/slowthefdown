@@ -141,15 +141,17 @@ class HomeScreen extends React.Component {
 
     const font = await this.loadFont();
 
-    const objectToCatch = new ObjectToCatch(font);
-    const objectToCatchMesh = objectToCatch.getMesh();
     
-
+    
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
     });
     const vortex = new Vortex(texture);
     const vortexMesh = vortex.getMesh();
+    
+    const objectToCatch = new ObjectToCatch(font);
+    const objectToCatchMesh = objectToCatch.getMesh();
+    
     // width, height, depth, prefabCount, prefabSize
     const particles = new Particles(40, 40, 40, 3000, 0.005, 0xFFFFFF);
     particles.setScale( 1000 ); // 100000
@@ -162,15 +164,17 @@ class HomeScreen extends React.Component {
     // vortexMesh.rotation.x = (0) * Math.PI / 180
     // vortexMesh.position.x = 0;
     // vortexMesh.position.y = -15;
+    // vortexMesh.position.z = -20;
+    // particlesMesh.position.z = 1;
     particlesMesh.position.y = -15;
     particlesGreenMesh.position.y = -15;
 
-    particlesGreenMesh.position.z = -30;
+    // particlesGreenMesh.position.z = -21;
     
     camera.position.set(0, 0, 1.0).multiplyScalar(20);
-    scene.add(particlesGreenMesh);
-    scene.add(particlesMesh);
+    // scene.add(particlesMesh);
     scene.add(vortexMesh);
+    scene.add(particlesGreenMesh);
     scene.add(objectToCatchMesh);
 
     const startTime = Date.now()
@@ -182,8 +186,8 @@ class HomeScreen extends React.Component {
 
     const updateParticlePositions = ( elapsedSeconds ) => {
       // slowly move the particles Z position forward, over time.
-      particlesGreenMesh.position.z += elapsedSeconds/this.state.timescale
-      particlesMesh.position.z += elapsedSeconds/this.state.timescale
+      // particlesGreenMesh.position.z += elapsedSeconds/this.state.timescale
+      // particlesMesh.position.z += elapsedSeconds/this.state.timescale
       // console.log('particlesGreenMesh.position.z', particlesGreenMesh.position.z, this.state.timescale)
     }
 
