@@ -27,7 +27,7 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
-import Shader from "./Visualizations/Vortex";
+import Vortex from "./Visualizations/Vortex";
 import ObjectToCatch from "./ObjectToCatch";
 import Particles from "./Visualizations/Particles";
 
@@ -143,8 +143,8 @@ class HomeScreen extends React.Component {
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
     });
-    const background = new Shader(texture);
-    const backgroundMesh = background.getMesh();
+    const vortex = new Vortex(texture);
+    const vortexMesh = vortex.getMesh();
     const objectToCatch = new ObjectToCatch(font);
     const objectToCatchMesh = objectToCatch.getMesh();
     
@@ -153,11 +153,15 @@ class HomeScreen extends React.Component {
     particles.setScale( 1000 ); // 100000
     const particlesMesh = particles.getMesh();
 
+    const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0x00ff00);
+    particlesGreen.setScale(1000); // 100000
+    const particlesGreenMesh = particlesGreen.getMesh();
+
     camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
     particlesMesh.position.x = 0;
     particlesMesh.position.y = -15;
 
-    // scene.add(backgroundMesh);
+    scene.add(particlesGreenMesh);
     scene.add(particlesMesh);
     scene.add(objectToCatchMesh);
 
@@ -180,7 +184,7 @@ class HomeScreen extends React.Component {
       particles.update(1/240)
       particles.setScale( 500 )
       objectToCatch.over( deltaTime )
-      background.over( deltaTime, this.state.mouse )
+      vortex.over( deltaTime, this.state.mouse )
     }
     const out = () => {
       if ( this.startHowLongHeldMilliseconds !== null ) {
@@ -195,8 +199,8 @@ class HomeScreen extends React.Component {
       particles.update(1 / 60)
       // speed up letter
       objectToCatch.out()
-      // speed up background shader
-      background.out()
+      // speed up vortex shader
+      vortex.out()
     }
 
 
@@ -209,7 +213,7 @@ class HomeScreen extends React.Component {
       camera.updateMatrixWorld()
       
       objectToCatch.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
-      background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
+      vortex.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
 
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
