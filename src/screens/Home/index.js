@@ -27,9 +27,9 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
-import Shader from "./components/Shader";
-import MovingLetter from "./components/MovingLetter";
-import Particles from "./components/Particles";
+import Vortex from "./visualizations/Vortex";
+import MovingLetter from "./MovingLetter";
+import Particles from "./visualizations/Particles";
 
 import THREERoot from './Root'
 
@@ -58,6 +58,7 @@ class HomeScreen extends React.Component {
       pan: new Animated.ValueXY(),
       mouse: new THREE.Vector2(-10, -10),
       deltaTime: 0,
+      timescale: 60,
     }
     // Turn off extra warnings
     THREE.suppressExpoWarnings(true)
@@ -143,22 +144,32 @@ class HomeScreen extends React.Component {
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
     });
-    const background = new Shader(texture);
-    const backgroundMesh = background.getMesh();
+    const vortex = new Vortex(texture);
+    const vortexMesh = vortex.getMesh();
     const movingLetter = new MovingLetter(font);
     const movingLetterMesh = movingLetter.getMesh();
     
     // width, height, depth, prefabCount, prefabSize
-    const particles = new Particles(20, 40, 40, 3000, 0.005);
+    const particles = new Particles(40, 40, 40, 3000, 0.005, 0xFFFFFF);
     particles.setScale( 1000 ); // 100000
-    const particlesMesh = particles.getMesh();
+    const particlesMesh = particles.getMesh()
+    
+    const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0x00FF00);
+    particlesGreen.setScale(1000); // 100000
+    const particlesGreenMesh = particlesGreen.getMesh()
 
-    camera.position.set(0, 0.1, 1.0).multiplyScalar(20);
-    particlesMesh.position.x = 0;
+    // vortexMesh.rotation.x = (0) * Math.PI / 180
+    // vortexMesh.position.x = 0;
+    // vortexMesh.position.y = -15;
     particlesMesh.position.y = -15;
+    particlesGreenMesh.position.y = -15;
 
-    // scene.add(backgroundMesh);
+    particlesGreenMesh.position.z = -30;
+    
+    camera.position.set(0, 0, 1.0).multiplyScalar(20);
+    scene.add(particlesGreenMesh);
     scene.add(particlesMesh);
+    // scene.add(vortexMesh);
     scene.add(movingLetterMesh);
 
     const startTime = Date.now()
@@ -167,7 +178,14 @@ class HomeScreen extends React.Component {
     this.elapsedHowLongHeldMilliseconds = null
     let elapsedSeconds
     let elapsedMilliseconds
-    
+
+    const updateParticlePositions = ( elapsedSeconds ) => {
+      // slowly move the particles Z position forward, over time.
+      particlesGreenMesh.position.z += elapsedSeconds/this.state.timescale
+      particlesMesh.position.z += elapsedSeconds/this.state.timescale
+      // console.log('particlesGreenMesh.position.z', particlesGreenMesh.position.z, this.state.timescale)
+    }
+
     const over = () => {
       this.elapsedHowLongHeldMilliseconds = Date.now()
       let deltaTime = (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds)
@@ -179,8 +197,11 @@ class HomeScreen extends React.Component {
       }
       particles.update(1/240)
       particles.setScale( 500 )
+
+      particlesGreen.setScale( 500 )
+      particlesGreen.update(1 / 240)
       movingLetter.over( deltaTime )
-      background.over( deltaTime, this.state.mouse )
+      vortex.over( deltaTime, this.state.mouse )
     }
     const out = () => {
       if ( this.startHowLongHeldMilliseconds !== null ) {
@@ -193,12 +214,17 @@ class HomeScreen extends React.Component {
       }
       particles.setScale( 1000 )
       particles.update(1 / 60)
+      particlesGreen.setScale( 1000 )
+      particlesGreen.update(1 / 60)
       // speed up letter
       movingLetter.out()
-      // speed up background shader
-      background.out()
+      // speed up vortex Vortex
+      vortex.out()
     }
 
+    const updateParticleRotation = ( rotation ) => {
+      particlesMesh.rotation.x = (25 * this.state.mouse.y) * Math.PI / 180
+    }
 
     const animate = p => {
       requestAnimationFrame(animate)
@@ -209,22 +235,23 @@ class HomeScreen extends React.Component {
       camera.updateMatrixWorld()
       
       movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
-      background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
+      vortex.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
 
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
 
+      updateParticlePositions(elapsedSeconds)
+
       // adjusting perspective of particles to make it look like it moves versus the finger
-      // console.log( 'this.state.mouse', this.state.mouse )
       if ( this.state.mouse.y != -10 ) {
-        particlesMesh.rotation.x = (25 * this.state.mouse.y) * Math.PI / 180
+        particlesGreenMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
       } else {
-        particlesMesh.rotation.x = (10) * Math.PI / 180
+        particlesGreenMesh.rotation.x = (10) * Math.PI / 180
       }
       if ( this.state.mouse.x != -10 ) {
-        particlesMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
+        // particlesGreenMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
       } else {
-        particlesMesh.rotation.y = (0) * Math.PI / 180
+        // particlesGreenMesh.rotation.y = (0) * Math.PI / 180
       }
 
       // console.log('this.state.mouse', this.state.mouse)
@@ -244,6 +271,7 @@ class HomeScreen extends React.Component {
     animate()
     this.setState({ loading: false })
   }
+
   navigateToHighscores = () => {
       this.props.navigation.navigate("Highscores", {});
   }
