@@ -27,11 +27,11 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
-import Vortex from "./visualizations/Vortex";
-import MovingLetter from "./MovingLetter";
-import Particles from "./visualizations/Particles";
+import Vortex from "./Visualizations/Vortex";
+import ObjectToCatch from "./ObjectToCatch";
+import Particles from "./Visualizations/Particles";
 
-import THREERoot from './Root'
+import THREERoot from './ThreeRoot'
 
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -141,14 +141,15 @@ class HomeScreen extends React.Component {
 
     const font = await this.loadFont();
 
+    const objectToCatch = new ObjectToCatch(font);
+    const objectToCatchMesh = objectToCatch.getMesh();
+    
+
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
     });
     const vortex = new Vortex(texture);
     const vortexMesh = vortex.getMesh();
-    const movingLetter = new MovingLetter(font);
-    const movingLetterMesh = movingLetter.getMesh();
-    
     // width, height, depth, prefabCount, prefabSize
     const particles = new Particles(40, 40, 40, 3000, 0.005, 0xFFFFFF);
     particles.setScale( 1000 ); // 100000
@@ -169,8 +170,8 @@ class HomeScreen extends React.Component {
     camera.position.set(0, 0, 1.0).multiplyScalar(20);
     scene.add(particlesGreenMesh);
     scene.add(particlesMesh);
-    // scene.add(vortexMesh);
-    scene.add(movingLetterMesh);
+    scene.add(vortexMesh);
+    scene.add(objectToCatchMesh);
 
     const startTime = Date.now()
     let intersects
@@ -200,7 +201,7 @@ class HomeScreen extends React.Component {
 
       particlesGreen.setScale( 500 )
       particlesGreen.update(1 / 240)
-      movingLetter.over( deltaTime )
+      objectToCatch.over( deltaTime )
       vortex.over( deltaTime, this.state.mouse )
     }
     const out = () => {
@@ -217,7 +218,7 @@ class HomeScreen extends React.Component {
       particlesGreen.setScale( 1000 )
       particlesGreen.update(1 / 60)
       // speed up letter
-      movingLetter.out()
+      objectToCatch.out()
       // speed up vortex Vortex
       vortex.out()
     }
@@ -234,7 +235,7 @@ class HomeScreen extends React.Component {
 
       camera.updateMatrixWorld()
       
-      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
+      objectToCatch.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
       vortex.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
 
       raycaster.setFromCamera( this.state.mouse, camera )
