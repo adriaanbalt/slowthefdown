@@ -1,18 +1,17 @@
 import { FileSystem, Asset } from "expo"
-import React from "react"
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise'
 import TextMesh from './TextMesh'
-import SVGLoader from "../SVGLoader";
+import SVGLoader from "../visualizations/SVGLoader"
+const PATH_TO_ASSETS = '../../../assets/'
+const SVG_FILE = require(`${PATH_TO_ASSETS}F.svg`)
 
-export default class MovingLetter extends React.Component {
+export default class MovingLetter {
 
     constructor( font ) {
-        super()
-
-        this.fontData = font
-
         // console.log( "moving letter constructor", this.fontData, typeof this.fontData )
+
+        this.fontData = font;
 
         this.setup()
     }
@@ -54,12 +53,12 @@ export default class MovingLetter extends React.Component {
         // svg.translateY(0)
         // svg.translateZ(-150)
 
-        // this.loadThreeSVG();
+        // this.loadThreeSVG()
 
         // this.mesh.add(svg)
         
         this.mesh.add(hit)
-        this.createText("F");
+        this.createText("F")
 
         // this.generateTextGeometry('F', {
         //     size: 40,
@@ -76,7 +75,7 @@ export default class MovingLetter extends React.Component {
         //         y: 0.5,
         //         z: 0.0
         //     }
-        // });
+        // })
 
         // this.createTextFontLoader( "F" )
     }
@@ -92,12 +91,12 @@ export default class MovingLetter extends React.Component {
             bevelSize: 1
         })
 
-        // var size = textGeo.boundingBox.size();
-        // var anchorX = size.x * -0.5;
-        // var anchorY = size.y * -0.5;
-        // var anchorZ = size.z * -0;
-        // var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ);
-        // textGeo.applyMatrix(matrix);
+        // var size = textGeo.boundingBox.size()
+        // var anchorX = size.x * -0.5
+        // var anchorY = size.y * -0.5
+        // var anchorZ = size.z * -0
+        // var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ)
+        // textGeo.applyMatrix(matrix)
 
         const materials = new THREE.MeshPhongMaterial({ color: 0xFFFFFF })
         const textMesh = new THREE.Mesh(textGeo, materials)
@@ -120,7 +119,7 @@ export default class MovingLetter extends React.Component {
         // console.log("this.progress", this.progress, this.overProgress)
         this.progress += (this.velocity * this.speed * this.overProgress)
         // this.speed += (time / 1)
-        // this.noiseAccum += 0.01 * this.noiseSpeed;
+        // this.noiseAccum += 0.01 * this.noiseSpeed
     }
 
     getPosition() {
@@ -186,7 +185,9 @@ export default class MovingLetter extends React.Component {
     }
 
     _loadSVGMesh = async() => {
-        const svgAsset = await Asset.fromModule(require(`../../../../assets/F.svg`))
+        const svgAsset = await Asset.fromModule(
+          require(`${PATH_TO_ASSETS}F.svg`)
+        );
 
         const geometry = await this._loadSVGGeometry(svgAsset)
         const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 })
@@ -201,72 +202,72 @@ export default class MovingLetter extends React.Component {
 
     loadThreeSVG = () => {
         // // instantiate a loader
-        // var loader = new THREE.SVGLoader();
+        // var loader = new THREE.SVGLoader()
 
         // // load a SVG resource
         // loader.load(
         //     // resource URL
-        //     '../../../../assets/F.svg',
+        //     `${PATH_TO_ASSETS}/F.svg`,
         //     // called when the resource is loaded
         //     function (data) {
 
         //         console.log( "svg ")
 
-        //         var paths = data.paths;
-        //         var group = new THREE.Group();
+        //         var paths = data.paths
+        //         var group = new THREE.Group()
 
-        //         for (var i = 0; i < paths.length; i++) {
+        //         for (var i = 0 i < paths.length i++) {
 
-        //             var path = paths[i];
+        //             var path = paths[i]
 
         //             var material = new THREE.MeshBasicMaterial({
         //                 color: path.color,
         //                 side: THREE.DoubleSide,
         //                 depthWrite: false
-        //             });
+        //             })
 
-        //             var shapes = path.toShapes(true);
+        //             var shapes = path.toShapes(true)
 
-        //             for (var j = 0; j < shapes.length; j++) {
+        //             for (var j = 0 j < shapes.length j++) {
 
-        //                 var shape = shapes[j];
-        //                 var geometry = new THREE.ShapeBufferGeometry(shape);
-        //                 var mesh = new THREE.Mesh(geometry, material);
-        //                 group.add(mesh);
+        //                 var shape = shapes[j]
+        //                 var geometry = new THREE.ShapeBufferGeometry(shape)
+        //                 var mesh = new THREE.Mesh(geometry, material)
+        //                 group.add(mesh)
 
         //             }
 
         //         }
 
-        //         this.mesh.add(group);
+        //         this.mesh.add(group)
 
         //     },
         //     // called when loading is in progresses
         //     function (xhr) {
 
-        //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        //         console.log((xhr.loaded / xhr.total * 100) + '% loaded')
 
         //     },
         //     // called when loading has errors
         //     function (error) {
 
-        //         console.log('An error happened');
+        //         console.log('An error happened')
 
         //     }
-        // );
+        // )
 
-        var loader = new THREE.SVGLoader();
-        loader.load('../../../../assets/tiger.svg', function (data) {
+        var loader = new THREE.SVGLoader()
+        loader.load(`${PATH_TO_ASSETS}tiger.svg`, function (data) {
             console.log('load svg', data)
-            var paths = data.paths;
-            var group = new THREE.Group();
-            group.scale.multiplyScalar(0.25);
-            group.position.x = - 70;
-            group.position.y = 70;
-            group.scale.y *= - 1;
+            var paths = data.paths
+            var group = new THREE.Group()
+            group.scale.multiplyScalar(0.25)
+            group.position.x = - 70
+            group.position.y = 70
+            group.scale.y *= - 1
             for (var i = 0; i < paths.length; i++) {
-                var path = paths[i];
-                var fillColor = path.userData.style.fill;
+                var path = paths[i]
+                var fillColor = path.userData.style.fill
                 if (guiData.drawFillShapes && fillColor !== undefined && fillColor !== 'none') {
                     var material = new THREE.MeshBasicMaterial({
                         color: new THREE.Color().setStyle(fillColor),
@@ -275,16 +276,16 @@ export default class MovingLetter extends React.Component {
                         side: THREE.DoubleSide,
                         depthWrite: false,
                         wireframe: guiData.fillShapesWireframe
-                    });
-                    var shapes = path.toShapes(true);
+                    })
+                    var shapes = path.toShapes(true)
                     for (var j = 0; j < shapes.length; j++) {
-                        var shape = shapes[j];
-                        var geometry = new THREE.ShapeBufferGeometry(shape);
-                        var mesh = new THREE.Mesh(geometry, material);
-                        group.add(mesh);
+                        var shape = shapes[j]
+                        var geometry = new THREE.ShapeBufferGeometry(shape)
+                        var mesh = new THREE.Mesh(geometry, material)
+                        group.add(mesh)
                     }
                 }
-                var strokeColor = path.userData.style.stroke;
+                var strokeColor = path.userData.style.stroke
                 if (guiData.drawStrokes && strokeColor !== undefined && strokeColor !== 'none') {
                     var material = new THREE.MeshBasicMaterial({
                         color: new THREE.Color().setStyle(strokeColor),
@@ -293,74 +294,74 @@ export default class MovingLetter extends React.Component {
                         side: THREE.DoubleSide,
                         depthWrite: false,
                         wireframe: guiData.strokesWireframe
-                    });
+                    })
                     for (var j = 0, jl = path.subPaths.length; j < jl; j++) {
-                        subPath = path.subPaths[j];
-                        var geometry = THREE.SVGLoader.pointsToStroke(subPath.getPoints(), path.userData.style);
+                        subPath = path.subPaths[j]
+                        var geometry = THREE.SVGLoader.pointsToStroke(subPath.getPoints(), path.userData.style)
                         if (geometry) {
-                            var mesh = new THREE.Mesh(geometry, material);
-                            group.add(mesh);
+                            var mesh = new THREE.Mesh(geometry, material)
+                            group.add(mesh)
                         }
                     }
                 }
             }
-            this.mesh.add(group);
+            this.mesh.add(group)
         },
         // called when loading is in progresses
         function (xhr) {
 
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded')
 
         },
         // called when loading has errors
         function (error) {
 
-            console.log('An error happened');
+            console.log('An error happened')
 
         })
     }
 
     createTextFontLoader = async text => {
-        const json = JSON.parse("../../../../assets/fonts/neue_haas_unica_pro_medium.json"); // you have to parse the data so it becomes a JS object 
-        var fontLoader = new THREE.FontLoader();
-        const font = loader.parse(json);
-        let shapes = font.generateShapes("F", 100, 2);
-        this.mesh.add(shapes);
+        const json = JSON.parse(`${PATH_TO_ASSETS}fonts/neue_haas_unica_pro_medium.json`) // you have to parse the data so it becomes a JS object 
+        var fontLoader = new THREE.FontLoader()
+        const font = loader.parse(json)
+        let shapes = font.generateShapes("F", 100, 2)
+        this.mesh.add(shapes)
         // console.log('create text font loader', fontLoader)
-        // await fontLoader.load("../../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
+        // await fontLoader.load(`${PATH_TO_ASSETS}/fonts/neue_haas_unica_pro_medium.json`, function (font) {
         //     console.log ( "FONT LOADER LOADED", font)
         //     var textGeo = new THREE.TextGeometry(text, {
         //         size: 10,
         //         height: 5,
         //         curveSegments: 6,
         //         font
-        //     });
-        //     var color = new THREE.Color();
-        //     color.setRGB(255, 250, 250);
-        //     var textMaterial = new THREE.MeshBasicMaterial({ color: color });
-        //     var text = new THREE.Mesh(textGeo, textMaterial);
-        //     this.mesh.add(text);
+        //     })
+        //     var color = new THREE.Color()
+        //     color.setRGB(255, 250, 250)
+        //     var textMaterial = new THREE.MeshBasicMaterial({ color: color })
+        //     var text = new THREE.Mesh(textGeo, textMaterial)
+        //     this.mesh.add(text)
         // })
     }
 
     loadFont = async () => {
         try {
             let t = await Font.loadAsync({
-                helvetica: require("../../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
-            });
+                helvetica: require(`${PATH_TO_ASSETS}fonts/HelveticaNeueLTStd-Bd.ttf`)
+            })
         } catch (e) {
-            Log.error(e);
+            Log.error(e)
         } finally {
             // console.log("Font.isLoaded", Font.isLoaded("helvetica"), Font)
-            let t = Font.processFontFamily("helvetica");
+            let t = Font.processFontFamily("helvetica")
             // console.log('t', t)
         }
-    };
+    }
 
     createTextPlugin = text => {
-        const textMesh = new TextMesh();
-        this.mesh.add(textMesh);
-        textMesh.material = new THREE.MeshPhongMaterial({ color: 0x056ecf });
+        const textMesh = new TextMesh()
+        this.mesh.add(textMesh)
+        textMesh.material = new THREE.MeshPhongMaterial({ color: 0x056ecf })
         textMesh.update({
             text: text,
             font: this.fontData, // This accepts json, THREE.Font, or a uri to remote THREE.Font json
@@ -371,7 +372,7 @@ export default class MovingLetter extends React.Component {
             bevelThickness: 1, // — Float. How deep into text bevel goes. Default is 10.
             bevelSize: 0.8, // — Float. How far from text outline is bevel. Default is 8.
             bevelSegments: 0.3 // — Integer. Number of bevel segments. Default is 3.
-        });
+        })
 
     }
 
@@ -406,17 +407,17 @@ export default class MovingLetter extends React.Component {
     }
 
     generateTextGeometry(text, params) {
-        var geometry = new THREE.TextGeometry(text, params);
+        var geometry = new THREE.TextGeometry(text, params)
 
-        geometry.computeBoundingBox();
+        geometry.computeBoundingBox()
 
-        var size = geometry.boundingBox.size();
-        var anchorX = size.x * -params.anchor.x;
-        var anchorY = size.y * -params.anchor.y;
-        var anchorZ = size.z * -params.anchor.z;
-        var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ);
+        var size = geometry.boundingBox.size()
+        var anchorX = size.x * -params.anchor.x
+        var anchorY = size.y * -params.anchor.y
+        var anchorZ = size.z * -params.anchor.z
+        var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ)
 
-        geometry.applyMatrix(matrix);
+        geometry.applyMatrix(matrix)
 
         const materials = new THREE.MeshPhongMaterial({ color: 0xFFFFFF })
         const textMesh = new THREE.Mesh(geometry, materials)
