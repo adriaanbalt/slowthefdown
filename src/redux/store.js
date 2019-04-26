@@ -11,6 +11,23 @@ const defaultState = {
   user: {},
   users: {},
   highscores: [],
+  levels: [
+    {
+      name: "particles",
+      type: "ParticlesLevelWhite",
+      duration: 2000
+    },
+    {
+      name: "particles",
+      type: "ParticlesLevelGreen",
+      duration: 2000
+    },
+    {
+      name: "vortex",
+      type: "VortexLevel",
+      duration: 2000
+    },
+  ]
 };
 
 function handleSetAction(state, action) {

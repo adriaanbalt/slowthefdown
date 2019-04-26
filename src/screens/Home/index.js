@@ -20,7 +20,13 @@ import {
 } from "react-native"
 
 import Dispatchers from '../../redux/dispatchers'
-import { isAuthenticated, getCurrentUserHighscore, profile, getDeltaTime } from '../../redux/selectors'
+import {
+  isAuthenticated,
+  getCurrentUserHighscore,
+  profile,
+  getDeltaTime,
+  getLevels
+} from "../../redux/selectors";
 
 import Waiting from '../../shared/Waiting'
 import StyledButton from '../../shared/StyledButton'
@@ -32,6 +38,8 @@ import ObjectToCatch from "./ObjectToCatch";
 import Particles from "./Visualizations/Particles";
 
 import THREERoot from './ThreeRoot'
+
+const LEVEL_COUNT = 2;
 
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -110,14 +118,18 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
-  createPieces = () => {
-    
+  createLevels = () => {
+    console.log("this.props.levels.length", this.props.levels.length);
+    for ( let i = 0; i < this.props.levels.length; i++ ) {
+
+    }
   }
 
   _onGLContextCreate = async gl => {
     console.log("_onGLContextCreate");
     this.state.gl = gl
 
+    this.createLevels();
     // gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     // gl.clearColor(0, 1, 1, 1);
 
@@ -370,7 +382,8 @@ export default connect(
   state => ({
     isAuthenticated: isAuthenticated(state),
     currentUserHighscore: getCurrentUserHighscore(state),
-    deltaTime: getDeltaTime(state)
+    deltaTime: getDeltaTime(state),
+    levels: getLevels(state)
   }),
   Dispatchers
 )(HomeScreen);

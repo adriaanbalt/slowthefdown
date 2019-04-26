@@ -30,3 +30,7 @@ export function getDeltaTime(state) {
 export function highscores(state) {
   return state.highscores
 }
+
+export function getLevels(state) {
+  return state.levels
+}
