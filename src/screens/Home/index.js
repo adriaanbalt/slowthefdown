@@ -27,9 +27,9 @@ import StyledButton from '../../shared/StyledButton'
 import ShareTheNavigation from "../../shared/shareTheNavigation"
 import NavigationUI from '../../shared/NavigationUI'
 
-import Shader from "./components/Shader";
-import MovingLetter from "./components/MovingLetter";
-import Particles from "./components/Particles";
+import Shader from "./Visualizations/Vortex";
+import ObjectToCatch from "./ObjectToCatch";
+import Particles from "./Visualizations/Particles";
 
 import THREERoot from './Root'
 
@@ -145,8 +145,8 @@ class HomeScreen extends React.Component {
     });
     const background = new Shader(texture);
     const backgroundMesh = background.getMesh();
-    const movingLetter = new MovingLetter(font);
-    const movingLetterMesh = movingLetter.getMesh();
+    const objectToCatch = new ObjectToCatch(font);
+    const objectToCatchMesh = objectToCatch.getMesh();
     
     // width, height, depth, prefabCount, prefabSize
     const particles = new Particles(20, 40, 40, 3000, 0.005);
@@ -159,7 +159,7 @@ class HomeScreen extends React.Component {
 
     // scene.add(backgroundMesh);
     scene.add(particlesMesh);
-    scene.add(movingLetterMesh);
+    scene.add(objectToCatchMesh);
 
     const startTime = Date.now()
     let intersects
@@ -179,7 +179,7 @@ class HomeScreen extends React.Component {
       }
       particles.update(1/240)
       particles.setScale( 500 )
-      movingLetter.over( deltaTime )
+      objectToCatch.over( deltaTime )
       background.over( deltaTime, this.state.mouse )
     }
     const out = () => {
@@ -194,7 +194,7 @@ class HomeScreen extends React.Component {
       particles.setScale( 1000 )
       particles.update(1 / 60)
       // speed up letter
-      movingLetter.out()
+      objectToCatch.out()
       // speed up background shader
       background.out()
     }
@@ -208,7 +208,7 @@ class HomeScreen extends React.Component {
 
       camera.updateMatrixWorld()
       
-      movingLetter.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
+      objectToCatch.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
       background.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
 
       raycaster.setFromCamera( this.state.mouse, camera )

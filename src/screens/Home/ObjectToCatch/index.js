@@ -3,7 +3,7 @@ import React from "react"
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 import SimplexNoise from 'simplex-noise'
 import TextMesh from './TextMesh'
-import SVGLoader from "../SVGLoader";
+import SVGLoader from "./SVGLoader";
 
 export default class MovingLetter extends React.Component {
 
@@ -186,7 +186,7 @@ export default class MovingLetter extends React.Component {
     }
 
     _loadSVGMesh = async() => {
-        const svgAsset = await Asset.fromModule(require(`../../../../assets/F.svg`))
+        const svgAsset = await Asset.fromModule(require(`../../../assets/F.svg`))
 
         const geometry = await this._loadSVGGeometry(svgAsset)
         const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 })
@@ -206,7 +206,7 @@ export default class MovingLetter extends React.Component {
         // // load a SVG resource
         // loader.load(
         //     // resource URL
-        //     '../../../../assets/F.svg',
+        //     '../../../assets/F.svg',
         //     // called when the resource is loaded
         //     function (data) {
 
@@ -256,7 +256,7 @@ export default class MovingLetter extends React.Component {
         // );
 
         var loader = new THREE.SVGLoader();
-        loader.load('../../../../assets/tiger.svg', function (data) {
+        loader.load('../../../assets/tiger.svg', function (data) {
             console.log('load svg', data)
             var paths = data.paths;
             var group = new THREE.Group();
@@ -321,13 +321,13 @@ export default class MovingLetter extends React.Component {
     }
 
     createTextFontLoader = async text => {
-        const json = JSON.parse("../../../../assets/fonts/neue_haas_unica_pro_medium.json"); // you have to parse the data so it becomes a JS object 
+        const json = JSON.parse("../../../assets/fonts/neue_haas_unica_pro_medium.json"); // you have to parse the data so it becomes a JS object 
         var fontLoader = new THREE.FontLoader();
         const font = loader.parse(json);
         let shapes = font.generateShapes("F", 100, 2);
         this.mesh.add(shapes);
         // console.log('create text font loader', fontLoader)
-        // await fontLoader.load("../../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
+        // await fontLoader.load("../../../assets/fonts/neue_haas_unica_pro_medium.json", function (font) {
         //     console.log ( "FONT LOADER LOADED", font)
         //     var textGeo = new THREE.TextGeometry(text, {
         //         size: 10,
@@ -346,7 +346,7 @@ export default class MovingLetter extends React.Component {
     loadFont = async () => {
         try {
             let t = await Font.loadAsync({
-                helvetica: require("../../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
+                helvetica: require("../../../assets/fonts/HelveticaNeueLTStd-Bd.ttf")
             });
         } catch (e) {
             Log.error(e);
