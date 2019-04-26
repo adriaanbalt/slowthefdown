@@ -119,11 +119,20 @@ class HomeScreen extends React.Component {
   }
 
   createLevels = () => {
-    console.log("this.props.levels.length", this.props.levels.length);
+    this.currentLevel = this.props.levels[0];
     for ( let i = 0; i < this.props.levels.length; i++ ) {
+      // how can we dynamically create the levels?
+      // based on the level, we need to set the correct level as the current level
+      // is this a big ass switch statement in a while loop?
+      // or is it a recursive function? where the accumulator is the level the user is on?
+      // when a level is complete, you need to update the current level
+      // once u update the current level it needs to call it's update function()
+      // how do you know that the level is complete?
 
     }
   }
+
+
 
   _onGLContextCreate = async gl => {
     console.log("_onGLContextCreate");
@@ -241,6 +250,9 @@ class HomeScreen extends React.Component {
       elapsedSeconds = elapsedMilliseconds / 1000
 
       camera.updateMatrixWorld()
+
+      // in here is all of the level controls
+      this.currentLevel.duration >= elapsedMilliseconds;
       
       objectToCatch.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y )
       vortex.update( elapsedSeconds, this.state.mouse.x, this.state.mouse.y, 0 )
