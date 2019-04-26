@@ -1,51 +1,50 @@
-import { THREE } from "expo-three";
+import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 
 export default class Vortex {
 
-    constructor(texture) {
+    constructor( texture ) {
 
+        // texture = this.loadTexture()
         this.shader = {
-          vertexShader: [
-            "varying vec2 vUv;",
-            "void main()",
-            "{",
-            "vUv = uv;",
-            "vec4 mvPosition = modelViewMatrix * vec4(position, 1.0 );",
-            "gl_Position = projectionMatrix * mvPosition;",
-            "}"
-          ].join("\n"),
-          fragmentShader: `precision highp float;
-            uniform float iTime;
-            uniform float iProgress;
-            uniform float iWaves;
-            uniform float iBrightness;
-            uniform float iMouseX;
-            uniform float iMouseY;
-            uniform sampler2D iText0;
-            uniform sampler2D iText1;
-            varying vec2 vUv;
-            void main() {
-                vec2 p = -1.0 + 3.0 * vUv;
-                vec2 q = p - vec2(0.5, 0.5);
-                q.x += iMouseX;
-                q.y += iMouseY;
-                float len = length(q);
-                float a = atan(q.y, q.x) / 3.1416;
-                float b = atan(q.y, q.x) / 3.1416;
-                float c = atan(q.y, q.x) / 3.1416;
-                float r1 = ((0.1 + iProgress) * iWaves) / len + iTime;
-                float r2 = ((0.1) * iWaves) / len + iTime;
-                float m = (cos(.5) + sin(.9)) / .5;
-                vec4 tex1 = texture2D(iText0, vec2(a, r1));
-                vec4 tex2 = texture2D(iText1, vec2(b, r2));
-                vec3 col = vec3(mix(tex1, tex2, m));
-                vec3 d = col * len * 0.5 * iBrightness;
-                gl_FragColor = vec4(d, 1.0);
-            }`
+            vertexShader: `varying vec2 vUv;
+                void main(){
+                    vUv = uv;
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0 );
+                    gl_Position = projectionMatrix * mvPosition;
+                }`,
+            fragmentShader: `precision highp float;
+                uniform float iTime;
+                uniform float iProgress;
+                uniform float iWaves;
+                uniform float iBrightness;
+                uniform float iMouseX;
+                uniform float iMouseY;
+                uniform sampler2D iText0;
+                uniform sampler2D iText1;
+                varying vec2 vUv;
+                void main() {
+                    vec2 p = -1.0 + 3.0 * vUv;
+                    vec2 q = p - vec2(0.5, 0.5);
+                    q.x += iMouseX;
+                    q.y += iMouseY;
+                    float len = length(q);
+                    float a = atan(q.y, q.x) / 3.1416;
+                    float b = atan(q.y, q.x) / 3.1416;
+                    float c = atan(q.y, q.x) / 3.1416;
+                    float r1 = ((0.1 + iProgress) * iWaves) / len + iTime;
+                    float r2 = ((0.1) * iWaves) / len + iTime;
+                    float m = (cos(.5) + sin(.9)) / .5;
+                    vec4 tex1 = texture2D(iText0, vec2(a, r1));
+                    vec4 tex2 = texture2D(iText1, vec2(b, r2));
+                    vec3 col = vec3(mix(tex1, tex2, m));
+                    vec3 d = col * len * 0.5 * iBrightness;
+                    gl_FragColor = vec4(d, 1.0);
+                }`
         };
 
         // const texture = await ExpoTHREE.loadAsync(someRemoteUrl);
         const backgroundGeometry = new THREE.PlaneBufferGeometry(22, 47);
+
 
         var tuniform = {
             iTime: { type: 'f', value: 1 },
@@ -75,6 +74,12 @@ export default class Vortex {
         this.shaderMat = backgroundMaterial;
         this.speed = 3;
         this.progress = 1;
+    }
+    
+    loadTexture = async () => {
+        return await ExpoTHREE.loadTextureAsync({
+            asset: require("../../../../assets/images/stars.jpg")
+        });
     }
 
     getMesh() {

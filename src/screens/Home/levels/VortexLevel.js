@@ -1,4 +1,5 @@
-import Level from './index'
+import Level from './Level'
+import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 
 export default class VortexLevel extends Level {
     constructor( options ){

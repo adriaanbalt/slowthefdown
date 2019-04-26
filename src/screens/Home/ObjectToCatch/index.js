@@ -8,15 +8,7 @@ const SVG_FILE = require(`${PATH_TO_ASSETS}F.svg`)
 
 export default class ObjectToCatch {
 
-    constructor( font ) {
-        // console.log( "moving letter constructor", this.fontData, typeof this.fontData )
-
-        this.fontData = font;
-
-        this.setup()
-    }
-
-    async setup () {
+    constructor() {
         this.simplex = new SimplexNoise(Math.random)
         
         let geometry = new THREE.CircleGeometry(3, 20)
@@ -79,9 +71,17 @@ export default class ObjectToCatch {
         // this.createTextFontLoader( "F" )
     }
 
+    loadFont =  () => {
+        const font = require(`${PATH_TO_ASSETS}fonts/HelveticaNeueLT-Std_Bold.json`);
+        return this.loadFontFromJson(font)
+    }
+    loadFontFromJson = json => new THREE.FontLoader().parse(json)
+
     // this one works
-    createText = text => {
-        // console.log( 'this.fontData', this.fontData)
+    createText = async text => {
+
+        this.fontData = await this.loadFont();
+
         const textGeo = new THREE.TextBufferGeometry(text, {
             font: this.fontData,
             size: 4,

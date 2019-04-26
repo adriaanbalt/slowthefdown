@@ -110,11 +110,9 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('Highscores', {})
   }
 
-  loadFont = async () => {
-    const font = require("../../assets/fonts/HelveticaNeueLT-Std_Bold.json");
-    return this.loadFontFromJson(font)
+  createPieces = () => {
+    
   }
-  loadFontFromJson = json => new THREE.FontLoader().parse(json)
 
   _onGLContextCreate = async gl => {
     console.log("_onGLContextCreate");
@@ -127,29 +125,22 @@ class HomeScreen extends React.Component {
     renderer.setPixelRatio(window.pixelRatio || 1);
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
     renderer.setClearColor(0x000000, 1.0)
-
     const camera = new THREE.PerspectiveCamera(
       100,
       gl.drawingBufferWidth / gl.drawingBufferHeight,
       0.1,
       20000
     );
-
     const scene = new THREE.Scene()
-    
     const raycaster = new THREE.Raycaster()
 
-    const font = await this.loadFont();
-
-    
-    
     const texture = await ExpoTHREE.loadTextureAsync({
       asset: require("../../assets/images/stars.jpg")
     });
     const vortex = new Vortex(texture);
     const vortexMesh = vortex.getMesh();
     
-    const objectToCatch = new ObjectToCatch(font);
+    const objectToCatch = new ObjectToCatch();
     const objectToCatchMesh = objectToCatch.getMesh();
     
     // width, height, depth, prefabCount, prefabSize
