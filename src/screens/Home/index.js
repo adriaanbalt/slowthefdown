@@ -132,8 +132,6 @@ class HomeScreen extends React.Component {
     }
   }
 
-
-
   _onGLContextCreate = async gl => {
     console.log("_onGLContextCreate");
     this.state.gl = gl
@@ -168,8 +166,8 @@ class HomeScreen extends React.Component {
     const particles = new Particles(40, 40, 40, 3000, 0.005, 0xFFFFFF);
     particles.setScale( 1000 ); // 100000
     const particlesMesh = particles.getMesh()
-    
-    const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0x00FF00);
+
+    const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0xFFFFFF);
     particlesGreen.setScale(1000); // 100000
     const particlesGreenMesh = particlesGreen.getMesh()
 
@@ -185,14 +183,18 @@ class HomeScreen extends React.Component {
     
     camera.position.set(0, 0, 1.0).multiplyScalar(20);
     // scene.add(particlesMesh);
-    scene.add(vortexMesh);
+    // scene.add(vortexMesh);
     scene.add(particlesGreenMesh);
     scene.add(objectToCatchMesh);
+    // particlesMesh.visible = false;
+    // vortexMesh.visible = true;
+    // particlesGreenMesh.visible = true;
+
 
     const startTime = Date.now()
     let intersects
-    this.startHowLongHeldMilliseconds = null
-    this.elapsedHowLongHeldMilliseconds = null
+    this.startHowLongHeldMilliseconds = 0
+    this.elapsedHowLongHeldMilliseconds = 0
     let elapsedSeconds
     let elapsedMilliseconds
 
@@ -201,17 +203,35 @@ class HomeScreen extends React.Component {
       // particlesGreenMesh.position.z += elapsedSeconds/this.state.timescale
       // particlesMesh.position.z += elapsedSeconds/this.state.timescale
       // console.log('particlesGreenMesh.position.z', particlesGreenMesh.position.z, this.state.timescale)
+      // if ( elapsedSeconds >= 5 ) {
+      //   particlesMesh.visible = false;
+      //   vortexMesh.visible = true;
+      //   particlesGreenMesh.visible = true;
+      // }
+      // if ( elapsedSeconds >= 10 ) {
+      //   particlesMesh.visible = false;
+      //   vortexMesh.visible = false;
+      //   particlesGreenMesh.visible = true;
+      // }
+      // if ( elapsedSeconds >= 15 ) {
+      //   particlesMesh.visible = true;
+      //   vortexMesh.visible = false;
+      //   particlesGreenMesh.visible = false;
+      // }
     }
 
     const over = () => {
       this.elapsedHowLongHeldMilliseconds = Date.now()
-      let deltaTime = (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds)
-      if (this.startHowLongHeldMilliseconds === null) {
+      if (this.startHowLongHeldMilliseconds === 0) {
         this.startHowLongHeldMilliseconds = Date.now()
       } else {
         this.setState({ deltaTime })
         // this.props.setDeltaTime( deltaTime )
       }
+      let deltaTime = Math.ceil( (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds) / 1000)
+
+      updateParticlePositions(deltaTime);
+
       particles.update(1/240)
       particles.setScale( 500 )
 
@@ -221,11 +241,11 @@ class HomeScreen extends React.Component {
       vortex.over( deltaTime, this.state.mouse )
     }
     const out = () => {
-      if ( this.startHowLongHeldMilliseconds !== null ) {
+      if ( this.startHowLongHeldMilliseconds !== 0 ) {
         this.elapsedHowLongHeldMilliseconds = Date.now()
-        let deltaTime = (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds)
+        let deltaTime = Math.ceil( (this.elapsedHowLongHeldMilliseconds - this.startHowLongHeldMilliseconds) / 1000)
         // let deltaTime = 0
-        this.startHowLongHeldMilliseconds = null
+        this.startHowLongHeldMilliseconds = 0
         // set highscore
         // this.props.setHighscore(deltaTime )
       }
@@ -260,8 +280,6 @@ class HomeScreen extends React.Component {
       raycaster.setFromCamera( this.state.mouse, camera )
       intersects = raycaster.intersectObjects( scene.children, true )
 
-      updateParticlePositions(elapsedSeconds)
-
       // adjusting perspective of particles to make it look like it moves versus the finger
       if ( this.state.mouse.y != -10 ) {
         particlesGreenMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
@@ -273,8 +291,6 @@ class HomeScreen extends React.Component {
       } else {
         // particlesGreenMesh.rotation.y = (0) * Math.PI / 180
       }
-
-      // console.log('this.state.mouse', this.state.mouse)
 
       if ( intersects.length > 0 ) {
         over()
