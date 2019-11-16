@@ -1,22 +1,14 @@
 import Expo from "expo";
 import { GLView } from "expo-gl";
-import * as FileSystem from "expo-file-system";
-import KeepAwake from "expo-keep-awake";
 import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 // import THREEJS from "three"
 import React from "react";
 import { connect } from "react-redux";
 import {
-	ScrollView,
 	StyleSheet,
 	View,
 	Animated,
 	Text,
-	TextInput,
-	KeyboardAvoidingView,
-	Platform,
-	Keyboard,
-	TouchableWithoutFeedback,
 	Dimensions,
 	PanResponder,
 	TouchableOpacity,
