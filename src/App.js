@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
-import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import { AppLoading } from "expo";
@@ -52,7 +51,6 @@ export default class App extends React.Component {
 
 	_loadResourcesAsync = async () => {
 		return Promise.all([
-			Asset.loadAsync([]),
 			Font.loadAsync({
 				// This is the font that we are using for our tab bar
 				...Ionicons.font,
