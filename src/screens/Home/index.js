@@ -1,4 +1,8 @@
-import Expo, { KeepAwake, FileSystem, Asset, GLView } from "expo";
+import Expo from "expo";
+import { GLView } from 'expo-gl';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
+import KeepAwake from 'expo-keep-awake';
 import ExpoTHREE, { THREE } from "expo-three" // 3.0.0-alpha.4
 // import THREEJS from "three"
 import React from 'react'

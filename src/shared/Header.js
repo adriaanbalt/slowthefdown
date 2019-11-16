@@ -1,4 +1,5 @@
-import Expo, { Icon } from "expo"
+import Expo from "expo";
+import * as Icon from '@expo/vector-icons';
 import React from 'react'
 import { connect } from 'react-redux'
 import {

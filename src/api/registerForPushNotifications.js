@@ -1,4 +1,5 @@
-import { Permissions, Notifications } from 'expo';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 import BASE_URL from '../BASE_URL';
 
 // Example server, implemented in Rails: https://git.io/vKHKv
