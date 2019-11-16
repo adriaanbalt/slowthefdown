@@ -1,36 +1,42 @@
 {
-  "name": "slowthefdown",
-  "version": "6.1.0",
-  "description": "Meditative game",
-  "author": "Adriaan Balt",
-  "private": true,
-  "main": "node_modules/expo/AppEntry.js",
-  "scripts": {
-    "start": "expo start",
-    "eject": "expo eject",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "test": "jest"
-  },
-  "dependencies": {
-    "axios": "^0.18.0",
-    "expo": "^32.0.0",
-    "expo-three": "github:adriaanbalt/expo-three",
-    "expokit": "32.0.7",
-    "firebase": "^5.5.4",
-    "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-native-scripts": "2.0.1",
-    "react-native-vector-icons": "^6.0.2",
-    "react-navigation": "^2.17.0",
-    "react-redux": "^5.0.7",
-    "redux": "^4.0.0",
-    "simplex-noise": "^2.4.0",
-    "three-bas": "^2.8.0"
-  },
-  "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-plugin-module-alias": "^1.6.0",
-    "schedule": "^0.4.0"
-  }
+	"name": "slowthefdown",
+	"version": "6.1.0",
+	"description": "Meditative game",
+	"author": "Adriaan Balt",
+	"private": true,
+	"main": "node_modules/expo/AppEntry.js",
+	"scripts": {
+		"start": "expo start",
+		"eject": "expo eject",
+		"android": "expo start --android",
+		"ios": "expo start --ios",
+		"test": "jest"
+	},
+	"dependencies": {
+		"axios": "^0.18.0",
+		"expo": "^35.0.0",
+		"expo-asset": "~7.0.0",
+		"expo-font": "~7.0.0",
+		"expo-gl": "~7.0.0",
+		"expo-gl-cpp": "~7.0.0",
+		"expo-keep-awake": "~7.0.0",
+		"expo-three": "^5.2.0",
+		"expokit": "32.0.7",
+		"firebase": "^5.5.4",
+		"react": "16.8.3",
+		"react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
+		"react-native-scripts": "2.0.1",
+		"react-native-vector-icons": "^6.0.2",
+		"react-navigation": "^2.17.0",
+		"react-redux": "^5.0.7",
+		"redux": "^4.0.0",
+		"simplex-noise": "^2.4.0",
+		"three": "^0.110.0",
+		"three-bas": "^2.10.1"
+	},
+	"devDependencies": {
+		"babel": "^6.23.0",
+		"babel-plugin-module-alias": "^1.6.0",
+		"schedule": "^0.4.0"
+	}
 }
