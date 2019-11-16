@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
@@ -30,31 +30,6 @@ export default class App extends React.Component {
 		deactivateKeepAwake();
 	};
 
-	componentDidMount() {
-		this._notificationSubscription = this._registerForPushNotifications();
-	}
-
-	componentWillUnmount() {
-		if (this._notificationSubscription) {
-			this._notificationSubscription.remove();
-		}
-	}
-
-	_registerForPushNotifications() {
-		// Watch for incoming notifications
-		this._notificationSubscription = Notifications.addListener(
-			this._handleNotification,
-		);
-	}
-
-	_handleNotification = ({ origin, data }) => {
-		console.log(
-			`Push notification ${origin} with data: ${JSON.stringify(data)}`,
-		);
-	};
-
-	// ---- END NOTIFICIATION BINDING --- //
-
 	render() {
 		if (!this.state.isLoadingComplete) {
 			return (
@@ -68,7 +43,6 @@ export default class App extends React.Component {
 		return (
 			<Provider store={store}>
 				<View style={styles.container}>
-					<KeepAwake />
 					<AppNavigator />
 					<BannerAd></BannerAd>
 				</View>

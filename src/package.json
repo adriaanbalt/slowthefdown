@@ -15,8 +15,8 @@
 	"dependencies": {
 		"axios": "^0.18.0",
 		"expo": "^34.0.0",
-		"expo-asset": "^7.0.0",
-		"expo-keep-awake": "^7.0.0",
+		"expo-asset": "~6.0.0",
+		"expo-keep-awake": "~6.0.0",
 		"expo-three": "github:adriaanbalt/expo-three",
 		"expokit": "32.0.7",
 		"firebase": "^5.5.4",
@@ -28,7 +28,9 @@
 		"react-redux": "^5.0.7",
 		"redux": "^4.0.0",
 		"simplex-noise": "^2.4.0",
-		"three-bas": "^2.8.0"
+		"three-bas": "^2.8.0",
+		"expo-gl": "~6.0.0",
+		"expo-gl-cpp": "~6.0.0"
 	},
 	"devDependencies": {
 		"babel": "^6.23.0",
