@@ -20,6 +20,7 @@
 		"expo-gl": "~7.0.0",
 		"expo-gl-cpp": "~7.0.0",
 		"expo-keep-awake": "~7.0.0",
+		"expo-secure-store": "^7.0.0",
 		"expo-three": "^5.2.0",
 		"expokit": "32.0.7",
 		"firebase": "^5.5.4",

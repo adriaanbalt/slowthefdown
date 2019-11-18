@@ -67,7 +67,8 @@ class HomeScreen extends React.Component {
 		THREE.suppressExpoWarnings(true);
 
 		ShareTheNavigation.set(props.navigation);
-		// this.props.initialize()
+		this.props.initialize();
+		console.disableYellowBox = true;
 	}
 	componentDidMount() {
 		this.setState({ loading: true });
@@ -217,17 +218,19 @@ class HomeScreen extends React.Component {
 
 		const over = () => {
 			this.elapsedHowLongHeldMilliseconds = Date.now();
-			if (this.startHowLongHeldMilliseconds === 0) {
-				this.startHowLongHeldMilliseconds = Date.now();
-			} else {
-				this.setState({ deltaTime });
-				// this.props.setDeltaTime( deltaTime )
-			}
+
 			let deltaTime = Math.ceil(
 				(this.elapsedHowLongHeldMilliseconds -
 					this.startHowLongHeldMilliseconds) /
-					1000,
+					100,
 			);
+			if (this.startHowLongHeldMilliseconds === 0) {
+				this.startHowLongHeldMilliseconds = Date.now();
+			} else {
+				this.props.setDeltaTime(
+					this.props.currentUserHighscore + deltaTime,
+				);
+			}
 
 			updateParticlePositions(deltaTime);
 
@@ -245,12 +248,14 @@ class HomeScreen extends React.Component {
 				let deltaTime = Math.ceil(
 					(this.elapsedHowLongHeldMilliseconds -
 						this.startHowLongHeldMilliseconds) /
-						1000,
+						100,
 				);
 				// let deltaTime = 0
 				this.startHowLongHeldMilliseconds = 0;
-				// set highscore
-				// this.props.setHighscore(deltaTime )
+				// set highscore on server
+				this.props.setHighscore(
+					this.props.currentUserHighscore + deltaTime,
+				);
 			}
 			particles.setScale(1000);
 			particles.update(1 / 60);
@@ -379,17 +384,7 @@ class HomeScreen extends React.Component {
 								width,
 								textAlign: "center",
 							}}>
-							{this.props.currentUserHighscore}
-						</Text>
-						<Text
-							style={{
-								color: "#fff",
-								fontSize: 16,
-								lineHeight: 25,
-								width,
-								textAlign: "center",
-							}}>
-							{this.state.deltaTime}
+							{this.props.deltaTime}
 						</Text>
 					</TouchableOpacity>
 				)}
