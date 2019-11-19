@@ -1,5 +1,5 @@
 export function isAuthenticated(state) {
-	return !!state.user.fbAccessToken;
+	return !!state.user.uid;
 }
 
 export function getPropertyFromState(state, property) {
@@ -10,8 +10,8 @@ export function profile(state) {
 	return state.user;
 }
 
-export function fbAccessToken(state) {
-	return state.fbAccessToken;
+export function uid(state) {
+	return state.uid;
 }
 
 export function users(state) {

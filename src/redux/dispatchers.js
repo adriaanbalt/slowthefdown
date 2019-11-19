@@ -7,7 +7,7 @@ import API from "../api";
 import * as firebase from "firebase";
 import FIREBASE_CONSTANTS from "../constants/firebase";
 const FACEBOOK_APP_ID = "331867204038135";
-const SECURE_STORE_FACEBOOK_TOKEN = "FACEBOOK_ACCESS_TOKEN";
+const SECURE_STORE_USER_UID = "ACCESS_TOKEN";
 const SECURE_STORE_FIRST_TIME = "FIRST_TIME";
 const SECURE_STORE_HIGHSCORE = "SECURE_STORE_HIGHSCORE";
 
@@ -45,11 +45,6 @@ export default (dispatch) => () => {
 				// if they play offline they will compete against themselves, but when they go online and they play their new highscore will in fact be updated online
 				// TODO: add this updating online/offline to the ABOUT page
 				const userHsFromSecureStore = await getSecureStoreHighScore();
-				console.log(
-					"firebase auth changed",
-					typeof user,
-					userHsFromSecureStore,
-				);
 
 				// get the current user"s highscore
 				firebase
@@ -62,12 +57,10 @@ export default (dispatch) => () => {
 							hs = userHsFromSecureStore;
 							// since server is not as high as local secure store, also update the server
 							const user = firebase.auth().currentUser;
-							firebase
-								.database()
-								.ref("users/" + user.uid)
-								.update({
-									highscore: hs,
-								});
+							updateUserOnDb({
+								uid: user.uid,
+								highscore: hs,
+							});
 						}
 						// set the highscore to whatever the server or secure store hardware value is
 						setHighscore(hs);
@@ -80,13 +73,21 @@ export default (dispatch) => () => {
 	};
 
 	const setUserDataLocal = (user) => {
-		setUserToDb(user);
+		updateUserOnDb({
+			uid: user.uid,
+			lastLoginAt: Date.now(),
+		});
 		set("/user/highscore", user.highscore);
 		set("/user/email", user.email);
 		set("/user/displayName", user.displayName);
 		set("/user/lastLoginAt", Date.now());
-		set("/user/phoneNumber", user.phoneNumber);
-		set("/user/photoURL", user.photoURL);
+		setUserUid(user.uid);
+		firebase
+			.database()
+			.ref("users/" + user.uid)
+			.on("value", (snapshot) => {
+				set("/user/displayName", snapshot.val().displayName);
+			});
 	};
 
 	const clearUserDataLocal = () => {
@@ -97,13 +98,11 @@ export default (dispatch) => () => {
 		set("/user/lastLoginAt", null);
 		set("/user/phoneNumber", null);
 		set("/user/photoURL", null);
-		set("/user/fbAccessToken", null);
+		set("/user/uid", null);
 		SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, "0");
 	};
 
 	const setDeltaTime = (deltaTime) => set("/deltaTime", deltaTime);
-
-	const fbAccessToken = () => store.getState().user.fbAccessToken;
 
 	const getUserFirstTimeSecureStore = () => {
 		return SecureStore.getItemAsync(SECURE_STORE_FIRST_TIME);
@@ -113,7 +112,6 @@ export default (dispatch) => () => {
 		let firstTime = await getUserFirstTime();
 		if (firstTime || firstTime == undefined) {
 			set("/user/firstime", bool);
-			console.log("set user first time", firstTime);
 			return SecureStore.setItemAsync(SECURE_STORE_FIRST_TIME, bool);
 		}
 	};
@@ -142,12 +140,10 @@ export default (dispatch) => () => {
 
 	const setUserHighscore = (score) => {
 		const user = firebase.auth().currentUser;
-		firebase
-			.database()
-			.ref("users/" + user.uid)
-			.update({
-				highscore: score,
-			});
+		updateUserOnDb({
+			uid: user.uid,
+			highscore: score,
+		});
 		set("/user/highscore", Number(score));
 		set("/deltaTime", Number(score));
 		SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, String(score));
@@ -158,54 +154,38 @@ export default (dispatch) => () => {
 		const secureStoreHighscore = await getSecureStoreHighScore();
 		const highscore =
 			secureStoreHighscore || store.getState().user.highscore;
-
-		console.log(
-			"setHighscore() local || hardware = result",
-			score,
-			store.getState().user.highscore,
-			secureStoreHighscore,
-			highscore,
-		);
 		// if the user is defined
 		// if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
 		// if the user"s highscore is less than the score sent, then it should be set to the score
 		if (user != null && (highscore === undefined || highscore <= score)) {
-			console.log("here");
 			setUserHighscore(score);
 		}
 		getHighscores();
 	};
 
 	// update the DB user data (happens after each login to ensure redundancy)
-	const setUserToDb = (user) => {
+	const updateUserOnDb = (obj) => {
 		firebase
 			.database()
-			.ref("users/" + user.uid)
-			.update({
-				displayName: user.displayName,
-				lastLoginAt: Date.now(),
-				email: user.email,
-				photoURL: user.photoURL,
-			});
+			.ref("users/" + obj.uid)
+			.update(obj);
 	};
 
 	const listenHighscoreByUser = (userId) => {
 		API.listenHighscoreByUser(userId);
 	};
 
-	const setFacebookAccessToken = (token) => {
+	const setUserUid = (token) => {
 		if (token) {
-			console.log("here?");
-			return SecureStore.setItemAsync(
-				SECURE_STORE_FACEBOOK_TOKEN,
-				token,
-			).then(() => {
-				set("/user/fbAccessToken", token);
-			});
+			return SecureStore.setItemAsync(SECURE_STORE_USER_UID, token).then(
+				() => {
+					set("/user/uid", token);
+				},
+			);
 		}
 	};
-	const getFacebookAccessToken = () => {
-		return SecureStore.getItemAsync(SECURE_STORE_FACEBOOK_TOKEN);
+	const getUserUid = () => {
+		return SecureStore.getItemAsync(SECURE_STORE_USER_UID);
 	};
 	const deleteUserAccount = () => {
 		const user = firebase.auth().currentUser;
@@ -221,37 +201,43 @@ export default (dispatch) => () => {
 		}
 	};
 	const logout = () => {
-		SecureStore.deleteItemAsync(SECURE_STORE_FACEBOOK_TOKEN).then(() => {
+		SecureStore.deleteItemAsync(SECURE_STORE_USER_UID).then(() => {
 			console.log("done clearing local data ");
 		});
 		clearUserDataLocal();
 		firebase.auth().signOut();
 	};
-	const signUp = async (email, password) => {
+	const signUp = async (email, password, displayName) => {
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
-			.catch(function(error) {
-				// Handle Errors here.
-				// var errorCode = error.code;
-				// var errorMessage = error.message;
-			});
+			.then(
+				({ user }) => {
+					updateUserOnDb({
+						uid: user.uid,
+						displayName: displayName,
+						created: Date.now(),
+						email: user.email,
+					});
+				},
+				(error) => {
+					console.log("ERROR");
+				},
+			);
 	};
 	const login = async (email, password) => {
 		firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.catch((error) => {
-				console.log("scucess!");
 				// var errorCode = error.code;
 				// var errorMessage = error.message;
 			});
 	};
-	const checkUserAccessToken = async () => {
-		let accessToken = await getFacebookAccessToken();
-		console.log("checkUserAccessToken", accessToken);
-		if (accessToken) {
-			set("/user/fbAccessToken", accessToken);
+	const checkUserUid = async () => {
+		let uid = await getUserUid();
+		if (uid) {
+			set("/user/uid", uid);
 		}
 	};
 
@@ -262,7 +248,7 @@ export default (dispatch) => () => {
 		login,
 		logout,
 		deleteUserAccount,
-		checkUserAccessToken,
+		checkUserUid,
 		getHighscores,
 		setHighscore,
 		setDeltaTime,

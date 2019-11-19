@@ -21,6 +21,7 @@ import {
 	getPropertyFromState,
 	profile,
 } from "../../redux/selectors";
+import { Color } from "three";
 
 var { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -35,6 +36,23 @@ const styles = StyleSheet.create({
 
 	header: {
 		paddingBottom: 20,
+	},
+
+	h2: {
+		color: Colors.fontColor,
+		fontSize: 24,
+	},
+
+	input: {
+		height: 24,
+		marginTop: 5,
+		marginBottom: 5,
+		color: Colors.fontColor,
+	},
+
+	inputContainer: {
+		borderBottomColor: Color.fontColor,
+		borderBottomWidth: 3,
 	},
 
 	displayName: {
@@ -68,6 +86,8 @@ class ProfileScreen extends React.Component {
 
 		this.state = {
 			loading: true,
+			isLogin: false,
+			isSignup: false,
 		};
 	}
 
@@ -89,10 +109,123 @@ class ProfileScreen extends React.Component {
 	navigateToHighscores = () => {
 		this.props.navigation.navigate("Highscores", {});
 	};
-	render() {
-		console.log("Profile Props", this.props.confirmResults);
 
-		const { errorMessage } = this.props;
+	revealLogin = () =>
+		this.setState({
+			isLogin: true,
+			isSignup: false,
+		});
+
+	revealSignup = () =>
+		this.setState({
+			isLogin: false,
+			isSignup: true,
+		});
+
+	renderLogin = () => {
+		return (
+			<View>
+				<Text style={styles.h2}>Login</Text>
+				{this.renderInputs()}
+				<StyledButton
+					title='Submit'
+					onPress={() =>
+						this.props.login(this.state.email, this.state.password)
+					}
+				/>
+			</View>
+		);
+	};
+
+	renderSignup = () => {
+		return (
+			<View>
+				<Text style={styles.h2}>Signup</Text>
+				<TextInput
+					autoFocus
+					style={styles.input}
+					onChangeText={(value) =>
+						this.setState({ displayName: value })
+					}
+					placeholder={"Your Name"}
+					placeholderTextColor={Colors.fontColor}
+				/>
+				{this.renderInputs()}
+				<StyledButton
+					title='Submit'
+					onPress={() =>
+						this.props.signUp(
+							this.state.email,
+							this.state.password,
+							this.state.displayName,
+						)
+					}
+				/>
+			</View>
+		);
+	};
+
+	renderInputs = () => {
+		return (
+			<View>
+				<View style={styles.inputContainer}>
+					<TextInput
+						autoFocus
+						style={styles.input}
+						onChangeText={(value) =>
+							this.setState({ email: value })
+						}
+						ref={(input) => {
+							this.emailTextInput = input;
+						}}
+						placeholder={"Email"}
+						placeholderTextColor={Colors.fontColor}
+					/>
+				</View>
+				<View style={styles.inputContainer}>
+					<TextInput
+						style={styles.input}
+						onChangeText={(value) =>
+							this.setState({ password: value })
+						}
+						placeholder={"Password"}
+						placeholderTextColor={Colors.fontColor}
+					/>
+				</View>
+			</View>
+		);
+	};
+
+	renderProfile = () => {
+		return (
+			<View
+				style={{
+					paddingBottom: 20,
+					justifyContent: "space-between",
+					flexDirection: "column",
+				}}>
+				<View>
+					<Text style={styles.displayName}>
+						{this.props.profile.displayName}
+					</Text>
+					<Text style={styles.body}>
+						Highscore: {this.props.profile.highscore}
+					</Text>
+				</View>
+				{this.props.profile.photoURL && (
+					<Image
+						style={styles.picture}
+						source={{
+							uri: this.props.profile.photoURL,
+						}}
+					/>
+				)}
+				<StyledButton title='Logout' onPress={this.props.logout} />
+			</View>
+		);
+	};
+
+	render() {
 		return (
 			<View style={styles.container}>
 				<View>
@@ -103,122 +236,25 @@ class ProfileScreen extends React.Component {
 							alignContent: "space-between",
 							flexDirection: "column",
 						}}>
-						{this.props.isAuthenticated &&
-							this.props.profile &&
-							this.props.profile.displayName && (
-								<View
-									style={{
-										paddingBottom: 20,
-										justifyContent: "space-between",
-										flexDirection: "row",
-									}}>
-									<View>
-										<Text style={styles.displayName}>
-											{this.props.profile.displayName}
-										</Text>
-										<Text style={styles.body}>
-											Highscore:{" "}
-											{this.props.profile.highscore}
-										</Text>
-									</View>
-									{this.props.profile.photoURL && (
-										<Image
-											style={styles.picture}
-											source={{
-												uri: this.props.profile
-													.photoURL,
-											}}
-										/>
-									)}
-								</View>
-							)}
+						{this.props.isAuthenticated && this.renderProfile()}
 						{!this.props.isAuthenticated && (
 							<View>
-								<TextInput
-									autoFocus
-									style={{
-										height: 40,
-										marginTop: 15,
-										marginBottom: 15,
-										color: "#FFF",
-									}}
-									onChangeText={(value) =>
-										this.setState({ phoneNumber: value })
-									}
-									placeholder={"Email"}
-								/>
-								<TextInput
-									autoFocus
-									style={{
-										height: 40,
-										marginTop: 15,
-										marginBottom: 15,
-										color: "#FFF",
-									}}
-									onChangeText={(value) =>
-										this.setState({ phoneNumber: value })
-									}
-									placeholder={"Password"}
-								/>
 								<StyledButton
 									title='Login'
-									onPress={() =>
-										this.props.login(
-											this.state.email,
-											this.state.password,
-										)
-									}
-								/>
-							</View>
-						)}
-
-						{!this.props.isAuthenticated && (
-							<View>
-								<TextInput
-									autoFocus
-									style={{
-										height: 40,
-										marginTop: 5,
-										marginBottom: 5,
-										color: "#FFF",
-									}}
-									placeholderTextColor='#FFF'
-									onChangeText={(value) =>
-										this.setState({ email: value })
-									}
-									placeholder={"Email"}
-								/>
-								<TextInput
-									autoFocus
-									style={{
-										height: 40,
-										marginTop: 5,
-										marginBottom: 5,
-										color: "#FFF",
-									}}
-									onChangeText={(value) =>
-										this.setState({ password: value })
-									}
-									placeholderTextColor='#FFF'
-									placeholder={"Password"}
+									onPress={this.revealLogin}
 								/>
 								<StyledButton
 									title='Sign Up'
-									onPress={() =>
-										this.props.signUp(
-											this.state.email,
-											this.state.password,
-										)
-									}
+									onPress={this.revealSignup}
 								/>
 							</View>
 						)}
-						{this.props.isAuthenticated && (
-							<StyledButton
-								title='Logout'
-								onPress={this.props.logout}
-							/>
-						)}
+						{!this.props.isAuthenticated &&
+							this.state.isLogin &&
+							this.renderLogin()}
+						{!this.props.isAuthenticated &&
+							this.state.isSignup &&
+							this.renderSignup()}
 					</View>
 				</View>
 				<NavigationUI navigation={this.props.navigation} />

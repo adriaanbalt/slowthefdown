@@ -18,7 +18,6 @@ import Dispatchers from "../../redux/dispatchers";
 import {
 	isAuthenticated,
 	getCurrentUserHighscore,
-	profile,
 	getDeltaTime,
 	getLevels,
 } from "../../redux/selectors";
@@ -73,7 +72,7 @@ class HomeScreen extends React.Component {
 	componentDidMount() {
 		this.setState({ loading: true });
 		this.props
-			.checkUserAccessToken()
+			.checkUserUid()
 			.then((user) => {
 				this.setState({ loading: false });
 			})
@@ -130,7 +129,6 @@ class HomeScreen extends React.Component {
 	};
 
 	_onGLContextCreate = async (gl) => {
-		console.log("_onGLContextCreate");
 		this.state.gl = gl;
 
 		this.createLevels();
@@ -164,7 +162,7 @@ class HomeScreen extends React.Component {
 		particles.setScale(1000); // 100000
 		const particlesMesh = particles.getMesh();
 
-		const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0xffffff);
+		const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0xff00ff);
 		particlesGreen.setScale(1000); // 100000
 		const particlesGreenMesh = particlesGreen.getMesh();
 
@@ -179,8 +177,8 @@ class HomeScreen extends React.Component {
 		// particlesGreenMesh.position.z = -21;
 
 		camera.position.set(0, 0, 1.0).multiplyScalar(20);
-		// scene.add(particlesMesh);
 		// scene.add(vortexMesh);
+		scene.add(particlesMesh);
 		scene.add(particlesGreenMesh);
 		scene.add(objectToCatchMesh);
 		// particlesMesh.visible = false;
@@ -298,17 +296,26 @@ class HomeScreen extends React.Component {
 			raycaster.setFromCamera(this.state.mouse, camera);
 			intersects = raycaster.intersectObjects(scene.children, true);
 
+			// the particle center will follow the object that is moving
+			// const objectPosX = objectToCatchMesh.position.x / 10;
+			// const objectPosY = objectToCatchMesh.position.y / 10;
+			// particlesGreenMesh.rotation.y = (25 * objectPosX * Math.PI) / 180;
+			// particlesGreenMesh.rotation.x = -(25 * objectPosY * Math.PI) / 180;
+
 			// adjusting perspective of particles to make it look like it moves versus the finger
 			if (this.state.mouse.y != -10) {
-				particlesGreenMesh.rotation.y =
+				particlesMesh.rotation.y = particlesGreenMesh.rotation.y =
 					(25 * this.state.mouse.x * Math.PI) / 180;
 			} else {
-				particlesGreenMesh.rotation.x = (10 * Math.PI) / 180;
+				particlesMesh.rotation.y = particlesGreenMesh.rotation.y =
+					(0 * Math.PI) / 180;
 			}
 			if (this.state.mouse.x != -10) {
-				// particlesGreenMesh.rotation.y = (25 * this.state.mouse.x) * Math.PI / 180
+				particlesMesh.rotation.x = particlesGreenMesh.rotation.x =
+					-(25 * this.state.mouse.y * Math.PI) / 180;
 			} else {
-				// particlesGreenMesh.rotation.y = (0) * Math.PI / 180
+				particlesMesh.rotation.x = particlesGreenMesh.rotation.x =
+					(10 * Math.PI) / 180;
 			}
 
 			if (intersects.length > 0) {
