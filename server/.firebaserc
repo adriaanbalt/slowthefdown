@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "fairplay-app",
+    "production": "fairplay-app"
+  }
+}
