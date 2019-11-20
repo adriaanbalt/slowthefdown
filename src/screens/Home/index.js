@@ -31,6 +31,8 @@ import Vortex from "./Visualizations/Vortex";
 import ObjectToCatch from "./ObjectToCatch";
 import Particles from "./Visualizations/Particles";
 
+import ParticlesLevel from "./levels/ParticlesLevel";
+
 import THREERoot from "./ThreeRoot";
 
 const LEVEL_COUNT = 2;
@@ -64,10 +66,11 @@ class HomeScreen extends React.Component {
 		};
 		// Turn off extra warnings
 		THREE.suppressExpoWarnings(true);
+		// hide warnings yellow box in ios
+		console.disableYellowBox = true;
 
 		ShareTheNavigation.set(props.navigation);
 		this.props.initialize();
-		console.disableYellowBox = true;
 	}
 	componentDidMount() {
 		this.setState({ loading: true });
@@ -116,17 +119,23 @@ class HomeScreen extends React.Component {
 	};
 
 	createLevels = () => {
-		this.currentLevel = this.props.levels[0];
-		for (let i = 0; i < this.props.levels.length; i++) {
-			// how can we dynamically create the levels?
-			// based on the level, we need to set the correct level as the current level
-			// is this a big ass switch statement in a while loop?
-			// or is it a recursive function? where the accumulator is the level the user is on?
-			// when a level is complete, you need to update the current level
-			// once u update the current level it needs to call it's update function()
-			// how do you know that the level is complete?
-		}
+		this.currentLevel = new ParticlesLevel({});
+		// for (let i = 0; i < this.props.levels.length; i++) {
+		// how can we dynamically create the levels?
+		// based on the level, we need to set the correct level as the current level
+		// is this a big ass switch statement in a while loop?
+		// or is it a recursive function? where the accumulator is the level the user is on?
+		// when a level is complete, you need to update the current level
+		// once u update the current level it needs to call it's update function()
+		// how do you know that the level is complete?
+		// }
 	};
+
+	addLevelToScene = (level) => {
+		this.scene.add(level.getMesh());
+	};
+
+	showLevelComplete = (level) => {};
 
 	_onGLContextCreate = async (gl) => {
 		this.state.gl = gl;
@@ -145,45 +154,15 @@ class HomeScreen extends React.Component {
 			0.1,
 			20000,
 		);
-		const scene = new THREE.Scene();
+		this.scene = new THREE.Scene();
 		const raycaster = new THREE.Raycaster();
-
-		const texture = await ExpoTHREE.loadTextureAsync({
-			asset: require("../../assets/images/stars.jpg"),
-		});
-		const vortex = new Vortex(texture);
-		const vortexMesh = vortex.getMesh();
 
 		const objectToCatch = new ObjectToCatch();
 		const objectToCatchMesh = objectToCatch.getMesh();
 
-		// width, height, depth, prefabCount, prefabSize
-		const particles = new Particles(40, 40, 40, 3000, 0.005, 0xffffff);
-		particles.setScale(1000); // 100000
-		const particlesMesh = particles.getMesh();
-
-		const particlesGreen = new Particles(40, 40, 40, 3000, 0.005, 0xff00ff);
-		particlesGreen.setScale(1000); // 100000
-		const particlesGreenMesh = particlesGreen.getMesh();
-
-		// vortexMesh.rotation.x = (0) * Math.PI / 180
-		// vortexMesh.position.x = 0;
-		// vortexMesh.position.y = -15;
-		// vortexMesh.position.z = -20;
-		// particlesMesh.position.z = 1;
-		particlesMesh.position.y = -15;
-		particlesGreenMesh.position.y = -15;
-
-		// particlesGreenMesh.position.z = -21;
-
 		camera.position.set(0, 0, 1.0).multiplyScalar(20);
-		// scene.add(vortexMesh);
-		scene.add(particlesMesh);
-		scene.add(particlesGreenMesh);
-		scene.add(objectToCatchMesh);
-		// particlesMesh.visible = false;
-		// vortexMesh.visible = true;
-		// particlesGreenMesh.visible = true;
+		this.scene.add(objectToCatchMesh);
+		this.addLevelToScene(this.currentLevel);
 
 		const startTime = Date.now();
 		let intersects;
@@ -191,28 +170,6 @@ class HomeScreen extends React.Component {
 		this.elapsedHowLongHeldMilliseconds = 0;
 		let elapsedSeconds;
 		let elapsedMilliseconds;
-
-		const updateParticlePositions = (elapsedSeconds) => {
-			// slowly move the particles Z position forward, over time.
-			// particlesGreenMesh.position.z += elapsedSeconds/this.state.timescale
-			// particlesMesh.position.z += elapsedSeconds/this.state.timescale
-			// console.log('particlesGreenMesh.position.z', particlesGreenMesh.position.z, this.state.timescale)
-			// if ( elapsedSeconds >= 5 ) {
-			//   particlesMesh.visible = false;
-			//   vortexMesh.visible = true;
-			//   particlesGreenMesh.visible = true;
-			// }
-			// if ( elapsedSeconds >= 10 ) {
-			//   particlesMesh.visible = false;
-			//   vortexMesh.visible = false;
-			//   particlesGreenMesh.visible = true;
-			// }
-			// if ( elapsedSeconds >= 15 ) {
-			//   particlesMesh.visible = true;
-			//   vortexMesh.visible = false;
-			//   particlesGreenMesh.visible = false;
-			// }
-		};
 
 		const over = () => {
 			this.elapsedHowLongHeldMilliseconds = Date.now();
@@ -230,15 +187,8 @@ class HomeScreen extends React.Component {
 				);
 			}
 
-			updateParticlePositions(deltaTime);
-
-			particles.update(1 / 240);
-			particles.setScale(500);
-
-			particlesGreen.setScale(500);
-			particlesGreen.update(1 / 240);
+			this.currentLevel.over();
 			objectToCatch.over(deltaTime);
-			vortex.over(deltaTime, this.state.mouse);
 		};
 		const out = () => {
 			if (this.startHowLongHeldMilliseconds !== 0) {
@@ -255,14 +205,8 @@ class HomeScreen extends React.Component {
 					this.props.currentUserHighscore + deltaTime,
 				);
 			}
-			particles.setScale(1000);
-			particles.update(1 / 60);
-			particlesGreen.setScale(1000);
-			particlesGreen.update(1 / 60);
-			// speed up letter
+			this.currentLevel.out();
 			objectToCatch.out();
-			// speed up vortex Vortex
-			vortex.out();
 		};
 
 		const updateParticleRotation = (rotation) => {
@@ -279,22 +223,21 @@ class HomeScreen extends React.Component {
 			camera.updateMatrixWorld();
 
 			// in here is all of the level controls
-			this.currentLevel.duration >= elapsedMilliseconds;
+			// if (
+			// 	this.currentLevel.duration >= elapsedMilliseconds &&
+			// 	this.currentLevel
+			// ) {
+			// 	this.showLevelComplete();
+			// }
 
 			objectToCatch.update(
 				elapsedSeconds,
 				this.state.mouse.x,
 				this.state.mouse.y,
 			);
-			vortex.update(
-				elapsedSeconds,
-				this.state.mouse.x,
-				this.state.mouse.y,
-				0,
-			);
 
 			raycaster.setFromCamera(this.state.mouse, camera);
-			intersects = raycaster.intersectObjects(scene.children, true);
+			intersects = raycaster.intersectObjects(this.scene.children, true);
 
 			// the particle center will follow the object that is moving
 			// const objectPosX = objectToCatchMesh.position.x / 10;
@@ -303,20 +246,7 @@ class HomeScreen extends React.Component {
 			// particlesGreenMesh.rotation.x = -(25 * objectPosY * Math.PI) / 180;
 
 			// adjusting perspective of particles to make it look like it moves versus the finger
-			if (this.state.mouse.y != -10) {
-				particlesMesh.rotation.y = particlesGreenMesh.rotation.y =
-					(25 * this.state.mouse.x * Math.PI) / 180;
-			} else {
-				particlesMesh.rotation.y = particlesGreenMesh.rotation.y =
-					(0 * Math.PI) / 180;
-			}
-			if (this.state.mouse.x != -10) {
-				particlesMesh.rotation.x = particlesGreenMesh.rotation.x =
-					-(25 * this.state.mouse.y * Math.PI) / 180;
-			} else {
-				particlesMesh.rotation.x = particlesGreenMesh.rotation.x =
-					(10 * Math.PI) / 180;
-			}
+			this.currentLevel.mouseAdjust(this.state.mouse);
 
 			if (intersects.length > 0) {
 				over();
@@ -324,7 +254,7 @@ class HomeScreen extends React.Component {
 				out();
 			}
 
-			renderer.render(scene, camera);
+			renderer.render(this.scene, camera);
 
 			gl.endFrameEXP();
 		};

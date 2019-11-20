@@ -5,8 +5,6 @@ import ParticlePrefabGeometry from "./ParticlePrefabGeometry";
 export default class Particles {
 	//(20, 10, 40, 10000, 0.01 )
 	constructor(width, height, depth, prefabCount, prefabSize, color) {
-		console.log("hi");
-
 		// create a prefab
 		var prefab = new THREE.TetrahedronGeometry(prefabSize);
 

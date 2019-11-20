@@ -12,18 +12,18 @@ const defaultState = {
 	levels: [
 		{
 			name: "particles",
-			type: "ParticlesLevelWhite",
-			duration: 2000,
+			type: "ParticlesLevel",
+			duration: 20000,
 		},
 		{
 			name: "particles",
 			type: "ParticlesLevelGreen",
-			duration: 2000,
+			duration: 20000,
 		},
 		{
 			name: "vortex",
 			type: "VortexLevel",
-			duration: 2000,
+			duration: 20000,
 		},
 	],
 };
