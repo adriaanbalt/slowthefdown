@@ -9,11 +9,11 @@ import HighscoresScreen from "../screens/Highscores";
 
 const AppNavigator = createStackNavigator(
 	{
-		Game: {
-			screen: HomeScreen,
-		},
 		Profile: {
 			screen: ProfileScreen,
+		},
+		Game: {
+			screen: HomeScreen,
 		},
 		Highscores: {
 			screen: HighscoresScreen,

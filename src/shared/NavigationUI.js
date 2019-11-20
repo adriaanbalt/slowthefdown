@@ -54,7 +54,7 @@ class NavigationUI extends React.Component {
 						backgroundColor: "#FFF",
 					}}
 					onPress={this.navigateToHighscores}>
-					<Text style={styles.text}>Highscores</Text>
+					<Text style={styles.text}>Times</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={{

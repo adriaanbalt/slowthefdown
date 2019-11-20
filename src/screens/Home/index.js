@@ -24,7 +24,7 @@ import {
 
 import Waiting from "../../shared/Waiting";
 import StyledButton from "../../shared/StyledButton";
-// // import InterstitialAd from "../../shared/InterstitialAd";
+// import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
 import NavigationUI from "../../shared/NavigationUI";
 

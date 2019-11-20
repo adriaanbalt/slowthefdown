@@ -6,9 +6,12 @@ const defaultState = {
 	initialized: false,
 	authenticatedUser: null,
 	accessToken: null,
-	user: {},
+	user: {
+		highscore: 0,
+	},
 	users: {},
 	highscores: [],
+	deltaTime: 0,
 	levels: [
 		{
 			name: "particles",

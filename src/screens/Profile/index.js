@@ -9,6 +9,7 @@ import {
 	Dimensions,
 	Image,
 	TextInput,
+	Keyboard,
 } from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import StyledButton from "../../shared/StyledButton";
@@ -20,6 +21,7 @@ import {
 	isAuthenticated,
 	getPropertyFromState,
 	profile,
+	getDeltaTime,
 } from "../../redux/selectors";
 import { Color } from "three";
 
@@ -35,12 +37,19 @@ const styles = StyleSheet.create({
 	},
 
 	header: {
-		paddingBottom: 20,
+		paddingBottom: 0,
+	},
+
+	h1: {
+		color: Colors.fontColor,
+		fontSize: 34,
+		marginBottom: 10,
 	},
 
 	h2: {
 		color: Colors.fontColor,
 		fontSize: 24,
+		marginBottom: 10,
 	},
 
 	input: {
@@ -48,6 +57,8 @@ const styles = StyleSheet.create({
 		marginTop: 5,
 		marginBottom: 5,
 		color: Colors.fontColor,
+		borderBottomColor: Colors.grayColor, // Add this to specify bottom border color
+		borderBottomWidth: 1, // Add this to specify bottom border thickness
 	},
 
 	inputContainer: {
@@ -69,10 +80,8 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 	},
 
-	picture: {
-		alignSelf: "flex-end",
-		width: 75,
-		height: 75,
+	submitBtn: {
+		marginTop: 20,
 	},
 });
 
@@ -110,6 +119,14 @@ class ProfileScreen extends React.Component {
 		this.props.navigation.navigate("Highscores", {});
 	};
 
+	closeKeyboard = () => {
+		Keyboard.dismiss();
+		this.setState({
+			isSignup: false,
+			isLogin: false,
+		});
+	};
+
 	revealLogin = () =>
 		this.setState({
 			isLogin: true,
@@ -126,12 +143,18 @@ class ProfileScreen extends React.Component {
 		return (
 			<View>
 				<Text style={styles.h2}>Login</Text>
-				{this.renderInputs()}
+				{this.renderInputs(true)}
 				<StyledButton
 					title='Submit'
+					style={styles.submitBtn}
 					onPress={() =>
 						this.props.login(this.state.email, this.state.password)
 					}
+				/>
+				<StyledButton
+					title='Close keyboard'
+					style={styles.submitBtn}
+					onPress={this.closeKeyboard}
 				/>
 			</View>
 		);
@@ -144,15 +167,17 @@ class ProfileScreen extends React.Component {
 				<TextInput
 					autoFocus
 					style={styles.input}
+					maxLength={20}
 					onChangeText={(value) =>
 						this.setState({ displayName: value })
 					}
 					placeholder={"Your Name"}
 					placeholderTextColor={Colors.fontColor}
 				/>
-				{this.renderInputs()}
+				{this.renderInputs(false)}
 				<StyledButton
 					title='Submit'
+					style={styles.submitBtn}
 					onPress={() =>
 						this.props.signUp(
 							this.state.email,
@@ -161,16 +186,21 @@ class ProfileScreen extends React.Component {
 						)
 					}
 				/>
+				<StyledButton
+					title='Close keyboard'
+					style={styles.submitBtn}
+					onPress={this.closeKeyboard}
+				/>
 			</View>
 		);
 	};
 
-	renderInputs = () => {
+	renderInputs = (focusEmail) => {
 		return (
 			<View>
 				<View style={styles.inputContainer}>
 					<TextInput
-						autoFocus
+						autoFocus={focusEmail}
 						style={styles.input}
 						onChangeText={(value) =>
 							this.setState({ email: value })
@@ -188,6 +218,7 @@ class ProfileScreen extends React.Component {
 						onChangeText={(value) =>
 							this.setState({ password: value })
 						}
+						secureTextEntry={true}
 						placeholder={"Password"}
 						placeholderTextColor={Colors.fontColor}
 					/>
@@ -209,7 +240,7 @@ class ProfileScreen extends React.Component {
 						{this.props.profile.displayName}
 					</Text>
 					<Text style={styles.body}>
-						Highscore: {this.props.profile.highscore}
+						Slow Down Time: {this.props.profile.highscore}
 					</Text>
 				</View>
 				{this.props.profile.photoURL && (
@@ -226,6 +257,7 @@ class ProfileScreen extends React.Component {
 	};
 
 	render() {
+		console.log("state", this.state);
 		return (
 			<View style={styles.container}>
 				<View>
@@ -238,17 +270,41 @@ class ProfileScreen extends React.Component {
 						}}>
 						{this.props.isAuthenticated && this.renderProfile()}
 						{!this.props.isAuthenticated && (
-							<View>
-								<StyledButton
-									title='Login'
-									onPress={this.revealLogin}
-								/>
+							<Text style={styles.h1}>
+								{`To save your time of ${this.props.deltaTime}, sign up or login`}
+							</Text>
+						)}
+						{!this.props.isAuthenticated &&
+							!this.state.isLogin &&
+							!this.state.isSignup && (
+								<View>
+									<StyledButton
+										title='Login'
+										onPress={this.revealLogin}
+									/>
+									<StyledButton
+										title='Sign Up'
+										onPress={this.revealSignup}
+									/>
+								</View>
+							)}
+						{!this.props.isAuthenticated &&
+							this.state.isLogin &&
+							!this.state.isSignup && (
 								<StyledButton
 									title='Sign Up'
 									onPress={this.revealSignup}
 								/>
-							</View>
-						)}
+							)}
+
+						{!this.props.isAuthenticated &&
+							!this.state.isLogin &&
+							this.state.isSignup && (
+								<StyledButton
+									title='Login'
+									onPress={this.revealLogin}
+								/>
+							)}
 						{!this.props.isAuthenticated &&
 							this.state.isLogin &&
 							this.renderLogin()}
@@ -267,6 +323,7 @@ export default connect(
 	(state) => ({
 		isAuthenticated: isAuthenticated(state),
 		profile: profile(state),
+		deltaTime: getDeltaTime(state),
 		confirmResults: getPropertyFromState(state, "confirmResults"),
 	}),
 	Dispatchers,

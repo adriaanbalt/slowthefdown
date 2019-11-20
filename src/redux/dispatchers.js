@@ -72,6 +72,7 @@ export default (dispatch) => () => {
 	};
 
 	const setUserDataLocal = (user) => {
+		console.log("setUserDataLocal", user.highscore);
 		updateUserOnDb({
 			uid: user.uid,
 			lastLoginAt: Date.now(),
@@ -120,14 +121,28 @@ export default (dispatch) => () => {
 		return new Promise((resolve, reject) => {
 			// get all users" highscores
 			var query = firebase.database().ref("users");
-			query.once("value").then((snapshot) => {
-				let highscores = [];
-				snapshot.forEach((childSnapshot) => {
-					highscores.push(childSnapshot.val());
+			query
+				.orderByChild("highscore")
+				.limitToLast(10)
+				.on("value", (snapshot) => {
+					let highscores = [];
+					snapshot.forEach((childSnapshot) => {
+						highscores.push(childSnapshot.val());
+					});
+					set("/highscores", highscores);
+					resolve(highscores);
 				});
-				set("/highscores", highscores);
-				resolve(highscores);
-			});
+			// query
+			// 	.orderByChild("highscore")
+			// 	.on("value")
+			// 	.then((snapshot) => {
+			// 		let highscores = [];
+			// 		snapshot.forEach((childSnapshot) => {
+			// 			highscores.push(childSnapshot.val());
+			// 		});
+			// 		set("/highscores", highscores);
+			// 		resolve(highscores);
+			// 	});
 		});
 	};
 
