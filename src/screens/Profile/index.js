@@ -157,6 +157,10 @@ class ProfileScreen extends React.Component {
 				error: res.message,
 			});
 			console.log("this.state", this.state);
+		} else {
+			this.setState({
+				error: null,
+			});
 		}
 	};
 

@@ -93,6 +93,7 @@ export default (dispatch) => () => {
 	const clearUserDataLocal = () => {
 		// set("/user", {})
 		set("/user/highscore", 0);
+		set("/deltaTime", 0);
 		set("/user/email", null);
 		set("/user/displayName", null);
 		set("/user/lastLoginAt", null);
