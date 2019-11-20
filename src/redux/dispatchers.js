@@ -3,7 +3,6 @@ const actions = require("./actions");
 import store from "./store";
 import * as SecureStore from "expo-secure-store";
 import registerForPushNotifications from "../api/registerForPushNotifications";
-import API from "../api";
 import * as firebase from "firebase";
 import FIREBASE_CONSTANTS from "../constants/firebase";
 const FACEBOOK_APP_ID = "331867204038135";
@@ -171,10 +170,6 @@ export default (dispatch) => () => {
 			.update(obj);
 	};
 
-	const listenHighscoreByUser = (userId) => {
-		API.listenHighscoreByUser(userId);
-	};
-
 	const setUserUid = (token) => {
 		if (token) {
 			return SecureStore.setItemAsync(SECURE_STORE_USER_UID, token).then(
@@ -252,6 +247,5 @@ export default (dispatch) => () => {
 		getHighscores,
 		setHighscore,
 		setDeltaTime,
-		listenHighscoreByUser,
 	};
 };

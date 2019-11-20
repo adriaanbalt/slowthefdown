@@ -24,6 +24,7 @@ import {
 
 import Waiting from "../../shared/Waiting";
 import StyledButton from "../../shared/StyledButton";
+// // import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
 import NavigationUI from "../../shared/NavigationUI";
 
@@ -82,6 +83,8 @@ class HomeScreen extends React.Component {
 			.catch(() => {
 				this.setState({ loading: false });
 			});
+
+		// // this.InterstitialAd = new InterstitialAd();
 	}
 
 	componentWillMount() {
@@ -189,6 +192,8 @@ class HomeScreen extends React.Component {
 
 			this.currentLevel.over();
 			objectToCatch.over(deltaTime);
+
+			// this.InterstitialAd.show();
 		};
 		const out = () => {
 			if (this.startHowLongHeldMilliseconds !== 0) {

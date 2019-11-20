@@ -1,8 +1,5 @@
 export default {
-    appId: "ca-app-pub-9783765382439775~8088783058",
-    bannerAdUnitId: "ca-app-pub-9783765382439775/7559543282",
-    testBannerAdUnitId: "ca-app-pub-3940256099942544/6300978111",
-}
-
-
-
+	appId: "ca-app-pub-3194664333843576~7507771243",
+	banner: "ca-app-pub-3194664333843576/9671674376",
+	interstitial: "ca-app-pub-3194664333843576/8984504447",
+};

@@ -43,7 +43,7 @@ export default class App extends React.Component {
 			<Provider store={store}>
 				<View style={styles.container}>
 					<AppNavigator />
-					<BannerAd></BannerAd>
+					<BannerAd />
 				</View>
 			</Provider>
 		);
