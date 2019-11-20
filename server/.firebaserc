@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "fairplay-app",
-    "production": "fairplay-app"
+    "default": "slowitdown-d1ac8",
+    "production": "slowitdown-d1ac8"
   }
 }
