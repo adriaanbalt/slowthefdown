@@ -61,6 +61,11 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1, // Add this to specify bottom border thickness
 	},
 
+	error: {
+		color: Colors.red,
+		fontSize: 14,
+	},
+
 	inputContainer: {
 		borderBottomColor: Color.fontColor,
 		borderBottomWidth: 3,
@@ -102,14 +107,14 @@ class ProfileScreen extends React.Component {
 
 	componentDidMount() {
 		this.setState({ loading: true });
-		this.props
-			.login()
-			.then((user) => {
-				this.setState({ loading: false });
-			})
-			.catch(() => {
-				this.setState({ loading: false });
-			});
+		// this.props
+		// 	.login()
+		// 	.then((user) => {
+		// 		this.setState({ loading: false });
+		// 	})
+		// 	.catch(() => {
+		// 		this.setState({ loading: false });
+		// 	});
 	}
 
 	navigateToGame = () => {
@@ -131,13 +136,29 @@ class ProfileScreen extends React.Component {
 		this.setState({
 			isLogin: true,
 			isSignup: false,
+			error: null,
 		});
 
 	revealSignup = () =>
 		this.setState({
 			isLogin: false,
 			isSignup: true,
+			error: null,
 		});
+
+	login = async () => {
+		const res = await this.props.login(
+			this.state.email,
+			this.state.password,
+		);
+		if (!res.user && res.message) {
+			// error!
+			this.setState({
+				error: res.message,
+			});
+			console.log("this.state", this.state);
+		}
+	};
 
 	renderLogin = () => {
 		return (
@@ -147,9 +168,7 @@ class ProfileScreen extends React.Component {
 				<StyledButton
 					title='Submit'
 					style={styles.submitBtn}
-					onPress={() =>
-						this.props.login(this.state.email, this.state.password)
-					}
+					onPress={this.login}
 				/>
 				<StyledButton
 					title='Close keyboard'
@@ -257,7 +276,6 @@ class ProfileScreen extends React.Component {
 	};
 
 	render() {
-		console.log("state", this.state);
 		return (
 			<View style={styles.container}>
 				<View>
@@ -311,6 +329,9 @@ class ProfileScreen extends React.Component {
 						{!this.props.isAuthenticated &&
 							this.state.isSignup &&
 							this.renderSignup()}
+						{this.state.error && (
+							<Text style={styles.error}>{this.state.error}</Text>
+						)}
 					</View>
 				</View>
 				<NavigationUI navigation={this.props.navigation} />

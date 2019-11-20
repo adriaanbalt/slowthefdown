@@ -8,8 +8,6 @@ class InterstitialAd {
 	}
 
 	async show() {
-		console.log("SHOW!");
-
 		await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: true });
 		await AdMobInterstitial.showAdAsync();
 	}

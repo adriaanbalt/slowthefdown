@@ -217,7 +217,8 @@ export default (dispatch) => () => {
 		clearUserDataLocal();
 		firebase.auth().signOut();
 	};
-	const signUp = async (email, password, displayName) => {
+	const signUp = (email, password, displayName) => {
+		console.log("signUp", email, password, displayName);
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
@@ -228,6 +229,7 @@ export default (dispatch) => () => {
 						displayName: displayName,
 						created: Date.now(),
 						email: user.email,
+						highscore: 0 || store.getState().deltaTime,
 					});
 				},
 				(error) => {
@@ -235,14 +237,11 @@ export default (dispatch) => () => {
 				},
 			);
 	};
-	const login = async (email, password) => {
-		firebase
+	const login = (email, password) => {
+		return firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
-			.catch((error) => {
-				// var errorCode = error.code;
-				// var errorMessage = error.message;
-			});
+			.catch((error) => error);
 	};
 	const checkUserUid = async () => {
 		let uid = await getUserUid();

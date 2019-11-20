@@ -4,4 +4,5 @@ export default {
 	highscoresFontColor: "#DDD",
 	firstPlaceFontColor: "#FFF",
 	grayColor: "#666",
+	red: "#ff2800",
 };
