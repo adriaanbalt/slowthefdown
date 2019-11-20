@@ -9,20 +9,20 @@ const typeDefs = gql`
 
 	type Mutation {
 		updateUser(userId: ID!, name: String!): User
-		updateHighscore(userId: ID!, highscore: Int!): Highscore
 	}
 
 	type Highscore {
-		filename: String!
-		mimetype: String!
-		encoding: String!
+		id: ID
+		value: Int!
+		userID: ID!
 	}
 
 	type User {
 		id: ID!
 		email: String!
-		displayName: String
-		highscore: Highscore
+		displayName: String!
+		highscore: Highscore!
+		highscoreID: ID
 	}
 `;
 
