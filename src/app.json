@@ -17,6 +17,7 @@
 			"assetExts": ["ttf", "mp4", "otf", "xml", "json", "png"]
 		},
 		"ios": {
+			"buildNumber": "7.0.0",
 			"supportsTablet": true,
 			"bundleIdentifier": "com.balt.slowitdown",
 			"config": {
