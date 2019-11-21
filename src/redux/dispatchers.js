@@ -62,7 +62,7 @@ export default (dispatch) => () => {
 							});
 						}
 						// set the highscore to whatever the server or secure store hardware value is
-						setHighscore(hs);
+						setHighscore(hs || userHsFromSecureStore);
 					});
 			}
 			// Do other things
@@ -71,21 +71,31 @@ export default (dispatch) => () => {
 		getHighscores();
 	};
 
+	const setSecureStoreUser = (user) => {
+		setUserUid(user.uid);
+		// set highscore and set
+	};
+
+	const getUserHighscore = (user) => {
+		// return either what is from the server
+		// or return what is on the device's storage
+		return user.highscore || getSecureStoreHighScore();
+	};
+
 	const setUserDataLocal = (user) => {
-		console.log("setUserDataLocal", user.highscore);
 		updateUserOnDb({
 			uid: user.uid,
 			lastLoginAt: Date.now(),
 		});
-		set("/user/highscore", user.highscore);
+		set("/user/highscore", getUserHighscore(user));
 		set("/user/email", user.email);
 		set("/user/displayName", user.displayName);
 		set("/user/lastLoginAt", Date.now());
-		setUserUid(user.uid);
+		setSecureStoreUser(user);
 		firebase
 			.database()
 			.ref("users/" + user.uid)
-			.on("value", (snapshot) => {
+			.once("value", (snapshot) => {
 				set("/user/displayName", snapshot.val().displayName);
 			});
 	};
