@@ -26,19 +26,10 @@ export default (dispatch) => () => {
 		// load as existing or new user
 		// check if secure store has info?
 		// check if server has info?
-		// const firstTimeSecureStore = getUserFirstTimeSecureStore()
-		// whatever the value of first time, set it to the reducer state for internal tracking
-		// set("/user/firstime", firstTimeSecureStore);
 
 		// check auth login state changes
 		firebase.auth().onAuthStateChanged(async (user) => {
 			if (user != null) {
-				// since user exists, store user data in the reducer
-				setUserDataLocal(user);
-
-				// check if this is the user's first time in the App
-				// getUserFirstTimeSecureStore()
-
 				// get the user's local highscore to compare to the server highscore, take whatever is higher
 				// server is what other users will see but secure store lets users play offline and keep their highscore...
 				// if they play offline they will compete against themselves, but when they go online and they play their new highscore will in fact be updated online
@@ -64,6 +55,9 @@ export default (dispatch) => () => {
 						// set the highscore to whatever the server or secure store hardware value is
 						setHighscore(hs || userHsFromSecureStore);
 					});
+
+				// since user exists, store user data in the reducer
+				setUserDataLocal(user);
 			}
 			// Do other things
 		});
@@ -76,22 +70,31 @@ export default (dispatch) => () => {
 		// set highscore and set
 	};
 
-	const getUserHighscore = (user) => {
+	const getUserHighscore = async (user) => {
 		// return either what is from the server
 		// or return what is on the device's storage
-		return user.highscore || getSecureStoreHighScore();
+		secureStoreHighScore = await getSecureStoreHighScore();
+		const ret = user.deltaTime || secureStoreHighScore;
+		console.log(
+			"secureStoreHighScore",
+			secureStoreHighScore,
+			ret,
+			user.deltaTime,
+		);
+		return ret;
 	};
 
-	const setUserDataLocal = (user) => {
+	const setUserDataLocal = async (user) => {
 		updateUserOnDb({
 			uid: user.uid,
 			lastLoginAt: Date.now(),
 		});
-		set("/user/highscore", getUserHighscore(user));
 		set("/user/email", user.email);
 		set("/user/displayName", user.displayName);
 		set("/user/lastLoginAt", Date.now());
 		setSecureStoreUser(user);
+		const hs = await getUserHighscore();
+		set("/user/highscore", hs);
 		firebase
 			.database()
 			.ref("users/" + user.uid)
@@ -115,18 +118,6 @@ export default (dispatch) => () => {
 
 	const setDeltaTime = (deltaTime) => set("/deltaTime", deltaTime);
 
-	const getUserFirstTimeSecureStore = () => {
-		return SecureStore.getItemAsync(SECURE_STORE_FIRST_TIME);
-	};
-
-	const setUserFirstTime = async (bool) => {
-		let firstTime = await getUserFirstTime();
-		if (firstTime || firstTime == undefined) {
-			set("/user/firstime", bool);
-			return SecureStore.setItemAsync(SECURE_STORE_FIRST_TIME, bool);
-		}
-	};
-
 	const getHighscores = () => {
 		// a promise is used here to create a loader
 		return new Promise((resolve, reject) => {
@@ -143,32 +134,23 @@ export default (dispatch) => () => {
 					set("/highscores", highscores);
 					resolve(highscores);
 				});
-			// query
-			// 	.orderByChild("highscore")
-			// 	.on("value")
-			// 	.then((snapshot) => {
-			// 		let highscores = [];
-			// 		snapshot.forEach((childSnapshot) => {
-			// 			highscores.push(childSnapshot.val());
-			// 		});
-			// 		set("/highscores", highscores);
-			// 		resolve(highscores);
-			// 	});
 		});
 	};
 
 	const getSecureStoreHighScore = () => {
 		return SecureStore.getItemAsync(SECURE_STORE_HIGHSCORE).then((res) => {
-			return res;
+			return Number(res) || 0;
 		});
 	};
 
 	const setUserHighscore = (score) => {
 		const user = firebase.auth().currentUser;
-		updateUserOnDb({
-			uid: user.uid,
-			highscore: score,
-		});
+		if (user.uid) {
+			updateUserOnDb({
+				uid: user.uid,
+				highscore: score,
+			});
+		}
 		set("/user/highscore", Number(score));
 		set("/deltaTime", Number(score));
 		SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, String(score));
@@ -229,7 +211,6 @@ export default (dispatch) => () => {
 		firebase.auth().signOut();
 	};
 	const signUp = (email, password, displayName) => {
-		console.log("signUp", email, password, displayName);
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)

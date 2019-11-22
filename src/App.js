@@ -8,11 +8,12 @@ import { Ionicons } from "@expo/vector-icons";
 import store from "./redux/store";
 import AppNavigator from "./navigation/AppNavigator";
 import BannerAd from "./shared/BannerAd";
+import Colors from "./constants/Colors";
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#000",
+		backgroundColor: Colors.backgroundColor,
 	},
 });
 

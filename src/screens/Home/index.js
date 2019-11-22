@@ -35,6 +35,7 @@ import Particles from "./Visualizations/Particles";
 import ParticlesLevel from "./levels/ParticlesLevel";
 
 import THREERoot from "./ThreeRoot";
+import Colors from "../../constants/Colors";
 
 const LEVEL_COUNT = 2;
 
@@ -42,7 +43,7 @@ const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#000",
+		backgroundColor: Colors.backgroundColor,
 	},
 	contentContainer: {
 		// backgroundColor: 'white'
@@ -291,7 +292,7 @@ class HomeScreen extends React.Component {
 							position: "absolute",
 							width,
 							height,
-							backgroundColor: "#000",
+							backgroundColor: Colors.backgroundColor,
 							zIndex: 10000,
 						}}>
 						<Text
