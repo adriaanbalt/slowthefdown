@@ -26,7 +26,6 @@ module.exports = async (_, data) => {
 			.doc(`users/${data.userId}`)
 			.get(newObj)
 			.then((docRef) => {
-				console.log("User Document information!", docRef.data());
 				return docRef.data();
 			})
 			.catch((error) => {
