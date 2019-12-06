@@ -9,6 +9,7 @@ import store from "./redux/store";
 import AppNavigator from "./navigation/AppNavigator";
 import BannerAd from "./shared/BannerAd";
 import Colors from "./constants/Colors";
+import Modal from "./shared/Modal";
 
 const styles = StyleSheet.create({
 	container: {
@@ -43,6 +44,7 @@ export default class App extends React.Component {
 		return (
 			<Provider store={store}>
 				<View style={styles.container}>
+					<Modal />
 					<AppNavigator />
 					<BannerAd />
 				</View>

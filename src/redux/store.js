@@ -3,6 +3,11 @@ import { createStore } from "redux";
 import { SET } from "./actions";
 
 const defaultState = {
+	ui: {
+		modal: {
+			children: null,
+		},
+	},
 	initialized: false,
 	authenticatedUser: null,
 	accessToken: null,
@@ -12,6 +17,9 @@ const defaultState = {
 	users: {},
 	highscores: [],
 	deltaTime: 0,
+	ad: {
+		interstitial: false,
+	},
 	levels: [
 		{
 			name: "particles",
@@ -75,7 +83,30 @@ function handleSetAction(state, action) {
 		};
 	}
 
+	if (path === "/modal") {
+		return {
+			...state,
+			ui: {
+				...state.ui,
+				modal: action,
+			},
+		};
+	}
+
 	for (const key of ["user"]) {
+		if (path.indexOf(`/${key}/`) === 0) {
+			const id = path.slice(`/${key}/`.length);
+			return {
+				...state,
+				[key]: {
+					...(state[key] || {}),
+					[id]: value,
+				},
+			};
+		}
+	}
+
+	for (const key of ["ad"]) {
 		if (path.indexOf(`/${key}/`) === 0) {
 			const id = path.slice(`/${key}/`.length);
 			return {
