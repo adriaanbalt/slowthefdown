@@ -2,13 +2,13 @@ import Expo from "expo";
 const actions = require("./actions");
 import store from "./store";
 import * as SecureStore from "expo-secure-store";
-import registerForPushNotifications from "../api/registerForPushNotifications";
 import * as firebase from "firebase";
+import { AdMobInterstitial } from "expo-ads-admob";
+import AdMob from "../constants/AdMob";
 import FIREBASE_CONSTANTS from "../constants/firebase";
-const FACEBOOK_APP_ID = "331867204038135";
 const SECURE_STORE_USER_UID = "ACCESS_TOKEN";
-const SECURE_STORE_FIRST_TIME = "FIRST_TIME";
 const SECURE_STORE_HIGHSCORE = "SECURE_STORE_HIGHSCORE";
+const SECURE_STORE_FIRST_TIME = "SECURE_STORE_FIRST_TIME";
 
 export default (dispatch) => () => {
 	// used to set values to the reducer
@@ -22,6 +22,16 @@ export default (dispatch) => () => {
 			firebase.initializeApp(FIREBASE_CONSTANTS);
 			set("/initialized", true);
 		}
+
+		AdMobInterstitial.setAdUnitID(AdMob.interstitial); // Test ID, Replace with your-admob-unit-id
+		// AdMobInterstitial.setTestDeviceID('EMULATOR');
+		AdMobInterstitial.addEventListener("interstitialDidOpen", () =>
+			console.log("interstitialDidOpen"),
+		);
+		AdMobInterstitial.addEventListener("interstitialDidClose", () => {
+			console.log("interstitialDidClose");
+			set("/ad/interstitial", false);
+		});
 
 		// load as existing or new user
 		// check if secure store has info?
@@ -42,6 +52,8 @@ export default (dispatch) => () => {
 					.ref("users/" + user.uid)
 					.on("value", (snapshot) => {
 						let hs = snapshot.val() && snapshot.val().highscore;
+						let firstTimeHuh =
+							snapshot.val() && snapshot.val().firstTime;
 						if (!hs || hs < userHsFromSecureStore) {
 							// if server highscore is less than secure store hardware highscore, choose the secure store hardware highscore
 							hs = userHsFromSecureStore;
@@ -52,11 +64,14 @@ export default (dispatch) => () => {
 								highscore: hs,
 							});
 						}
+						if (firstTimeHuh) {
+						}
 						// set the highscore to whatever the server or secure store hardware value is
 						setHighscore(hs || userHsFromSecureStore);
 					});
 
 				// since user exists, store user data in the reducer
+
 				setUserDataLocal(user);
 			}
 			// Do other things
@@ -65,23 +80,20 @@ export default (dispatch) => () => {
 		getHighscores();
 	};
 
+	const toggleeModal = (action) => {
+		set("/modal", action);
+	};
+
 	const setSecureStoreUser = (user) => {
 		setUserUid(user.uid);
 		// set highscore and set
 	};
 
-	const getUserHighscore = async (user) => {
-		// return either what is from the server
-		// or return what is on the device's storage
-		secureStoreHighScore = await getSecureStoreHighScore();
-		const ret = user.deltaTime || secureStoreHighScore;
-		console.log(
-			"secureStoreHighScore",
-			secureStoreHighScore,
-			ret,
-			user.deltaTime,
+	const ifMattImo = (user) => {
+		return (
+			user.uid === "BrO8J19gjHThGGpGy1jEKRsKrsf2" ||
+			user.uid === "v0aCvGqgNzeivCeVk3Ain5NZ6WM2"
 		);
-		return ret;
 	};
 
 	const setUserDataLocal = async (user) => {
@@ -90,17 +102,17 @@ export default (dispatch) => () => {
 			lastLoginAt: Date.now(),
 		});
 		set("/user/email", user.email);
-		set("/user/displayName", user.displayName);
 		set("/user/lastLoginAt", Date.now());
 		setSecureStoreUser(user);
-		const hs = await getUserHighscore();
-		set("/user/highscore", hs);
-		firebase
+		const ref = firebase
 			.database()
-			.ref("users/" + user.uid)
-			.once("value", (snapshot) => {
+			.ref("/users/" + user.uid)
+			.once("value")
+			.then((snapshot) => {
 				set("/user/displayName", snapshot.val().displayName);
 			});
+		const hs = await getSecureStoreHighScore();
+		set("/user/highscore", hs);
 	};
 
 	const clearUserDataLocal = () => {
@@ -137,10 +149,13 @@ export default (dispatch) => () => {
 		});
 	};
 
-	const getSecureStoreHighScore = () => {
-		return SecureStore.getItemAsync(SECURE_STORE_HIGHSCORE).then((res) => {
-			return Number(res) || 0;
-		});
+	const getSecureStoreHighScore = async () => {
+		const ret = await SecureStore.getItemAsync(SECURE_STORE_HIGHSCORE).then(
+			(res) => {
+				return Number(res) || 0;
+			},
+		);
+		return ret;
 	};
 
 	const setUserHighscore = (score) => {
@@ -152,7 +167,6 @@ export default (dispatch) => () => {
 			});
 		}
 		set("/user/highscore", Number(score));
-		set("/deltaTime", Number(score));
 		SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, String(score));
 	};
 
@@ -176,6 +190,14 @@ export default (dispatch) => () => {
 			.database()
 			.ref("users/" + obj.uid)
 			.update(obj);
+	};
+
+	const setFirstTime = () => {
+		return SecureStore.setItemAsync(SECURE_STORE_FIRST_TIME, false).then(
+			() => {
+				set("/user/firsttime", false);
+			},
+		);
 	};
 
 	const setUserUid = (token) => {
@@ -242,6 +264,20 @@ export default (dispatch) => () => {
 		}
 	};
 
+	const showInterstitial = () => {
+		console.log(
+			"store.getState().ad.interstitial",
+			store.getState().ad.interstitial,
+		);
+		if (!store.getState().ad.interstitial) {
+			set("/ad/interstitial", true);
+			AdMobInterstitial.requestAdAsync({
+				servePersonalizedAds: true,
+			});
+			AdMobInterstitial.showAdAsync();
+		}
+	};
+
 	return {
 		initialize,
 		set,
@@ -253,5 +289,7 @@ export default (dispatch) => () => {
 		getHighscores,
 		setHighscore,
 		setDeltaTime,
+		showInterstitial,
+		toggleeModal,
 	};
 };
