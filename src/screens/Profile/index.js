@@ -52,6 +52,13 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 
+	howto: {
+		textAlign: "center",
+		color: Colors.fontColor,
+		fontSize: 12,
+		marginBottom: 10,
+	},
+
 	input: {
 		height: 24,
 		marginTop: 5,
@@ -260,17 +267,21 @@ class ProfileScreen extends React.Component {
 				}}>
 				<View>
 					<Text style={styles.displayName}>
-						{this.props.profile.displayName}
+						{this.props.user.displayName}
+					</Text>
+					<Text style={styles.displayName}>
+						{this.props.user.email}
 					</Text>
 					<Text style={styles.body}>
-						Slow Down Time: {this.props.profile.highscore}
+						How long you slowed the F down:
 					</Text>
+					<Text style={styles.h1}>{this.props.user.highscore}</Text>
 				</View>
-				{this.props.profile.photoURL && (
+				{this.props.user.photoURL && (
 					<Image
 						style={styles.picture}
 						source={{
-							uri: this.props.profile.photoURL,
+							uri: this.props.user.photoURL,
 						}}
 					/>
 				)}
@@ -347,7 +358,7 @@ class ProfileScreen extends React.Component {
 export default connect(
 	(state) => ({
 		isAuthenticated: isAuthenticated(state),
-		profile: profile(state),
+		user: profile(state),
 		deltaTime: getDeltaTime(state),
 		confirmResults: getPropertyFromState(state, "confirmResults"),
 	}),
