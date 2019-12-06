@@ -41,7 +41,7 @@ export default class ParticlesLevel extends Level {
 		if (position.x != -10) {
 			this.particlesMesh.rotation.x = -(25 * position.y * Math.PI) / 180;
 		} else {
-			this.particlesMesh.rotation.x = (10 * Math.PI) / 180;
+			this.particlesMesh.rotation.x = (0 * Math.PI) / 180;
 		}
 	};
 }
