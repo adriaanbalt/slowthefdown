@@ -76,24 +76,25 @@ export default class ObjectToCatch {
 	createText = async (text) => {
 		this.fontData = await this.loadFont();
 
+		const textGeoDark = new THREE.TextBufferGeometry(text, {
+			font: this.fontData,
+			size: 4,
+			height: -1000,
+		});
+
 		const textGeo = new THREE.TextBufferGeometry(text, {
 			font: this.fontData,
 			size: 4,
 			height: 1,
-			bevelThickness: 1,
-			bevelSize: 1,
 		});
 
-		// var size = textGeo.boundingBox.size()
-		// var anchorX = size.x * -0.5
-		// var anchorY = size.y * -0.5
-		// var anchorZ = size.z * -0
-		// var matrix = new THREE.Matrix4().makeTranslation(anchorX, anchorY, anchorZ)
-		// textGeo.applyMatrix(matrix)
-
+		const materialsDark = new THREE.MeshPhongMaterial({ color: 0x222222 });
+		const textMeshDark = new THREE.Mesh(textGeoDark, materialsDark);
+		textMeshDark.position.set(0, 0, 0);
+		this.mesh.add(textMeshDark);
 		const materials = new THREE.MeshPhongMaterial({ color: 0xffffff });
 		const textMesh = new THREE.Mesh(textGeo, materials);
-		textMesh.position.set(0, 0, 0);
+		textMesh.position.set(0, 0, -1);
 		this.mesh.add(textMesh);
 
 		// let centerOffset =
@@ -141,7 +142,7 @@ export default class ObjectToCatch {
 		this.radius = newRadius;
 	}
 	over(time) {
-		this.speed = 0.5;
+		this.speed = 0.7;
 		// to speed up while playing
 		this.overProgress = 1; //time / 10000
 		// this.mesh.children[0].color.setHex(0xff00ff)
