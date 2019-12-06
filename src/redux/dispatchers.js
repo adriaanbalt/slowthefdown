@@ -16,22 +16,22 @@ export default (dispatch) => () => {
 		return dispatch(actions.set(path, value));
 	};
 
-	const initialize = () => {
+	const initialize = async () => {
 		// Initialize Firebase
 		if (!store.getState().initialized) {
 			firebase.initializeApp(FIREBASE_CONSTANTS);
 			set("/initialized", true);
 		}
 
-		AdMobInterstitial.setAdUnitID(AdMob.interstitial); // Test ID, Replace with your-admob-unit-id
-		// AdMobInterstitial.setTestDeviceID('EMULATOR');
-		AdMobInterstitial.addEventListener("interstitialDidOpen", () =>
-			console.log("interstitialDidOpen"),
-		);
-		AdMobInterstitial.addEventListener("interstitialDidClose", () => {
-			console.log("interstitialDidClose");
-			set("/ad/interstitial", false);
-		});
+		// AdMobInterstitial.setAdUnitID(AdMob.interstitial); // Test ID, Replace with your-admob-unit-id
+		// // AdMobInterstitial.setTestDeviceID('EMULATOR');
+		// AdMobInterstitial.addEventListener("interstitialDidOpen", () =>
+		// 	console.log("interstitialDidOpen"),
+		// );
+		// AdMobInterstitial.addEventListener("interstitialDidClose", () => {
+		// 	console.log("interstitialDidClose");
+		// 	set("/ad/interstitial", false);
+		// });
 
 		// load as existing or new user
 		// check if secure store has info?
@@ -39,6 +39,7 @@ export default (dispatch) => () => {
 
 		// check auth login state changes
 		firebase.auth().onAuthStateChanged(async (user) => {
+			console.log("!!onAuthStateChanged", user != null);
 			if (user != null) {
 				// get the user's local highscore to compare to the server highscore, take whatever is higher
 				// server is what other users will see but secure store lets users play offline and keep their highscore...
@@ -50,10 +51,8 @@ export default (dispatch) => () => {
 				firebase
 					.database()
 					.ref("users/" + user.uid)
-					.on("value", (snapshot) => {
+					.once("value", (snapshot) => {
 						let hs = snapshot.val() && snapshot.val().highscore;
-						let firstTimeHuh =
-							snapshot.val() && snapshot.val().firstTime;
 						if (!hs || hs < userHsFromSecureStore) {
 							// if server highscore is less than secure store hardware highscore, choose the secure store hardware highscore
 							hs = userHsFromSecureStore;
@@ -64,15 +63,16 @@ export default (dispatch) => () => {
 								highscore: hs,
 							});
 						}
-						if (firstTimeHuh) {
-						}
 						// set the highscore to whatever the server or secure store hardware value is
-						setHighscore(hs || userHsFromSecureStore);
+						setUserHighscore(hs);
 					});
 
 				// since user exists, store user data in the reducer
 
 				setUserDataLocal(user);
+			} else {
+				const hs = await getSecureStoreHighScore();
+				setUserHighscore(hs);
 			}
 			// Do other things
 		});
@@ -158,9 +158,9 @@ export default (dispatch) => () => {
 		return ret;
 	};
 
-	const setUserHighscore = (score) => {
+	const setUserHighscore = async (score) => {
 		const user = firebase.auth().currentUser;
-		if (user.uid) {
+		if (user && user.uid) {
 			updateUserOnDb({
 				uid: user.uid,
 				highscore: score,
@@ -168,6 +168,7 @@ export default (dispatch) => () => {
 		}
 		set("/user/highscore", Number(score));
 		SecureStore.setItemAsync(SECURE_STORE_HIGHSCORE, String(score));
+		const secureStoreHighscore = await getSecureStoreHighScore();
 	};
 
 	const setHighscore = async (score) => {
@@ -178,7 +179,7 @@ export default (dispatch) => () => {
 		// if the user is defined
 		// if the user"s highscore has never been set (aka is equal to undefined), then it should be set to the score
 		// if the user"s highscore is less than the score sent, then it should be set to the score
-		if (user != null && (highscore === undefined || highscore <= score)) {
+		if (highscore === undefined || highscore <= score) {
 			setUserHighscore(score);
 		}
 		getHighscores();
@@ -265,10 +266,6 @@ export default (dispatch) => () => {
 	};
 
 	const showInterstitial = () => {
-		console.log(
-			"store.getState().ad.interstitial",
-			store.getState().ad.interstitial,
-		);
 		if (!store.getState().ad.interstitial) {
 			set("/ad/interstitial", true);
 			AdMobInterstitial.requestAdAsync({

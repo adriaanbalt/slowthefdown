@@ -21,7 +21,7 @@ import {
 	isAuthenticated,
 	getPropertyFromState,
 	profile,
-	getDeltaTime,
+	getCurrentUserHighscore,
 } from "../../redux/selectors";
 import { Color } from "three";
 
@@ -304,7 +304,7 @@ class ProfileScreen extends React.Component {
 						{this.props.isAuthenticated && this.renderProfile()}
 						{!this.props.isAuthenticated && (
 							<Text style={styles.h1}>
-								{`To save your time of ${this.props.deltaTime}, sign up or login`}
+								{`To post your time of ${this.props.highscore} on the score board, sign up or login below`}
 							</Text>
 						)}
 						{!this.props.isAuthenticated &&
@@ -359,7 +359,7 @@ export default connect(
 	(state) => ({
 		isAuthenticated: isAuthenticated(state),
 		user: profile(state),
-		deltaTime: getDeltaTime(state),
+		highscore: getCurrentUserHighscore(state),
 		confirmResults: getPropertyFromState(state, "confirmResults"),
 	}),
 	Dispatchers,
