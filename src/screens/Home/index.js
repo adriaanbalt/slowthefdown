@@ -24,7 +24,7 @@ import {
 
 import Waiting from "../../shared/Waiting";
 import StyledButton from "../../shared/StyledButton";
-// import InterstitialAd from "../../shared/InterstitialAd";
+import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
 import NavigationUI from "../../shared/NavigationUI";
 
@@ -84,8 +84,6 @@ class HomeScreen extends React.Component {
 			.catch(() => {
 				this.setState({ loading: false });
 			});
-
-		// // this.InterstitialAd = new InterstitialAd();
 	}
 
 	componentWillMount() {
@@ -165,8 +163,8 @@ class HomeScreen extends React.Component {
 		const objectToCatchMesh = objectToCatch.getMesh();
 
 		camera.position.set(0, 0, 1.0).multiplyScalar(20);
-		this.scene.add(objectToCatchMesh);
 		this.addLevelToScene(this.currentLevel);
+		this.scene.add(objectToCatchMesh);
 
 		const startTime = Date.now();
 		let intersects;
@@ -186,15 +184,11 @@ class HomeScreen extends React.Component {
 			if (this.startHowLongHeldMilliseconds === 0) {
 				this.startHowLongHeldMilliseconds = Date.now();
 			} else {
-				this.props.setDeltaTime(
-					this.props.currentUserHighscore + deltaTime,
-				);
+				this.props.setDeltaTime(deltaTime);
 			}
 
 			this.currentLevel.over();
 			objectToCatch.over(deltaTime);
-
-			// this.InterstitialAd.show();
 		};
 		const out = () => {
 			if (this.startHowLongHeldMilliseconds !== 0) {
@@ -207,9 +201,8 @@ class HomeScreen extends React.Component {
 				// let deltaTime = 0
 				this.startHowLongHeldMilliseconds = 0;
 				// set highscore on server
-				this.props.setHighscore(
-					this.props.currentUserHighscore + deltaTime,
-				);
+				this.props.setHighscore(deltaTime);
+				// this.props.showInterstitial();
 			}
 			this.currentLevel.out();
 			objectToCatch.out();
@@ -327,6 +320,16 @@ class HomeScreen extends React.Component {
 								width,
 								textAlign: "center",
 							}}>
+							{this.props.highscore}
+						</Text>
+						<Text
+							style={{
+								color: "#fff",
+								fontSize: 16,
+								lineHeight: 25,
+								width,
+								textAlign: "center",
+							}}>
 							{this.props.deltaTime}
 						</Text>
 					</TouchableOpacity>
@@ -338,6 +341,7 @@ class HomeScreen extends React.Component {
 					style={{ flex: 1 }}
 					onContextCreate={this._onGLContextCreate}
 				/>
+				<InterstitialAd />
 			</View>
 		);
 	}
@@ -361,7 +365,7 @@ class HomeScreen extends React.Component {
 export default connect(
 	(state) => ({
 		isAuthenticated: isAuthenticated(state),
-		currentUserHighscore: getCurrentUserHighscore(state),
+		highscore: getCurrentUserHighscore(state),
 		deltaTime: getDeltaTime(state),
 		levels: getLevels(state),
 	}),
