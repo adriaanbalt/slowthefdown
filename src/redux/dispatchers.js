@@ -1,4 +1,4 @@
-import Expo from "expo";
+import Expo, { Updates } from "expo";
 const actions = require("./actions");
 import store from "./store";
 import * as SecureStore from "expo-secure-store";
@@ -80,7 +80,7 @@ export default (dispatch) => () => {
 		getHighscores();
 	};
 
-	const toggleeModal = (action) => {
+	const toggleModal = (action) => {
 		set("/modal", action);
 	};
 
@@ -275,6 +275,31 @@ export default (dispatch) => () => {
 		}
 	};
 
+	const initialLoad = async (onCompleteCallback, onErrorCallback) => {
+		try {
+			// continues with the app since this must be the most recent version after the above code completes and no update is in fact available
+			onCompleteCallback();
+			console.log("Updates", Updates.checkForUpdateAsync());
+			const promises = Promise.all([Updates.checkForUpdateAsync()]).then(
+				(vals) => {
+					console.log("promises", vals);
+				},
+			);
+			const update = await Updates.checkForUpdateAsync();
+			console.log("update", update);
+			if (update.isAvailable) {
+				await Updates.fetchUpdateAsync();
+				// ... notify user of update ...
+				Updates.reloadFromCache();
+			}
+		} catch (e) {
+			// handle or log error
+		}
+
+		// using the genre type files, create a URL to get lists of movies for the movieListIds
+		return Promise.resolve();
+	};
+
 	return {
 		initialize,
 		set,
@@ -287,6 +312,7 @@ export default (dispatch) => () => {
 		setHighscore,
 		setDeltaTime,
 		showInterstitial,
-		toggleeModal,
+		toggleModal,
+		initialLoad,
 	};
 };

@@ -1,13 +1,14 @@
+import Expo, { Updates } from "expo";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
 import * as Font from "expo-font";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
-import { AppLoading } from "expo";
 import { Ionicons } from "@expo/vector-icons";
 import store from "./redux/store";
 import AppNavigator from "./navigation/AppNavigator";
 import BannerAd from "./shared/BannerAd";
+import Loader from "./shared/Loader";
 import Colors from "./constants/Colors";
 import Modal from "./shared/Modal";
 
@@ -32,22 +33,23 @@ export default class App extends React.Component {
 	};
 
 	render() {
-		if (!this.state.isLoadingComplete) {
-			return (
-				<AppLoading
-					startAsync={this._loadResourcesAsync}
-					onError={this._handleLoadingError}
-					onFinish={this._handleFinishLoading}
-				/>
-			);
-		}
 		return (
 			<Provider store={store}>
-				<View style={styles.container}>
-					<Modal />
-					<AppNavigator />
-					<BannerAd />
-				</View>
+				<React.Fragment>
+					{!this.state.isLoadingComplete && (
+						<Loader
+							onFinish={this._handleFinishLoading}
+							onError={this._handleLoadingError}
+						/>
+					)}
+					{this.state.isLoadingComplete && (
+						<View style={styles.container}>
+							<Modal />
+							<AppNavigator />
+							<BannerAd />
+						</View>
+					)}
+				</React.Fragment>
 			</Provider>
 		);
 	}
