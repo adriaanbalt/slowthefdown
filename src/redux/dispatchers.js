@@ -39,7 +39,7 @@ export default (dispatch) => () => {
 
 		// check auth login state changes
 		firebase.auth().onAuthStateChanged(async (user) => {
-			console.log("!!onAuthStateChanged", user != null);
+			// console.log("!!onAuthStateChanged", user != null);
 			if (user != null) {
 				// get the user's local highscore to compare to the server highscore, take whatever is higher
 				// server is what other users will see but secure store lets users play offline and keep their highscore...
@@ -275,31 +275,6 @@ export default (dispatch) => () => {
 		}
 	};
 
-	const initialLoad = async (onCompleteCallback, onErrorCallback) => {
-		try {
-			// continues with the app since this must be the most recent version after the above code completes and no update is in fact available
-			onCompleteCallback();
-			console.log("Updates", Updates.checkForUpdateAsync());
-			const promises = Promise.all([Updates.checkForUpdateAsync()]).then(
-				(vals) => {
-					console.log("promises", vals);
-				},
-			);
-			const update = await Updates.checkForUpdateAsync();
-			console.log("update", update);
-			if (update.isAvailable) {
-				await Updates.fetchUpdateAsync();
-				// ... notify user of update ...
-				Updates.reloadFromCache();
-			}
-		} catch (e) {
-			// handle or log error
-		}
-
-		// using the genre type files, create a URL to get lists of movies for the movieListIds
-		return Promise.resolve();
-	};
-
 	return {
 		initialize,
 		set,
@@ -313,6 +288,5 @@ export default (dispatch) => () => {
 		setDeltaTime,
 		showInterstitial,
 		toggleModal,
-		initialLoad,
 	};
 };
