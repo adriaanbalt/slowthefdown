@@ -22,22 +22,15 @@ import {
 	getLevels,
 } from "../../redux/selectors";
 
-import Waiting from "../../shared/Waiting";
-import StyledButton from "../../shared/StyledButton";
 import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
 import NavigationUI from "../../shared/NavigationUI";
 
-import Vortex from "./Visualizations/Vortex";
 import ObjectToCatch from "./ObjectToCatch";
-import Particles from "./Visualizations/Particles";
 
 import ParticlesLevel from "./levels/ParticlesLevel";
 
-import THREERoot from "./ThreeRoot";
 import Colors from "../../constants/Colors";
-
-const LEVEL_COUNT = 2;
 
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
@@ -60,7 +53,6 @@ class HomeScreen extends React.Component {
 
 		this.state = {
 			fadeOutAnim: new Animated.Value(1),
-			loading: true,
 			pan: new Animated.ValueXY(),
 			mouse: new THREE.Vector2(-10, -10),
 			deltaTime: 0,
@@ -73,17 +65,6 @@ class HomeScreen extends React.Component {
 
 		ShareTheNavigation.set(props.navigation);
 		this.props.initialize();
-	}
-	componentDidMount() {
-		this.setState({ loading: true });
-		this.props
-			.checkUserUid()
-			.then((user) => {
-				this.setState({ loading: false });
-			})
-			.catch(() => {
-				this.setState({ loading: false });
-			});
 	}
 
 	componentWillMount() {
@@ -259,7 +240,6 @@ class HomeScreen extends React.Component {
 		};
 
 		animate();
-		this.setState({ loading: false });
 	};
 
 	navigateToHighscores = () => {
@@ -279,64 +259,38 @@ class HomeScreen extends React.Component {
 						height,
 					},
 				]}>
-				{this.state.loading && (
-					<View
+				<TouchableOpacity
+					style={{
+						position: "absolute",
+						zIndex: 1000,
+						top: 30,
+						left: 0,
+						height: 30,
+						backgroundColor: "transparent",
+					}}
+					onPress={this.navigateToHighscores}>
+					<Text
 						style={{
-							position: "absolute",
+							color: "#fff",
+							fontSize: 16,
+							lineHeight: 25,
 							width,
-							height,
-							backgroundColor: Colors.backgroundColor,
-							zIndex: 10000,
+							textAlign: "center",
 						}}>
-						<Text
-							style={{
-								color: "#fff",
-								fontSize: 16,
-								lineHeight: 30,
-								top: "50%",
-								width,
-								textAlign: "center",
-							}}>
-							Loading
-						</Text>
-					</View>
-				)}
-				{!this.state.loading && (
-					<TouchableOpacity
+						{this.props.highscore}
+					</Text>
+					<Text
 						style={{
-							position: "absolute",
-							zIndex: 1000,
-							top: 30,
-							left: 0,
-							height: 30,
-							backgroundColor: "transparent",
-						}}
-						onPress={this.navigateToHighscores}>
-						<Text
-							style={{
-								color: "#fff",
-								fontSize: 16,
-								lineHeight: 25,
-								width,
-								textAlign: "center",
-							}}>
-							{this.props.highscore}
-						</Text>
-						<Text
-							style={{
-								color: "#fff",
-								fontSize: 16,
-								lineHeight: 25,
-								width,
-								textAlign: "center",
-							}}>
-							{this.props.deltaTime}
-						</Text>
-					</TouchableOpacity>
-				)}
-				{!this.state.loading && (
-					<NavigationUI navigation={this.props.navigation} />
-				)}
+							color: "#fff",
+							fontSize: 16,
+							lineHeight: 25,
+							width,
+							textAlign: "center",
+						}}>
+						{this.props.deltaTime}
+					</Text>
+				</TouchableOpacity>
+				<NavigationUI navigation={this.props.navigation} />
 				<GLView
 					style={{ flex: 1 }}
 					onContextCreate={this._onGLContextCreate}
@@ -347,18 +301,7 @@ class HomeScreen extends React.Component {
 	}
 
 	render() {
-		const { errorMessage } = this.props;
-
 		return this.renderGame();
-
-		if (this.state.loading || errorMessage) {
-			return (
-				<Waiting
-					loading={this.state.loading}
-					errorMessage={errorMessage}
-				/>
-			);
-		}
 	}
 }
 
