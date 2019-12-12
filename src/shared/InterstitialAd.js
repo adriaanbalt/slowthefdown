@@ -17,7 +17,6 @@ class InterstitialAd extends React.Component {
 		AdMobInterstitial.addEventListener("interstitialDidClose", () =>
 			console.log("interstitialDidClose"),
 		);
-		console.log("this.props", this.props);
 	}
 
 	async show() {
