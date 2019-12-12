@@ -5,7 +5,7 @@
 		"slug": "snack-slowitdown",
 		"privacy": "unlisted",
 		"sdkVersion": "35.0.0",
-		"version": "8.0.4",
+		"version": "8.0.5",
 		"orientation": "portrait",
 		"primaryColor": "#000000",
 		"icon": "./assets/expo-icon.png",
@@ -17,7 +17,7 @@
 			"assetExts": ["ttf", "mp4", "otf", "xml", "json", "png"]
 		},
 		"ios": {
-			"buildNumber": "8.0.4",
+			"buildNumber": "8.0.5",
 			"supportsTablet": true,
 			"bundleIdentifier": "com.balt.slowitdown",
 			"config": {
