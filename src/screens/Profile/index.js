@@ -106,22 +106,9 @@ class ProfileScreen extends React.Component {
 		super(props);
 
 		this.state = {
-			loading: true,
 			isLogin: false,
 			isSignup: false,
 		};
-	}
-
-	componentDidMount() {
-		this.setState({ loading: true });
-		// this.props
-		// 	.login()
-		// 	.then((user) => {
-		// 		this.setState({ loading: false });
-		// 	})
-		// 	.catch(() => {
-		// 		this.setState({ loading: false });
-		// 	});
 	}
 
 	navigateToGame = () => {
