@@ -40,6 +40,9 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#FFF",
 		borderBottomWidth: 1,
 	},
+	scrollView: {
+		paddingBottom: 20,
+	},
 });
 
 class HighscoresScreen extends React.Component {
@@ -113,23 +116,24 @@ class HighscoresScreen extends React.Component {
 		const dname = "Adriaan Balt Louis Scholvinck";
 		return (
 			<View style={styles.container}>
-				<View>
+				<ScrollView style={styles.scrollView}>
 					<Header style={styles.header}>
 						Top 10 Slow Down Times
 					</Header>
-					{highscores
-						.sort((a, b) => {
-							if (a.highscore < b.highscore) return 1;
-							if (a.highscore > b.highscore) return -1;
-							return 0;
-						})
-						.slice(0, 10)
-						.map((obj, i) => (
-							<View key={`highscore-${i}`}>
-								{this.renderRow(obj, i)}
-							</View>
-						))}
-				</View>
+					<View style={styles.scrollView}>
+						{highscores
+							.sort((a, b) => {
+								if (a.highscore < b.highscore) return 1;
+								if (a.highscore > b.highscore) return -1;
+								return 0;
+							})
+							.map((obj, i) => (
+								<View key={`highscore-${i}`}>
+									{this.renderRow(obj, i)}
+								</View>
+							))}
+					</View>
+				</ScrollView>
 				<NavigationUI navigation={this.props.navigation} />
 			</View>
 		);
