@@ -21,17 +21,10 @@ export default class App extends React.Component {
 	};
 
 	render() {
-		if (!this.state.isLoadingComplete) {
-			return (
-				<Loader
-					onError={this._handleLoadingError}
-					onFinish={this._handleFinishLoading}
-				/>
-			);
-		}
 		return (
 			<Provider store={store}>
 				<View style={styles.container}>
+					<Loader />
 					<Modal />
 					<AppNavigator />
 					<BannerAd />
