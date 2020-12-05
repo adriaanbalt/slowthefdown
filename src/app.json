@@ -4,8 +4,7 @@
 		"description": "Adriaan Balt",
 		"slug": "snack-slowitdown",
 		"privacy": "unlisted",
-		"sdkVersion": "35.0.0",
-		"version": "8.0.6",
+		"version": "8.0.7",
 		"orientation": "portrait",
 		"primaryColor": "#000000",
 		"icon": "./assets/expo-icon.png",
@@ -13,18 +12,17 @@
 			"icon": "./assets/expo-icon.png",
 			"hideExponentText": true
 		},
-		"packagerOpts": {
-			"assetExts": ["ttf", "mp4", "otf", "xml", "json", "png"]
-		},
 		"ios": {
-			"buildNumber": "8.0.6",
+			"buildNumber": "8.0.7",
 			"supportsTablet": true,
 			"bundleIdentifier": "com.balt.slowitdown",
 			"config": {
 				"googleMobileAdsAppId": "ca-app-pub-3194664333843576~7507771243"
 			}
 		},
-		"platforms": ["ios"],
+		"platforms": [
+			"ios"
+		],
 		"updates": {
 			"enabled": true,
 			"checkAutomatically": "ON_ERROR_RECOVERY",

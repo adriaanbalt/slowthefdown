@@ -37,6 +37,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
+		width,
+		height
 	},
 	contentContainer: {
 		// backgroundColor: 'white'
@@ -60,46 +62,41 @@ class HomeScreen extends React.Component {
 		};
 		// Turn off extra warnings
 		THREE.suppressExpoWarnings(true);
-		// hide warnings yellow box in ios
-		console.disableYellowBox = true;
 
 		ShareTheNavigation.set(props.navigation);
 		this.props.initialize();
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this._val = { x: 0, y: 0 };
 		this.state.pan.addListener((value) => (this._val = value));
 
-		this.panResponder = PanResponder.create({
-			onStartShouldSetPanResponder: (e, gesture) => true,
-			onPanResponderGrant: (e, gesture) => {
-				this.state.pan.setOffset({
-					x: this._val.x,
-					y: this._val.y,
-				});
-				this.state.pan.setValue({ x: -10, y: -10 });
-			},
-			onPanResponderMove: ({ nativeEvent }, gestureState) => {
-				if (this.state.gl) {
-					// ratio of mouse position to the width of the screen
-					// todo something is wrong with the sizing
-					this.state.mouse.x =
-						(nativeEvent.locationX / width) * 2 - 1;
-					this.state.mouse.y =
-						-(nativeEvent.locationY / height) * 2 + 1;
-				}
-			},
-			onPanResponderRelease: ({ nativeEvent }, gestureState) => {
-				this.state.mouse.x = -10;
-				this.state.mouse.y = -10;
-			},
-		});
 	}
 
-	navigateToHighscores = () => {
-		this.props.navigation.navigate("Highscores", {});
-	};
+	_panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: (e, gesture) => true,
+		onPanResponderGrant: (e, gesture) => {
+			this.state.pan.setOffset({
+				x: this._val.x,
+				y: this._val.y,
+			});
+			this.state.pan.setValue({ x: -10, y: -10 });
+		},
+		onPanResponderMove: ({ nativeEvent }, gestureState) => {
+			if (this.state.gl) {
+				// ratio of mouse position to the width of the screen
+				// todo something is wrong with the sizing
+				this.state.mouse.x =
+					(nativeEvent.locationX / width) * 2 - 1;
+				this.state.mouse.y =
+					-(nativeEvent.locationY / height) * 2 + 1;
+			}
+		},
+		onPanResponderRelease: ({ nativeEvent }, gestureState) => {
+			this.state.mouse.x = -10;
+			this.state.mouse.y = -10;
+		},
+	});
 
 	createLevels = () => {
 		this.currentLevel = new ParticlesLevel({});
@@ -168,7 +165,7 @@ class HomeScreen extends React.Component {
 				this.props.setDeltaTime(deltaTime);
 			}
 
-			this.currentLevel.over();
+			if ( this.currentLevel ) this.currentLevel.over();
 			objectToCatch.over(deltaTime);
 		};
 		const out = () => {
@@ -185,7 +182,7 @@ class HomeScreen extends React.Component {
 				this.props.setHighscore(deltaTime);
 				// this.props.showInterstitial();
 			}
-			this.currentLevel.out();
+			if ( this.currentLevel ) this.currentLevel.out();
 			objectToCatch.out();
 		};
 
@@ -226,7 +223,7 @@ class HomeScreen extends React.Component {
 			// particlesGreenMesh.rotation.x = -(25 * objectPosY * Math.PI) / 180;
 
 			// adjusting perspective of particles to make it look like it moves versus the finger
-			this.currentLevel.mouseAdjust(this.state.mouse);
+			if ( this.currentLevel ) this.currentLevel.mouseAdjust(this.state.mouse);
 
 			if (intersects.length > 0) {
 				over();
@@ -249,16 +246,11 @@ class HomeScreen extends React.Component {
 		this.props.navigation.navigate("Profile", {});
 	};
 	renderGame() {
-		const { height, width } = Dimensions.get("window");
+		console.log ( 'width, height', width, height)
 		return (
 			<View
-				{...this.panResponder.panHandlers}
-				style={[
-					{
-						width,
-						height,
-					},
-				]}>
+				{...this._panResponder.panHandlers}
+				style={styles.container}>
 				<TouchableOpacity
 					style={{
 						position: "absolute",

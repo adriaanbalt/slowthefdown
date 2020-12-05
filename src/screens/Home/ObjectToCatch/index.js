@@ -93,6 +93,9 @@ export default class ObjectToCatch {
 		textMeshDark.position.set(0, 0, 0);
 		this.mesh.add(textMeshDark);
 		const materials = new THREE.MeshPhongMaterial({ color: 0xffffff });
+		materials.customProgramCacheKey = () => {
+			console.log('materials customProgramCacheKey')
+		}
 		const textMesh = new THREE.Mesh(textGeo, materials);
 		textMesh.position.set(0, 0, -1);
 		this.mesh.add(textMesh);

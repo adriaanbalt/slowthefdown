@@ -60,14 +60,14 @@ class HighscoresScreen extends React.Component {
 
 	componentDidMount() {
 		// load the latest highscores when this page loads
-		this.props
-			.getHighscores()
-			.then((highscores) => {
-				this.setState({ loading: true });
-			})
-			.catch(() => {
-				this.setState({ loading: false });
-			});
+		// this.props
+		// 	.getHighscores()
+		// 	.then((highscores) => {
+		// 		this.setState({ loading: true });
+		// 	})
+		// 	.catch(() => {
+		// 		this.setState({ loading: false });
+		// 	});
 	}
 
 	renderRow(obj, i) {
