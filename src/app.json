@@ -1,42 +1,32 @@
 {
-  "expo": {
-    "name": "Slow the F",
-    "description": "Adriaan Balt",
-    "slug": "snack-slowitdown",
-    "privacy": "unlisted",
-    "version": "8.0.7",
-    "orientation": "portrait",
-    "primaryColor": "#000000",
-    "icon": "./assets/expo-icon.png",
-    "loading": {
-      "icon": "./assets/expo-icon.png",
-      "hideExponentText": true
-    },
-    "packagerOpts": {
-      "assetExts": [
-        "ttf",
-        "mp4",
-        "otf",
-        "xml",
-        "json",
-        "png"
-      ]
-    },
-    "ios": {
-      "buildNumber": "8.0.7",
-      "supportsTablet": true,
-      "bundleIdentifier": "com.balt.slowitdown",
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-3194664333843576~7507771243"
-      }
-    },
-    "platforms": [
-      "ios"
-    ],
-    "updates": {
-      "enabled": true,
-      "checkAutomatically": "ON_ERROR_RECOVERY",
-      "fallbackToCacheTimeout": 0
-    }
-  }
+	"expo": {
+		"name": "Slow the F",
+		"description": "Adriaan Balt",
+		"slug": "snack-slowitdown",
+		"privacy": "unlisted",
+		"version": "8.0.7",
+		"orientation": "portrait",
+		"primaryColor": "#000000",
+		"icon": "./assets/expo-icon.png",
+		"loading": {
+			"icon": "./assets/expo-icon.png",
+			"hideExponentText": true
+		},
+		"ios": {
+			"buildNumber": "8.0.7",
+			"supportsTablet": true,
+			"bundleIdentifier": "com.balt.slowitdown",
+			"config": {
+				"googleMobileAdsAppId": "ca-app-pub-3194664333843576~7507771243"
+			}
+		},
+		"platforms": [
+			"ios"
+		],
+		"updates": {
+			"enabled": true,
+			"checkAutomatically": "ON_ERROR_RECOVERY",
+			"fallbackToCacheTimeout": 0
+		}
+	}
 }

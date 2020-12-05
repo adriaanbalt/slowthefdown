@@ -2,6 +2,7 @@ import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 
 export default class Vortex {
 	constructor(texture) {
+		console.log ( 'vortex shader')
 		// texture = this.loadTexture()
 		this.shader = {
 			vertexShader: `varying vec2 vUv;

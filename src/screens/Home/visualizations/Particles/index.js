@@ -53,9 +53,7 @@ export default class Particles {
 				uDuration: { value: 1.0 },
 				uScale: { value: 0.01 },
 			},
-			uniformValues: {
-				diffuse: new THREE.Color(color),
-			},
+			diffuse: new THREE.Color(color),
 			vertexParameters: [
 				"uniform float uTime;",
 				"uniform float uDuration;",
@@ -78,6 +76,9 @@ export default class Particles {
 		});
 
 		// super( geometry, material );
+		this.material.customProgramCacheKey = () => {
+			console.log('particles customProgramCacheKey')
+		}
 		this.mesh = new THREE.Mesh(geometry, this.material);
 		this.frustumCulled = false;
 	}
