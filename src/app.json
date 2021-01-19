@@ -27,6 +27,15 @@
 			"enabled": true,
 			"checkAutomatically": "ON_ERROR_RECOVERY",
 			"fallbackToCacheTimeout": 0
+		},
+		"extra": {
+			"firebase": {
+				"apiKey": "AIzaSyCmP3XNUSjzPNJkMeJIox91SrOiMsd1uok",
+				"authDomain": "slowitdown-d1ac8.firebaseapp.com",
+				"databaseURL": "https://slowitdown-d1ac8.firebaseio.com",
+				"projectId": "slowitdown-d1ac8",
+				"storageBucket": "slowitdown-d1ac8.appspot.com"
+			}
 		}
 	}
 }
