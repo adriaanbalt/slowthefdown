@@ -117,9 +117,7 @@ class HighscoresScreen extends React.Component {
 		return (
 			<View style={styles.container}>
 				<ScrollView style={styles.scrollView}>
-					<Header style={styles.header}>
-						Top 10 Slow Down Times
-					</Header>
+					<Header style={styles.header}>Slow Down Times</Header>
 					<View style={styles.scrollView}>
 						{highscores
 							.sort((a, b) => {
