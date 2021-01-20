@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
 		width,
-		height
+		height,
 	},
 	contentContainer: {
 		// backgroundColor: 'white'
@@ -70,7 +70,6 @@ class HomeScreen extends React.Component {
 	componentDidMount() {
 		this._val = { x: 0, y: 0 };
 		this.state.pan.addListener((value) => (this._val = value));
-
 	}
 
 	_panResponder = PanResponder.create({
@@ -86,10 +85,8 @@ class HomeScreen extends React.Component {
 			if (this.state.gl) {
 				// ratio of mouse position to the width of the screen
 				// todo something is wrong with the sizing
-				this.state.mouse.x =
-					(nativeEvent.locationX / width) * 2 - 1;
-				this.state.mouse.y =
-					-(nativeEvent.locationY / height) * 2 + 1;
+				this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1;
+				this.state.mouse.y = -(nativeEvent.locationY / height) * 2 + 1;
 			}
 		},
 		onPanResponderRelease: ({ nativeEvent }, gestureState) => {
@@ -165,7 +162,7 @@ class HomeScreen extends React.Component {
 				this.props.setDeltaTime(deltaTime);
 			}
 
-			if ( this.currentLevel ) this.currentLevel.over();
+			if (this.currentLevel) this.currentLevel.over();
 			objectToCatch.over(deltaTime);
 		};
 		const out = () => {
@@ -182,7 +179,7 @@ class HomeScreen extends React.Component {
 				this.props.setHighscore(deltaTime);
 				// this.props.showInterstitial();
 			}
-			if ( this.currentLevel ) this.currentLevel.out();
+			if (this.currentLevel) this.currentLevel.out();
 			objectToCatch.out();
 		};
 
@@ -223,7 +220,8 @@ class HomeScreen extends React.Component {
 			// particlesGreenMesh.rotation.x = -(25 * objectPosY * Math.PI) / 180;
 
 			// adjusting perspective of particles to make it look like it moves versus the finger
-			if ( this.currentLevel ) this.currentLevel.mouseAdjust(this.state.mouse);
+			if (this.currentLevel)
+				this.currentLevel.mouseAdjust(this.state.mouse);
 
 			if (intersects.length > 0) {
 				over();
@@ -246,11 +244,8 @@ class HomeScreen extends React.Component {
 		this.props.navigation.navigate("Profile", {});
 	};
 	renderGame() {
-		console.log ( 'width, height', width, height)
 		return (
-			<View
-				{...this._panResponder.panHandlers}
-				style={styles.container}>
+			<View {...this._panResponder.panHandlers} style={styles.container}>
 				<TouchableOpacity
 					style={{
 						position: "absolute",
