@@ -9,7 +9,6 @@ import COLORS from "../constants/Colors";
 import HomeScreen from "../screens/Home";
 import ProfileScreen from "../screens/Profile";
 import HighscoresScreen from "../screens/Highscores";
-import AuthLoadingScreen from "../screens/Auth/AuthLoadingScreen";
 
 import ModalLoginPhone from "../modals/ModalLoginPhone";
 
@@ -47,26 +46,28 @@ function Tabs() {
 					shadowRadius: 5,
 				},
 			}}>
-			<Tab.Screen name='Times' component={HighscoresScreen} />
-			<Tab.Screen name='Game' component={HomeScreen} />
-			<Tab.Screen name='Profile' component={ProfileScreen} />
-		</Tab.Navigator>
-	);
-}
-
-function App() {
-	const Stack = createStackNavigator();
-	return (
-		<Stack.Navigator mode='modal' initialRouteName='Tabs'>
-			<Stack.Screen
-				name='Tabs'
-				component={Tabs}
+			<Tab.Screen
+				name='Times'
+				component={HighscoresScreen}
 				options={{
 					headerShown: false,
 				}}
 			/>
-			<Stack.Screen name='ModalLoginPhone' component={ModalLoginPhone} />
-		</Stack.Navigator>
+			<Tab.Screen
+				name='Game'
+				component={HomeScreen}
+				options={{
+					headerShown: false,
+				}}
+			/>
+			<Tab.Screen
+				name='Profile'
+				component={ProfileScreen}
+				options={{
+					headerShown: false,
+				}}
+			/>
+		</Tab.Navigator>
 	);
 }
 
@@ -82,27 +83,20 @@ export default function AppNavigator() {
 				// 	AppAnalytics.viewedScreen(currentRouteName);
 				// }
 			}}>
-			<Stack.Navigator
-				initialRouteName='AuthLoadingScreen'
-				screenOptions={{
-					headerStyle: { elevation: 0 },
-				}}>
+			<Stack.Navigator mode='modal' initialRouteName='Tabs'>
 				<Stack.Screen
-					name='AuthLoadingScreen'
-					component={AuthLoadingScreen}
+					name='Tabs'
+					component={Tabs}
 					options={{
 						headerShown: false,
-						gestureEnabled: false,
-						...PAGE_TRANSITIONS.FADE_IN,
 					}}
 				/>
 				<Stack.Screen
-					name='App'
-					component={App}
+					name='ModalLoginPhone'
+					component={ModalLoginPhone}
 					options={{
 						headerShown: false,
-						gestureEnabled: false,
-						...PAGE_TRANSITIONS.FADE_IN,
+						...PAGE_TRANSITIONS.MODAL,
 					}}
 				/>
 			</Stack.Navigator>
