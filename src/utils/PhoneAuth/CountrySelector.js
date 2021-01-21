@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CountryPicker from "react-native-country-picker-modal";
-import COLORS from "../constants/Colors";
+import COLORS from "../../constants/Colors";
 
 export default function CountrySelector(props) {
 	const THEME = {

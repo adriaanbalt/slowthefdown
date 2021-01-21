@@ -13,7 +13,6 @@ import { isAuthenticated, highscores } from "../../redux/selectors";
 import Dispatchers from "../../redux/dispatchers";
 import StyledButton from "../../shared/StyledButton";
 import Colors from "../../constants/Colors";
-import NavigationUI from "../../shared/NavigationUI";
 import Header from "../../shared/Header";
 
 var { width, height } = Dimensions.get("window");
@@ -132,7 +131,6 @@ class HighscoresScreen extends React.Component {
 							))}
 					</View>
 				</ScrollView>
-				<NavigationUI navigation={this.props.navigation} />
 			</View>
 		);
 	}

@@ -9,10 +9,10 @@ import COLORS from "../constants/Colors";
 import HomeScreen from "../screens/Home";
 import ProfileScreen from "../screens/Profile";
 import HighscoresScreen from "../screens/Highscores";
-
-import ModalLoginPhone from "../modals/ModalLoginPhone";
+import ModalLoginPhone from "../screens/ModalLoginPhone";
 
 import PAGE_TRANSITIONS from "../utils/PAGE_TRANSITIONS";
+import { View } from "react-native";
 
 const MyTheme = {
 	dark: false,
@@ -27,23 +27,28 @@ function Tabs() {
 		<Tab.Navigator
 			initialRouteName='Game'
 			tabBarOptions={{
-				showLabel: false,
-				activeTintColor: "#fff",
-				inactiveTintColor: "#fff",
-				style: {
-					bottom: 30,
-					justifyContent: "center",
-					left: "20%",
-					width: "60%",
-					paddingBottom: 10,
-					borderRadius: 20,
+				showLabel: true,
+				activeTintColor: "#000",
+				inactiveTintColor: "#000",
+				tabStyle: {
+					backgroundColor: "#0f0",
+					backgroundColor: "#fff",
+					marginTop: 5,
+					marginBottom: 5,
+					marginRight: 10,
+					marginLeft: 10,
+					textAlign: "center",
+				},
+				labelStyle: {
+					fontSize: 12,
 					position: "absolute",
-					borderTopColor: "transparent",
-					backgroundColor: Variables.backgroundColorTransparent,
-					shadowOffset: { width: 0, height: 0 },
-					shadowColor: Variables.shadowColor,
-					shadowOpacity: 0.75,
-					shadowRadius: 5,
+					top: "25%",
+				},
+				style: {
+					left: "5%",
+					width: "90%",
+					paddingBottom: 10,
+					position: "absolute",
 				},
 			}}>
 			<Tab.Screen
@@ -51,6 +56,16 @@ function Tabs() {
 				component={HighscoresScreen}
 				options={{
 					headerShown: false,
+					tabBarIcon: () => (
+						<View
+							style={{
+								display: "none",
+								backgroundColor: "#0f0",
+								width: 0,
+								height: 0,
+							}}
+						/>
+					),
 				}}
 			/>
 			<Tab.Screen
@@ -58,6 +73,16 @@ function Tabs() {
 				component={HomeScreen}
 				options={{
 					headerShown: false,
+					tabBarIcon: () => (
+						<View
+							style={{
+								display: "none",
+								backgroundColor: "#0f0",
+								width: 0,
+								height: 0,
+							}}
+						/>
+					),
 				}}
 			/>
 			<Tab.Screen
@@ -65,6 +90,16 @@ function Tabs() {
 				component={ProfileScreen}
 				options={{
 					headerShown: false,
+					tabBarIcon: () => (
+						<View
+							style={{
+								display: "none",
+								backgroundColor: "#0f0",
+								width: 0,
+								height: 0,
+							}}
+						/>
+					),
 				}}
 			/>
 		</Tab.Navigator>

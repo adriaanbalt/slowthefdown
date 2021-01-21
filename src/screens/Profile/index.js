@@ -13,9 +13,7 @@ import {
 } from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import StyledButton from "../../shared/StyledButton";
-import Waiting from "../../shared/Waiting";
 import Colors from "../../constants/Colors";
-import NavigationUI from "../../shared/NavigationUI";
 import Header from "../../shared/Header";
 import {
 	isAuthenticated,
@@ -111,13 +109,6 @@ class ProfileScreen extends React.Component {
 		};
 	}
 
-	navigateToGame = () => {
-		this.props.navigation.navigate("Game", {});
-	};
-	navigateToHighscores = () => {
-		this.props.navigation.navigate("Highscores", {});
-	};
-
 	closeKeyboard = () => {
 		Keyboard.dismiss();
 		this.setState({
@@ -126,19 +117,7 @@ class ProfileScreen extends React.Component {
 		});
 	};
 
-	revealLogin = () =>
-		this.setState({
-			isLogin: true,
-			isSignup: false,
-			error: null,
-		});
-
-	revealSignup = () =>
-		this.setState({
-			isLogin: false,
-			isSignup: true,
-			error: null,
-		});
+	gotoLogin = () => this.props.navigation.navigate("ModalLoginPhone");
 
 	login = async () => {
 		const res = await this.props.login(
@@ -299,44 +278,13 @@ class ProfileScreen extends React.Component {
 							!this.state.isSignup && (
 								<View>
 									<StyledButton
-										title='Login'
-										onPress={this.revealLogin}
-									/>
-									<StyledButton
-										title='Sign Up'
-										onPress={this.revealSignup}
+										title='Login / Signup'
+										onPress={this.gotoLogin}
 									/>
 								</View>
 							)}
-						{!this.props.isAuthenticated &&
-							this.state.isLogin &&
-							!this.state.isSignup && (
-								<StyledButton
-									title='Sign Up'
-									onPress={this.revealSignup}
-								/>
-							)}
-
-						{!this.props.isAuthenticated &&
-							!this.state.isLogin &&
-							this.state.isSignup && (
-								<StyledButton
-									title='Login'
-									onPress={this.revealLogin}
-								/>
-							)}
-						{!this.props.isAuthenticated &&
-							this.state.isLogin &&
-							this.renderLogin()}
-						{!this.props.isAuthenticated &&
-							this.state.isSignup &&
-							this.renderSignup()}
-						{this.state.error && (
-							<Text style={styles.error}>{this.state.error}</Text>
-						)}
 					</View>
 				</View>
-				<NavigationUI navigation={this.props.navigation} />
 			</View>
 		);
 	}

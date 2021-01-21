@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import AppNavigator from "./navigation/AppNavigator";
+import AppNavigator from "./navigation/AppNavigator5x";
 import BannerAd from "./shared/BannerAd";
 import Loader from "./shared/Loader";
 import Colors from "./constants/Colors";

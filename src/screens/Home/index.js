@@ -24,7 +24,6 @@ import {
 
 import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
-import NavigationUI from "../../shared/NavigationUI";
 
 import ObjectToCatch from "./ObjectToCatch";
 
@@ -237,12 +236,6 @@ class HomeScreen extends React.Component {
 		animate();
 	};
 
-	navigateToHighscores = () => {
-		this.props.navigation.navigate("Highscores", {});
-	};
-	navigateToProfile = () => {
-		this.props.navigation.navigate("Profile", {});
-	};
 	renderGame() {
 		return (
 			<View {...this._panResponder.panHandlers} style={styles.container}>
@@ -254,8 +247,7 @@ class HomeScreen extends React.Component {
 						left: 0,
 						height: 30,
 						backgroundColor: "transparent",
-					}}
-					onPress={this.navigateToHighscores}>
+					}}>
 					<Text
 						style={{
 							color: "#fff",
@@ -277,7 +269,6 @@ class HomeScreen extends React.Component {
 						{this.props.deltaTime}
 					</Text>
 				</TouchableOpacity>
-				<NavigationUI navigation={this.props.navigation} />
 				<GLView
 					style={{ flex: 1 }}
 					onContextCreate={this._onGLContextCreate}

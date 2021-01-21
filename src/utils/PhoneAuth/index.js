@@ -2,7 +2,6 @@ import * as React from "react";
 import {
 	Text,
 	View,
-	TextInput,
 	Dimensions,
 	TouchableOpacity,
 	Platform,
@@ -11,10 +10,11 @@ import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
 import * as Linking from "expo-linking";
 import Styles from "../../constants/Styles";
-import BubbleButton from "../../shared/BubbleButton";
-import Input from "../Input";
-import COLORS from "../constants/Colors";
+import ButtonBubble from "../../shared/ButtonBubble";
+import Input from "../../shared/Input";
+import COLORS from "../../constants/Colors";
 import CountrySelector from "./CountrySelector";
+import PrivacyPolicyLink from "../PrivacyPolicyLink";
 
 var { width } = Dimensions.get("window");
 
@@ -197,7 +197,7 @@ export default function PhoneAuth(props) {
 							Terms & Privacy Policy
 						</Text>
 					</TouchableOpacity>
-					<BubbleButton
+					<ButtonBubble
 						style={{
 							marginTop: 25,
 							backgroundColor: COLORS.grayColor,
@@ -235,7 +235,7 @@ export default function PhoneAuth(props) {
 							]}>
 							Request Verification Code
 						</Text>
-					</BubbleButton>
+					</ButtonBubble>
 				</View>
 			)}
 			{phoneNumber && verificationId && !credential && (
@@ -275,7 +275,7 @@ export default function PhoneAuth(props) {
 							</Text>
 						</TouchableOpacity>
 					)}
-					<BubbleButton
+					<ButtonBubble
 						style={{
 							marginTop: 55,
 							backgroundColor: COLORS.grayColor,
@@ -307,7 +307,7 @@ export default function PhoneAuth(props) {
 							]}>
 							Send Verification Code
 						</Text>
-					</BubbleButton>
+					</ButtonBubble>
 				</React.Fragment>
 			)}
 		</View>

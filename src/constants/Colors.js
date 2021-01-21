@@ -5,4 +5,7 @@ export default {
 	firstPlaceFontColor: "#FFF",
 	grayColor: "#666",
 	red: "#ff2800",
+	shadowColor: "#000",
+	shadowOpacity: 0.5,
+	shadowRadius: 2,
 };
