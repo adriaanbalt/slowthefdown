@@ -36,7 +36,7 @@
 		"react-native-reanimated": "^1.13.2",
 		"react-native-screens": "^2.15.0",
 		"react-native-vector-icons": "^6.0.2",
-		"react-native-webview": "10.7.0",
+		"react-native-webview": "11.0.0",
 		"react-redux": "^5.0.7",
 		"redux": "^4.0.0",
 		"simplex-noise": "^2.4.0",
