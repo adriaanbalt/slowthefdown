@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import Dispatchers from "../redux/dispatchers";
 import COLORS from "../constants/Colors";
+import { AntDesign } from "@expo/vector-icons";
 
 class ButtonCircle extends React.Component {
 	styles = StyleSheet.create({
@@ -22,11 +23,13 @@ class ButtonCircle extends React.Component {
 			shadowOpacity: COLORS.shadowOpacity,
 			shadowRadius: COLORS.shadowRadius,
 			zIndex: -1,
+			borderWidth: 1,
+			borderColor: "#fff",
 		},
 	});
 
 	render() {
-		const { style, onPress } = this.props;
+		const { style, onPress, iconName, iconFamily } = this.props;
 
 		let bgCircleStyles = this.styles.circle;
 		if (this.props.backgroundColor) {
@@ -42,6 +45,14 @@ class ButtonCircle extends React.Component {
 				onPress={onPress}
 				style={[this.styles.container, style]}>
 				{this.props.children}
+				{iconFamily === "antdesign" && (
+					<AntDesign
+						name={iconName}
+						size={this.props.fontSize || 25}
+						color={this.props.fontColor || COLORS.fontColor}
+						style={[this.styles.icon, this.props.iconStyle]}
+					/>
+				)}
 				<View style={bgCircleStyles} />
 			</TouchableOpacity>
 		);

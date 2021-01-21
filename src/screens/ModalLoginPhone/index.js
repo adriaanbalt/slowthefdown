@@ -1,7 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { StyleSheet, View, Dimensions, TouchableOpacity } from "react-native";
+import {
+	StyleSheet,
+	View,
+	Dimensions,
+	TouchableOpacity,
+	Text,
+} from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import COLORS from "../../constants/Colors";
 import ButtonCircle from "../../shared/ButtonCircle";
@@ -17,10 +23,8 @@ const styles = StyleSheet.create({
 		height: "100%",
 	},
 	closeBtn: {
-		position: "absolute",
 		zIndex: 2,
 		top: 60,
-		right: 10,
 	},
 	modal: {
 		marginTop: 50,
@@ -46,25 +50,19 @@ class ModalLoginPhone extends React.Component {
 
 	render() {
 		return (
-			<KeyboardAwareScrollView style={styles.container}>
-				<View>
-					<ButtonCircle
-						style={styles.closeBtn}
-						iconName='close'
-						backgroundColor={COLORS.red}
-						iconFamily='antdesign'
-						iconStyle={{ paddingTop: 2 }}
-						onPress={this.goBack}
-					/>
-					<View style={[styles.modal]}>
-						<Join navigation={this.props.navigation} />
-					</View>
-					<TouchableOpacity
-						onPress={this.goBack}
-						style={styles.screen}
-					/>
+			<React.Fragment>
+				<ButtonCircle
+					style={styles.closeBtn}
+					iconName='close'
+					backgroundColor={COLORS.backgroundColor}
+					iconFamily='antdesign'
+					iconStyle={{ paddingTop: 2 }}
+					onPress={this.goBack}></ButtonCircle>
+				<View style={[styles.modal]}>
+					<Join navigation={this.props.navigation} />
 				</View>
-			</KeyboardAwareScrollView>
+				<TouchableOpacity onPress={this.goBack} style={styles.screen} />
+			</React.Fragment>
 		);
 	}
 }

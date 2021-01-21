@@ -60,9 +60,6 @@ function Tabs() {
 						<View
 							style={{
 								display: "none",
-								backgroundColor: "#0f0",
-								width: 0,
-								height: 0,
 							}}
 						/>
 					),
@@ -77,9 +74,6 @@ function Tabs() {
 						<View
 							style={{
 								display: "none",
-								backgroundColor: "#0f0",
-								width: 0,
-								height: 0,
 							}}
 						/>
 					),
@@ -94,9 +88,6 @@ function Tabs() {
 						<View
 							style={{
 								display: "none",
-								backgroundColor: "#0f0",
-								width: 0,
-								height: 0,
 							}}
 						/>
 					),
