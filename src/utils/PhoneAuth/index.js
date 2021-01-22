@@ -15,6 +15,7 @@ import Input from "../../shared/Input";
 import COLORS from "../../constants/Colors";
 import CountrySelector from "./CountrySelector";
 import PrivacyPolicyLink from "../PrivacyPolicyLink";
+import Colors from "../../constants/Colors";
 
 var { width } = Dimensions.get("window");
 
@@ -135,21 +136,33 @@ export default function PhoneAuth(props) {
 								setCountryCallingCode(countryCallingCode)
 							}
 						/>
-						<Input
-							onChangeText={(phoneNumber) => {
-								setPhoneNumberFormatted(format(phoneNumber));
-								setPhoneNumber(phoneNumber);
-							}}
-							value={phoneNumberFormatted}
-							placeholderTextColor='#aaa'
-							placeholder='999 999 9999'
-							autoCompleteType='tel'
-							keyboardType='phone-pad'
-							textContentType='telephoneNumber'
+						<View
 							style={{
-								marginTop: 5,
-							}}
-						/>
+								borderBottomWidth: 1,
+								borderBottomColor: "#fff",
+								flexGrow: 1,
+								justifyContent: "center",
+							}}>
+							<Input
+								onChangeText={(phoneNumber) => {
+									setPhoneNumberFormatted(
+										format(phoneNumber),
+									);
+									setPhoneNumber(phoneNumber);
+								}}
+								value={phoneNumberFormatted}
+								placeholderTextColor='#aaa'
+								placeholder='999 999 9999'
+								autoCompleteType='tel'
+								keyboardType='phone-pad'
+								textContentType='telephoneNumber'
+								style={{
+									color: Colors.fontColor,
+									fontSize: 20,
+									marginTop: 5,
+								}}
+							/>
+						</View>
 					</View>
 					{message && (
 						<TouchableOpacity

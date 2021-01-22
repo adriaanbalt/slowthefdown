@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { StyleSheet, Text, View, Image, TextInput } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import StyledButton from "../../shared/StyledButton";
 import Colors from "../../constants/Colors";
@@ -11,20 +11,11 @@ import {
 	getCurrentUserHighscore,
 } from "../../redux/selectors";
 import Styles from "../../constants/Styles";
-import Input from "../../shared/Input";
+import Input from "./Input";
 
 const styles = StyleSheet.create({
 	header: {
 		paddingBottom: 0,
-	},
-
-	input: {
-		height: 24,
-		marginTop: 5,
-		marginBottom: 5,
-		color: Colors.fontColor,
-		borderBottomColor: Colors.grayColor, // Add this to specify bottom border color
-		borderBottomWidth: 1, // Add this to specify bottom border thickness
 	},
 
 	displayNameContainer: {
@@ -53,12 +44,23 @@ const styles = StyleSheet.create({
 });
 
 class ProfileScreen extends React.Component {
+	state = {
+		displayName: "",
+	};
 	gotoLogin = () => this.props.navigation.navigate("ModalLoginPhone");
 
 	save = () => {
-		this.props.save();
+		console.log("save", this.state.displayName);
+		this.props.save(this.state.displayName);
+	};
+	onChangeText = (displayName) => {
+		console.log("this.state.displayName", this.state.displayName);
+		this.setState({
+			displayName,
+		});
 	};
 	renderProfile = () => {
+		console.log("this.props.user", this.props.user);
 		return (
 			<View
 				style={{
@@ -79,7 +81,11 @@ class ProfileScreen extends React.Component {
 								flexGrow: 1,
 							}}>
 							<Input
-								placeholder='Update your name'
+								placeholder={
+									this.props.user.displayName ||
+									"Update your name"
+								}
+								onChangeText={this.onChangeText}
 								style={styles.displayNameInput}
 							/>
 						</View>
