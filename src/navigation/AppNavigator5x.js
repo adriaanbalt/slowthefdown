@@ -12,7 +12,6 @@ import HighscoresScreen from "../screens/Highscores";
 import ModalLoginPhone from "../screens/ModalLoginPhone";
 
 import PAGE_TRANSITIONS from "../utils/PAGE_TRANSITIONS";
-import { View } from "react-native";
 
 const MyTheme = {
 	dark: false,
@@ -56,13 +55,6 @@ function Tabs() {
 				component={HighscoresScreen}
 				options={{
 					headerShown: false,
-					tabBarIcon: () => (
-						<View
-							style={{
-								display: "none",
-							}}
-						/>
-					),
 				}}
 			/>
 			<Tab.Screen
@@ -70,13 +62,6 @@ function Tabs() {
 				component={HomeScreen}
 				options={{
 					headerShown: false,
-					tabBarIcon: () => (
-						<View
-							style={{
-								display: "none",
-							}}
-						/>
-					),
 				}}
 			/>
 			<Tab.Screen
@@ -84,13 +69,6 @@ function Tabs() {
 				component={ProfileScreen}
 				options={{
 					headerShown: false,
-					tabBarIcon: () => (
-						<View
-							style={{
-								display: "none",
-							}}
-						/>
-					),
 				}}
 			/>
 		</Tab.Navigator>
