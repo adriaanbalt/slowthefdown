@@ -9,7 +9,7 @@ const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
 	modal: {
 		width: 100,
-		height,
+		height: "100%",
 		backgroundColor: "#0f0",
 		zIndex: 10000,
 	},

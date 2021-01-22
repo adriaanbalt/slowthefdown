@@ -15,14 +15,14 @@ import StyledButton from "../../shared/StyledButton";
 import Colors from "../../constants/Colors";
 import Header from "../../shared/Header";
 
-var { width, height } = Dimensions.get("window");
+var { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
 	container: {
 		width,
-		height,
+		height: "100%",
 		flex: 1,
-		paddingTop: height > 600 ? 50 : 10, // for smaller phones
+		paddingTop: 50, // for smaller phones
 		padding: 20,
 		backgroundColor: Colors.backgroundColor,
 	},

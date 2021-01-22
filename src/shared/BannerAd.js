@@ -12,7 +12,7 @@ import {
 import Dispatchers from "../redux/dispatchers";
 import AdMob from "../constants/AdMob";
 
-var { height, width } = Dimensions.get("window");
+var { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
 	container: {

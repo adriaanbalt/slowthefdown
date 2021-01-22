@@ -1,5 +1,5 @@
 import React from "react";
-import * as Updates from 'expo-updates'
+import * as Updates from "expo-updates";
 import {
 	StyleSheet,
 	View,
@@ -8,12 +8,12 @@ import {
 	Text,
 } from "react-native";
 
-var { width, height } = Dimensions.get("window");
+var { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
 	container: {
 		width: width,
-		height: height,
+		height: "100%",
 		flex: 1,
 		position: "absolute",
 		zIndex: 1000,
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 	},
 	modal: {
 		width: width / 1.25,
-		height: height / 2,
+		height: "50%",
 		backgroundColor: "rgba(0, 0, 0, 0.8)",
 		borderColor: "#FFF",
 		borderWidth: 1,
@@ -70,7 +70,7 @@ export default class LoaderScreen extends React.Component {
 					updateAvailable: true,
 				});
 				await Updates.fetchUpdateAsync();
-				setTimeout(function() {
+				setTimeout(function () {
 					Updates.reloadFromCache();
 				}, 1000);
 			}

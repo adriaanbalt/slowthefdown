@@ -23,13 +23,13 @@ import {
 } from "../../redux/selectors";
 import { Color } from "three";
 
-var { width, height } = Dimensions.get("window");
+var { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
 	container: {
 		width,
-		height,
+		height: "100%",
 		flex: 1,
-		paddingTop: height > 600 ? 50 : 10, // for smaller phones
+		paddingTop: 50,
 		padding: 20,
 		backgroundColor: Colors.backgroundColor,
 	},
