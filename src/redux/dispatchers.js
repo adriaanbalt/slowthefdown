@@ -232,6 +232,15 @@ export default (dispatch) => () => {
 		clearUserDataLocal();
 		// firebase.auth().signOut();
 	};
+	const save = (displayName) => {
+		const user = firebase.auth().currentUser;
+		if (user && user.uid) {
+			updateUserOnDb({
+				uid: user.uid,
+				displayName: displayName,
+			});
+		}
+	};
 	const signUp = (email, password, displayName) => {
 		// firebase
 		// 	.auth()
@@ -280,6 +289,7 @@ export default (dispatch) => () => {
 		signUp,
 		login,
 		logout,
+		save,
 		deleteUserAccount,
 		checkUserUid,
 		getHighscores,

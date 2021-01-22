@@ -1,59 +1,16 @@
 import React from "react";
-import { StyleSheet, TextInput } from "react-native";
-import COLORS from "../constants/Colors";
+import { TextInput } from "react-native";
 
-const styles = StyleSheet.create({
-	input: {
-		backgroundColor: "transparent",
-		borderBottomColor: COLORS.fontColor,
-		borderBottomWidth: 1,
-		padding: 10,
-		zIndex: 1,
-		color: COLORS.fontColor,
-		fontSize: 20,
-	},
-});
+const Input = (props) => {
+	const [value, onChangeText] = React.useState(props.placeholder);
 
-class Input extends React.Component {
-	render() {
-		const {
-			placeholder,
-			placeholderTextColor,
-			style,
-			onSubmitEditing,
-			onChangeText,
-			getRef,
-			secureTextEntry,
-			autoCompleteType,
-			keyboardType,
-			textContentType,
-			value,
-			multiline,
-		} = this.props;
-
-		return (
-			<TextInput
-				ref={(ref) => {
-					if (getRef) {
-						getRef(ref);
-					}
-				}}
-				multiline={multiline}
-				value={value}
-				autoCompleteType={autoCompleteType}
-				keyboardType={keyboardType}
-				textContentType={textContentType}
-				secureTextEntry={secureTextEntry}
-				onChangeText={onChangeText}
-				placeholder={placeholder}
-				placeholderTextColor={
-					placeholderTextColor || COLORS.backgroundColor
-				}
-				style={[styles.input, style]}
-				onSubmitEditing={onSubmitEditing}
-			/>
-		);
-	}
-}
+	return (
+		<TextInput
+			style={props.style}
+			onChangeText={(text) => onChangeText(text)}
+			value={value}
+		/>
+	);
+};
 
 export default Input;

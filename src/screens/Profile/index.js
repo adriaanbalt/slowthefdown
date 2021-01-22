@@ -1,60 +1,21 @@
-import Expo from "expo";
 import React from "react";
 import { connect } from "react-redux";
-import {
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	Dimensions,
-	Image,
-	TextInput,
-	Keyboard,
-} from "react-native";
+import { StyleSheet, Text, View, Image, TextInput } from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import StyledButton from "../../shared/StyledButton";
 import Colors from "../../constants/Colors";
 import Header from "../../shared/Header";
 import {
 	isAuthenticated,
-	getPropertyFromState,
 	profile,
 	getCurrentUserHighscore,
 } from "../../redux/selectors";
-import { Color } from "three";
+import Styles from "../../constants/Styles";
+import Input from "../../shared/Input";
 
-var { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
-	container: {
-		width,
-		height: "100%",
-		flex: 1,
-		paddingTop: 50,
-		padding: 20,
-		backgroundColor: Colors.backgroundColor,
-	},
-
 	header: {
 		paddingBottom: 0,
-	},
-
-	h1: {
-		color: Colors.fontColor,
-		fontSize: 34,
-		marginBottom: 10,
-	},
-
-	h2: {
-		color: Colors.fontColor,
-		fontSize: 24,
-		marginBottom: 10,
-	},
-
-	howto: {
-		textAlign: "center",
-		color: Colors.fontColor,
-		fontSize: 12,
-		marginBottom: 10,
 	},
 
 	input: {
@@ -66,21 +27,21 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1, // Add this to specify bottom border thickness
 	},
 
-	error: {
-		color: Colors.red,
-		fontSize: 14,
+	displayNameContainer: {
+		width: "100%",
+		display: "flex",
+		flexDirection: "row",
 	},
 
-	inputContainer: {
-		borderBottomColor: Color.fontColor,
-		borderBottomWidth: 3,
-	},
-
-	displayName: {
-		paddingTop: 10,
-		paddingBottom: 10,
+	displayNameLabel: {
 		color: Colors.fontColor,
 		fontSize: 25,
+		marginRight: 5,
+	},
+	displayNameInput: {
+		color: Colors.fontColor,
+		fontSize: 25,
+		paddingBottom: 5,
 	},
 
 	body: {
@@ -89,202 +50,69 @@ const styles = StyleSheet.create({
 		color: Colors.fontColor,
 		fontSize: 20,
 	},
-
-	submitBtn: {
-		marginTop: 20,
-	},
 });
 
 class ProfileScreen extends React.Component {
-	static navigationOptions = {
-		header: null,
-	};
-
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			isLogin: false,
-			isSignup: false,
-		};
-	}
-
-	closeKeyboard = () => {
-		Keyboard.dismiss();
-		this.setState({
-			isSignup: false,
-			isLogin: false,
-		});
-	};
-
 	gotoLogin = () => this.props.navigation.navigate("ModalLoginPhone");
 
-	login = async () => {
-		const res = await this.props.login(
-			this.state.email,
-			this.state.password,
-		);
-		if (!res.user && res.message) {
-			// error!
-			this.setState({
-				error: res.message,
-			});
-			console.log("this.state", this.state);
-		} else {
-			this.setState({
-				error: null,
-			});
-		}
+	save = () => {
+		this.props.save();
 	};
-
-	renderLogin = () => {
-		return (
-			<View>
-				<Text style={styles.h2}>Login</Text>
-				{this.renderInputs(true)}
-				<StyledButton
-					title='Submit'
-					style={styles.submitBtn}
-					onPress={this.login}
-				/>
-				<StyledButton
-					title='Close keyboard'
-					style={styles.submitBtn}
-					onPress={this.closeKeyboard}
-				/>
-			</View>
-		);
-	};
-
-	renderSignup = () => {
-		return (
-			<View>
-				<Text style={styles.h2}>Signup</Text>
-				<TextInput
-					autoFocus
-					style={styles.input}
-					maxLength={20}
-					onChangeText={(value) =>
-						this.setState({ displayName: value })
-					}
-					placeholder={"Your Name"}
-					placeholderTextColor={Colors.fontColor}
-				/>
-				{this.renderInputs(false)}
-				<StyledButton
-					title='Submit'
-					style={styles.submitBtn}
-					onPress={() =>
-						this.props.signUp(
-							this.state.email,
-							this.state.password,
-							this.state.displayName,
-						)
-					}
-				/>
-				<StyledButton
-					title='Close keyboard'
-					style={styles.submitBtn}
-					onPress={this.closeKeyboard}
-				/>
-			</View>
-		);
-	};
-
-	renderInputs = (focusEmail) => {
-		return (
-			<View>
-				<View style={styles.inputContainer}>
-					<TextInput
-						autoFocus={focusEmail}
-						style={styles.input}
-						onChangeText={(value) =>
-							this.setState({ email: value })
-						}
-						ref={(input) => {
-							this.emailTextInput = input;
-						}}
-						placeholder={"Email"}
-						placeholderTextColor={Colors.fontColor}
-					/>
-				</View>
-				<View style={styles.inputContainer}>
-					<TextInput
-						style={styles.input}
-						onChangeText={(value) =>
-							this.setState({ password: value })
-						}
-						secureTextEntry={true}
-						placeholder={"Password"}
-						placeholderTextColor={Colors.fontColor}
-					/>
-				</View>
-			</View>
-		);
-	};
-
 	renderProfile = () => {
 		return (
 			<View
 				style={{
-					paddingBottom: 20,
 					justifyContent: "space-between",
 					flexDirection: "column",
+					flexGrow: 1,
 				}}>
-				<View>
-					<Text style={styles.displayName}>
-						{this.props.user.displayName}
-					</Text>
-					<Text style={styles.displayName}>
-						{this.props.user.email}
-					</Text>
+				<View
+					style={{
+						flexGrow: 1,
+					}}>
+					<View style={styles.displayNameContainer}>
+						<Text style={styles.displayNameLabel}>{`Name:`}</Text>
+						<View
+							style={{
+								borderBottomWidth: 1,
+								borderBottomColor: "#fff",
+								flexGrow: 1,
+							}}>
+							<Input
+								placeholder='Update your name'
+								style={styles.displayNameInput}
+							/>
+						</View>
+					</View>
 					<Text style={styles.body}>
 						How long you slowed the F down:
 					</Text>
-					<Text style={styles.h1}>{this.props.user.highscore}</Text>
+					<Text style={Styles.h1}>{this.props.user.highscore}</Text>
 				</View>
-				{this.props.user.photoURL && (
-					<Image
-						style={styles.picture}
-						source={{
-							uri: this.props.user.photoURL,
-						}}
-					/>
-				)}
-				<StyledButton title='Logout' onPress={this.props.logout} />
+				<View>
+					<StyledButton title='Save' onPress={this.save} />
+					<StyledButton title='Logout' onPress={this.props.logout} />
+				</View>
 			</View>
 		);
 	};
 
 	render() {
 		return (
-			<View style={styles.container}>
-				<View>
-					<Header style={styles.header}>Profile</Header>
-					<View
-						style={{
-							justifyContent: "space-between",
-							alignContent: "space-between",
-							flexDirection: "column",
-						}}>
-						{this.props.isAuthenticated && this.renderProfile()}
-						{!this.props.isAuthenticated && (
-							<Text style={styles.h1}>
-								{`To post your time of ${this.props.highscore} on the score board, sign up or login below`}
-							</Text>
-						)}
-						{!this.props.isAuthenticated &&
-							!this.state.isLogin &&
-							!this.state.isSignup && (
-								<View>
-									<StyledButton
-										title='Login / Signup'
-										onPress={this.gotoLogin}
-									/>
-								</View>
-							)}
-					</View>
-				</View>
+			<View style={Styles.container}>
+				<Header style={styles.header}>Profile</Header>
+				{this.props.isAuthenticated && this.renderProfile()}
+				{!this.props.isAuthenticated && (
+					<React.Fragment>
+						<StyledButton
+							title='Login / Signup'
+							onPress={this.gotoLogin}
+						/>
+						<Text style={styles.h1}>
+							{`To post your time of ${this.props.highscore} on the score board, sign up or login below`}
+						</Text>
+					</React.Fragment>
+				)}
 			</View>
 		);
 	}
@@ -295,7 +123,6 @@ export default connect(
 		isAuthenticated: isAuthenticated(state),
 		user: profile(state),
 		highscore: getCurrentUserHighscore(state),
-		confirmResults: getPropertyFromState(state, "confirmResults"),
 	}),
 	Dispatchers,
 )(ProfileScreen);

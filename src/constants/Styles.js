@@ -1,6 +1,20 @@
 import Colors from "./Colors";
 
 export default {
+	container: {
+		width: "100%",
+		height: "100%",
+		flex: 1,
+		paddingTop: 50,
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingBottom: 80,
+	},
+	h1: {
+		color: Colors.fontColor,
+		fontSize: 34,
+		marginBottom: 10,
+	},
 	h2: {
 		color: Colors.fontColor,
 		fontSize: 30,
