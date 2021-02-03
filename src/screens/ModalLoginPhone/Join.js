@@ -18,6 +18,7 @@ class Join extends React.Component {
 	};
 
 	signUpAuth = (user) => {
+		this.props.setUserDataLocal(user);
 		this.props.navigation.goBack();
 	};
 

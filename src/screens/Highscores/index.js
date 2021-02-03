@@ -69,7 +69,7 @@ class HighscoresScreen extends React.Component {
 		// 	});
 	}
 
-	renderRow(obj, i) {
+	renderRow(personObj, i) {
 		return (
 			<View style={styles.highscoreRow}>
 				<Text
@@ -90,7 +90,8 @@ class HighscoresScreen extends React.Component {
 								? Colors.firstPlaceFontColor
 								: Colors.highscoresFontColor,
 					}}>
-					{obj.displayName.substring(0, 20)}{" "}
+					{personObj.displayName &&
+						personObj.displayName.substring(0, 20)}{" "}
 				</Text>
 				<Text
 					style={{
@@ -104,7 +105,7 @@ class HighscoresScreen extends React.Component {
 						justifyContent: "flex-end",
 						alignSelf: "flex-end",
 					}}>
-					{obj.highscore}
+					{personObj.highscore}
 				</Text>
 			</View>
 		);
@@ -124,9 +125,9 @@ class HighscoresScreen extends React.Component {
 								if (a.highscore > b.highscore) return -1;
 								return 0;
 							})
-							.map((obj, i) => (
+							.map((personObj, i) => (
 								<View key={`highscore-${i}`}>
-									{this.renderRow(obj, i)}
+									{this.renderRow(personObj, i)}
 								</View>
 							))}
 					</View>

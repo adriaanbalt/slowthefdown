@@ -7,7 +7,6 @@ import * as SecureStore from "expo-secure-store";
 import firebase from "../constants/firebase";
 import { AdMobInterstitial } from "expo-ads-admob";
 import AdMob from "../constants/AdMob";
-import FIREBASE_CONSTANTS from "../constants/firebase";
 const SECURE_STORE_USER_UID = "ACCESS_TOKEN";
 const SECURE_STORE_HIGHSCORE = "SECURE_STORE_HIGHSCORE";
 const SECURE_STORE_FIRST_TIME = "SECURE_STORE_FIRST_TIME";
@@ -19,6 +18,7 @@ export default (dispatch) => () => {
 	};
 
 	const initialize = async () => {
+		console.log("initialize");
 		// Initialize Firebase
 		// if (!store.getState().initialized) {
 		// 	firebase.initializeApp(FIREBASE_CONSTANTS);
@@ -41,7 +41,7 @@ export default (dispatch) => () => {
 
 		// check auth login state changes
 		firebase.auth().onAuthStateChanged(async (user) => {
-			// console.log("!!onAuthStateChanged", user != null);
+			console.log("!!onAuthStateChanged", user != null);
 			if (user != null) {
 				// get the user's local highscore to compare to the server highscore, take whatever is higher
 				// server is what other users will see but secure store lets users play offline and keep their highscore...
@@ -297,5 +297,6 @@ export default (dispatch) => () => {
 		setDeltaTime,
 		showInterstitial,
 		toggleModal,
+		setUserDataLocal,
 	};
 };

@@ -8,18 +8,17 @@ import {
 } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
-import * as Linking from "expo-linking";
+import firebaseApp from "../../constants/firebase";
 import Styles from "../../constants/Styles";
 import ButtonBubble from "../../shared/ButtonBubble";
 import Input from "../../shared/Input";
 import COLORS from "../../constants/Colors";
 import CountrySelector from "./CountrySelector";
 import PrivacyPolicyLink from "../PrivacyPolicyLink";
-import Colors from "../../constants/Colors";
 
-var { width } = Dimensions.get("window");
+var { width, height } = Dimensions.get("window");
 
-export default function PhoneAuth(props) {
+export default function App(props) {
 	const recaptchaVerifier = React.useRef(null);
 	const [phoneNumber, setPhoneNumber] = React.useState();
 	const [
@@ -31,9 +30,7 @@ export default function PhoneAuth(props) {
 	const [verificationId, setVerificationId] = React.useState();
 	const [verificationCode, setVerificationCode] = React.useState();
 	const [credential, setCredential] = React.useState();
-	const firebaseConfig = firebase.apps.length
-		? firebase.app().options
-		: undefined;
+	const firebaseConfig = firebaseApp.options;
 	const [message, showMessage] = React.useState(
 		!firebaseConfig || Platform.OS === "web"
 			? {
@@ -54,52 +51,27 @@ export default function PhoneAuth(props) {
 			: undefined,
 	);
 
-	const { onboarding, onboardingButtonStyle } = props;
-
-	const format = (str) => {
-		// clear our formatting characters
-		str = str.replace(/\D/g, "");
-		// re build the string formatted
-		return buildFormattedString(str);
-	};
-
-	const buildFormattedString = (str) => {
-		let returnStr = ""; // this is the string we will be building
-		const lengthOfStr = str.length > 9 ? 10 : str.length;
-		for (let index = 0; index < lengthOfStr; index++) {
-			let char = str[index];
-			// console.log('str', char, index)
-			returnStr += `${char}`;
-		}
-		return returnStr;
-	};
-
-	const gotoPrivacy = () => {
-		try {
-			const url = "https://www.greatflix.app/privacy";
-			Linking.canOpenURL(url).then((supported) => {
-				if (supported) {
-					Linking.openURL(url);
-				}
-			});
-		} catch (err) {
-			console.log("Privacy Policy onPress 'Linking' Error");
+	const format = (phoneNumberString) => {
+		var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+		var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+		if (match) {
+			return match[1] + match[2] + match[3];
 		}
 	};
 
 	return (
-		<View style={{ marginTop: 20 }}>
+		<View>
 			<FirebaseRecaptchaVerifierModal
 				ref={recaptchaVerifier}
 				firebaseConfig={firebaseConfig}
 				attemptInvisibleVerification={true}
 			/>
 			{!verificationId && (
-				<View style={{}}>
+				<React.Fragment>
 					<Text
 						style={[
 							Styles.h3,
-							{ marginBottom: -5, textAlign: "center" },
+							{ marginBottom: 0, textAlign: "center" },
 						]}>
 						Enter your
 					</Text>
@@ -121,16 +93,19 @@ export default function PhoneAuth(props) {
 						style={{
 							display: "flex",
 							flexDirection: "row",
-							justifyContent: "center",
-							marginTop: 40,
+							alignItems: "center",
+							marginTop: 15,
+							marginBottom: 15,
 						}}>
 						<CountrySelector
 							style={{
 								height: 50,
 								justifyContent: "center",
-								borderBottomWidth: 1,
-								borderBottomColor: "#fff",
-								marginRight: 5,
+								borderWidth: 1,
+								borderColor: COLORS.buttonBorderColor,
+								marginRight: 15,
+								paddingLeft: 10,
+								paddingRight: 10,
 							}}
 							selectedCountry={(countryCallingCode) =>
 								setCountryCallingCode(countryCallingCode)
@@ -138,17 +113,21 @@ export default function PhoneAuth(props) {
 						/>
 						<View
 							style={{
-								borderBottomWidth: 1,
 								borderBottomColor: "#fff",
+								borderBottomWidth: 1,
 								flexGrow: 1,
 								justifyContent: "center",
 							}}>
 							<Input
 								onChangeText={(phoneNumber) => {
-									setPhoneNumberFormatted(
-										format(phoneNumber),
+									const n = phoneNumber.replace(
+										/[^0-9]{0,10}$/g,
+										"",
 									);
-									setPhoneNumber(phoneNumber);
+									if (n.length <= 10) {
+										setPhoneNumber(n);
+										setPhoneNumberFormatted(n);
+									}
 								}}
 								value={phoneNumberFormatted}
 								placeholderTextColor='#aaa'
@@ -157,8 +136,6 @@ export default function PhoneAuth(props) {
 								keyboardType='phone-pad'
 								textContentType='telephoneNumber'
 								style={{
-									color: Colors.fontColor,
-									fontSize: 20,
 									marginTop: 5,
 								}}
 							/>
@@ -170,10 +147,10 @@ export default function PhoneAuth(props) {
 							onPress={() => showMessage(undefined)}>
 							<Text
 								style={{
-									color: "#000",
+									color: "#f00",
 									fontSize: 17,
 									textAlign: "center",
-									margin: 20,
+									marginTop: 20,
 								}}>
 								{message.text}
 							</Text>
@@ -184,7 +161,7 @@ export default function PhoneAuth(props) {
 							Styles.h6,
 							{
 								alignSelf: "center",
-								marginTop: 65,
+								marginTop: 5,
 								marginBottom: 5,
 								textAlign: "center",
 								width: width,
@@ -211,22 +188,34 @@ export default function PhoneAuth(props) {
 						</Text>
 					</TouchableOpacity>
 					<ButtonBubble
-						style={{
-							marginTop: 25,
-							backgroundColor: COLORS.grayColor,
-						}}
+						style={[
+							{
+								marginTop: 25,
+							},
+						]}
 						onPress={async () => {
 							// The FirebaseRecaptchaVerifierModal ref implements the
 							// FirebaseAuthApplicationVerifier interface and can be
 							// passed directly to `verifyPhoneNumber`.
 							try {
+								if (!countryCallingCode) {
+									throw new Error(
+										`Please select your country code`,
+									);
+								}
+								if (phoneNumber.length > 10) {
+									throw new Error(
+										`Invalid phone number. Too many digits`,
+									);
+								}
+								if (phoneNumber.length < 10) {
+									throw new Error(
+										`Invalid phone number.  Not enough digits.`,
+									);
+								}
 								const phoneNumberWithCallingCode = `+${
 									countryCallingCode + phoneNumber
 								}`;
-								console.log(
-									"phoneNumberWithCallingCode",
-									phoneNumberWithCallingCode,
-								);
 								const phoneProvider = new firebase.auth.PhoneAuthProvider();
 								const verificationId = await phoneProvider.verifyPhoneNumber(
 									phoneNumberWithCallingCode,
@@ -241,17 +230,11 @@ export default function PhoneAuth(props) {
 								showMessage({ text: `${err}` });
 							}
 						}}>
-						<Text
-							style={[
-								Styles.italic,
-								{ color: COLORS.fontColor, fontWeight: "bold" },
-							]}>
-							Request Verification Code
-						</Text>
+						Request Verification Code
 					</ButtonBubble>
-				</View>
+				</React.Fragment>
 			)}
-			{phoneNumber && verificationId && !credential && (
+			{phoneNumber !== undefined && verificationId && !credential && (
 				<React.Fragment>
 					<Text
 						style={[
@@ -290,8 +273,7 @@ export default function PhoneAuth(props) {
 					)}
 					<ButtonBubble
 						style={{
-							marginTop: 55,
-							backgroundColor: COLORS.grayColor,
+							marginTop: 25,
 						}}
 						onPress={async () => {
 							try {
@@ -313,13 +295,7 @@ export default function PhoneAuth(props) {
 								throw new Error(err);
 							}
 						}}>
-						<Text
-							style={[
-								Styles.italic,
-								{ color: "#000", fontWeight: "bold" },
-							]}>
-							Send Verification Code
-						</Text>
+						Submit
 					</ButtonBubble>
 				</React.Fragment>
 			)}
