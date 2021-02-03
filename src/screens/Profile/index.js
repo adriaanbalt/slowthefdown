@@ -54,13 +54,11 @@ class ProfileScreen extends React.Component {
 		this.props.save(this.state.displayName);
 	};
 	onChangeText = (displayName) => {
-		console.log("this.state.displayName", this.state.displayName);
 		this.setState({
 			displayName,
 		});
 	};
 	renderProfile = () => {
-		console.log("this.props.user", this.props.user);
 		return (
 			<View
 				style={{

@@ -7,7 +7,7 @@ import PhoneAuth from "../../utils/PhoneAuth";
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 25,
+		padding: 15,
 	},
 });
 

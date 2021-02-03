@@ -35,11 +35,6 @@ const styles = StyleSheet.create({
 		bottom: 10,
 		width,
 		padding: 20,
-		height: "90%",
-		shadowOffset: { width: 0, height: 0 },
-		shadowColor: COLORS.shadowColor,
-		shadowOpacity: COLORS.shadowOpacity,
-		shadowRadius: COLORS.shadowRadius,
 	},
 });
 

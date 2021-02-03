@@ -8,4 +8,6 @@ export default {
 	shadowColor: "#000",
 	shadowOpacity: 0.5,
 	shadowRadius: 2,
+	buttonBackgroundColor: "#717171",
+	buttonBorderColor: "#fff",
 };
