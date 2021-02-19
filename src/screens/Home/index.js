@@ -21,6 +21,7 @@ import {
 	getDeltaTime,
 	getLevels,
 } from "../../redux/selectors";
+import { Context } from "../../Context";
 
 import InterstitialAd from "../../shared/InterstitialAd";
 import ShareTheNavigation from "../../shared/shareTheNavigation";
@@ -44,32 +45,31 @@ const styles = StyleSheet.create({
 	},
 });
 
-class HomeScreen extends React.Component {
-	static navigationOptions = {
-		header: null,
+function HomeScreen(props) {
+	// This works like magic...which is kinda annoying
+	// These are the objects passed in from App.js appContext
+	let { appState, dispatch } = useContext(AppContext);
+
+
+		highscore: getCurrentUserHighscore(state),
+		deltaTime: getDeltaTime(state),
+		levels: getLevels(state),
+
+	this.state = {
+		fadeOutAnim: new Animated.Value(1),
+		pan: new Animated.ValueXY(),
+		mouse: new THREE.Vector2(-10, -10),
+		deltaTime: 0,
+		timescale: 60,
 	};
+	// Turn off extra warnings
+	THREE.suppressExpoWarnings(true);
 
-	constructor(props) {
-		super(props);
+	ShareTheNavigation.set(props.navigation);
+	this.props.initialize();
 
-		this.state = {
-			fadeOutAnim: new Animated.Value(1),
-			pan: new Animated.ValueXY(),
-			mouse: new THREE.Vector2(-10, -10),
-			deltaTime: 0,
-			timescale: 60,
-		};
-		// Turn off extra warnings
-		THREE.suppressExpoWarnings(true);
-
-		ShareTheNavigation.set(props.navigation);
-		this.props.initialize();
-	}
-
-	componentDidMount() {
-		this._val = { x: 0, y: 0 };
-		this.state.pan.addListener((value) => (this._val = value));
-	}
+	this._val = { x: 0, y: 0 };
+	this.state.pan.addListener((value) => (this._val = value));
 
 	_panResponder = PanResponder.create({
 		onStartShouldSetPanResponder: (e, gesture) => true,
@@ -158,7 +158,11 @@ class HomeScreen extends React.Component {
 			if (this.startHowLongHeldMilliseconds === 0) {
 				this.startHowLongHeldMilliseconds = Date.now();
 			} else {
-				this.props.setDeltaTime(deltaTime);
+				dispatch({
+					doAction: (prevState, action) => {
+						prevState.deltaTime = deltaTime
+					}
+				})
 			}
 
 			if (this.currentLevel) this.currentLevel.over();
@@ -236,7 +240,7 @@ class HomeScreen extends React.Component {
 		animate();
 	};
 
-	renderGame() {
+	renderGame = () => {
 		return (
 			<View {...this._panResponder.panHandlers} style={styles.container}>
 				<TouchableOpacity
@@ -256,7 +260,7 @@ class HomeScreen extends React.Component {
 							width,
 							textAlign: "center",
 						}}>
-						{this.props.highscore}
+						{appState.highscore}
 					</Text>
 					<Text
 						style={{
@@ -266,7 +270,7 @@ class HomeScreen extends React.Component {
 							width,
 							textAlign: "center",
 						}}>
-						{this.props.deltaTime}
+						{appState.deltaTime}
 					</Text>
 				</TouchableOpacity>
 				<GLView
@@ -276,19 +280,11 @@ class HomeScreen extends React.Component {
 				<InterstitialAd />
 			</View>
 		);
-	}
+	};
 
-	render() {
-		return this.renderGame();
-	}
+	return this.renderGame();
 }
 
-export default connect(
-	(state) => ({
-		isAuthenticated: isAuthenticated(state),
-		highscore: getCurrentUserHighscore(state),
-		deltaTime: getDeltaTime(state),
-		levels: getLevels(state),
-	}),
-	Dispatchers,
-)(HomeScreen);
+module.exports = {
+	HomeScreen,
+};

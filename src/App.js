@@ -1,45 +1,39 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Provider } from "react-redux";
-import store from "./redux/store";
 import AppNavigator from "./navigation/AppNavigator5x";
 import BannerAd from "./shared/BannerAd";
-import Loader from "./shared/Loader";
-import Colors from "./constants/Colors";
 import Modal from "./shared/Modal";
+import React, { useReducer } from "react";
+import { AppContext, getInitAppState } from "./Context";
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: Colors.backgroundColor,
-	},
-});
+/**
+ * Function that reduces any function
+ */
+function reducer(prevState, action) {
+	if ("doAction" in action) {
+		// pass prevState and action to `doAction` dispatch function
+		action.doAction(prevState, action);
 
-export default class App extends React.Component {
-	state = {
-		isLoadingComplete: false,
-	};
-
-	render() {
-		return (
-			<Provider store={store}>
-				<View style={styles.container}>
-					<Loader />
-					<Modal />
-					<AppNavigator />
-					<BannerAd />
-				</View>
-			</Provider>
-		);
+		return { ...prevState }; //must copy to cause rerender
+	} else {
+		throw new Error(`Action missing doAction: ${JSON.stringify(action)}`);
 	}
+}
 
-	_handleLoadingError = (error) => {
-		// In this case, you might want to report the error to your error
-		// reporting service, for example Sentry
-		console.warn(error);
+export default function App() {
+	// This is the global appState and global dispatch function.
+	// We use AppContext.Provider to pass these to all screens
+	let [appState, dispatch] = useReducer(reducer, getInitAppState());
+
+	let appContext = {
+		appState: appState,
+		dispatch: dispatch,
 	};
 
-	_handleFinishLoading = () => {
-		this.setState({ isLoadingComplete: true });
-	};
+	return (
+		<AppContext.Provider value={appContext}>
+			<Modal />
+			<AppNavigator />
+			<BannerAd />
+		</AppContext.Provider>
+	);
 }
