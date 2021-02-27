@@ -6,7 +6,7 @@ export default class ObjectToCatch {
 	constructor() {
 		this.simplex = new SimplexNoise(Math.random);
 
-		let geometry = new THREE.CircleGeometry(3, 20);
+		let geometry = new THREE.CircleGeometry(3.5, 20);
 		let hitMaterial = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			opacity: 0.0,
@@ -94,8 +94,8 @@ export default class ObjectToCatch {
 		this.mesh.add(textMeshDark);
 		const materials = new THREE.MeshPhongMaterial({ color: 0xffffff });
 		materials.customProgramCacheKey = () => {
-			console.log('materials customProgramCacheKey')
-		}
+			console.log("materials customProgramCacheKey");
+		};
 		const textMesh = new THREE.Mesh(textGeo, materials);
 		textMesh.position.set(0, 0, -1);
 		this.mesh.add(textMesh);
