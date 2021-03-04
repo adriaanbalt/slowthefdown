@@ -8,6 +8,7 @@
 	"scripts": {
 		"start": "expo start",
 		"eject": "expo eject",
+		"build": "expo build:ios",
 		"android": "expo start --android",
 		"ios": "expo start --ios",
 		"test": "jest"
