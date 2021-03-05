@@ -1,41 +1,41 @@
 {
-	"expo": {
-		"name": "Slow the F",
-		"description": "Adriaan Balt",
-		"slug": "snack-slowitdown",
-		"privacy": "unlisted",
-		"version": "8.0.8",
-		"orientation": "portrait",
-		"primaryColor": "#000000",
-		"icon": "./assets/expo-icon.png",
-		"loading": {
-			"icon": "./assets/expo-icon.png",
-			"hideExponentText": true
-		},
-		"ios": {
-			"buildNumber": "8.0.7",
-			"supportsTablet": true,
-			"bundleIdentifier": "com.balt.slowitdown",
-			"config": {
-				"googleMobileAdsAppId": "ca-app-pub-3194664333843576~7507771243"
-			}
-		},
-		"platforms": [
-			"ios"
-		],
-		"updates": {
-			"enabled": true,
-			"checkAutomatically": "ON_ERROR_RECOVERY",
-			"fallbackToCacheTimeout": 0
-		},
-		"extra": {
-			"firebase": {
-				"apiKey": "AIzaSyCmP3XNUSjzPNJkMeJIox91SrOiMsd1uok",
-				"authDomain": "slowitdown-d1ac8.firebaseapp.com",
-				"databaseURL": "https://slowitdown-d1ac8.firebaseio.com",
-				"projectId": "slowitdown-d1ac8",
-				"storageBucket": "slowitdown-d1ac8.appspot.com"
-			}
-		}
-	}
+  "expo": {
+    "name": "Slow the F Down",
+    "description": "Adriaan Balt",
+    "slug": "snack-slowitdown",
+    "privacy": "unlisted",
+    "version": "8.0.9",
+    "orientation": "portrait",
+    "primaryColor": "#000000",
+    "icon": "./assets/expo-icon.png",
+    "loading": {
+      "icon": "./assets/expo-icon.png",
+      "hideExponentText": true
+    },
+    "ios": {
+      "buildNumber": "8.0.7",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.balt.slowitdown",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-3194664333843576~7507771243"
+      }
+    },
+    "platforms": [
+      "ios"
+    ],
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_ERROR_RECOVERY",
+      "fallbackToCacheTimeout": 0
+    },
+    "extra": {
+      "firebase": {
+        "apiKey": "AIzaSyCmP3XNUSjzPNJkMeJIox91SrOiMsd1uok",
+        "authDomain": "slowitdown-d1ac8.firebaseapp.com",
+        "databaseURL": "https://slowitdown-d1ac8.firebaseio.com",
+        "projectId": "slowitdown-d1ac8",
+        "storageBucket": "slowitdown-d1ac8.appspot.com"
+      }
+    }
+  }
 }
