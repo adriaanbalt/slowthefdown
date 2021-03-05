@@ -1,6 +1,6 @@
 {
     "name": "slowthefdown",
-    "version": "7.0.0",
+    "version": "7.0.1",
     "license": "MIT",
     "description": "Meditative game",
     "author": "Adriaan Balt",
@@ -8,7 +8,7 @@
     "scripts": {
         "start": "cd src && yarn start",
         "build": "cd src && yarn build",
-        "publish": "cd src && yarn expopublish",
+        "expopublish": "cd src && yarn expopublish",
         "test": "cd src && jest"
     },
     "repository": {
