@@ -4,8 +4,7 @@ import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 export default class VortexLevel extends Level {
 	constructor(options) {
 		super(options);
-		console.log("VortexLevel constructor");
-		
+
 		const texture = ExpoTHREE.loadTextureAsync({
 			asset: require("../../../assets/images/stars.jpg"),
 		});
@@ -13,7 +12,6 @@ export default class VortexLevel extends Level {
 	}
 
 	getMesh() {
-		console.log("getMesh");
 		return this.visualization.getMesh();
 	}
 
@@ -21,6 +19,5 @@ export default class VortexLevel extends Level {
 
 	out() {}
 
-	mouseAdjust = (position) => {
-	};
+	mouseAdjust = (position) => {};
 }

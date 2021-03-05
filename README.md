@@ -15,3 +15,5 @@
 ## Expo + Firebase
 
 [Reference](https://docs.expo.io/versions/latest/guides/using-firebase)
+
+[Firebase console](https://console.firebase.google.com/u/0/project/slowitdown-d1ac8/overview)

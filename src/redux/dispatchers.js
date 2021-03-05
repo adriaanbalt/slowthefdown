@@ -18,7 +18,6 @@ export default (dispatch) => () => {
 	};
 
 	const initialize = async () => {
-		console.log("initialize");
 		// Initialize Firebase
 		// if (!store.getState().initialized) {
 		// 	firebase.initializeApp(FIREBASE_CONSTANTS);
@@ -41,7 +40,6 @@ export default (dispatch) => () => {
 
 		// check auth login state changes
 		firebase.auth().onAuthStateChanged(async (user) => {
-			console.log("!!onAuthStateChanged", user != null);
 			if (user != null) {
 				// get the user's local highscore to compare to the server highscore, take whatever is higher
 				// server is what other users will see but secure store lets users play offline and keep their highscore...
@@ -226,11 +224,9 @@ export default (dispatch) => () => {
 		}
 	};
 	const logout = () => {
-		SecureStore.deleteItemAsync(SECURE_STORE_USER_UID).then(() => {
-			console.log("done clearing local data ");
-		});
+		SecureStore.deleteItemAsync(SECURE_STORE_USER_UID).then(() => {});
 		clearUserDataLocal();
-		// firebase.auth().signOut();
+		firebase.auth().signOut();
 	};
 	const save = (displayName) => {
 		const user = firebase.auth().currentUser;

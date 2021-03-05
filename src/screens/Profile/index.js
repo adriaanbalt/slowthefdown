@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
 class ProfileScreen extends React.Component {
 	state = {
 		displayName: "",
+		hasTapped: null,
 	};
 	gotoLogin = () => this.props.navigation.navigate("ModalLoginPhone");
 
 	save = () => {
-		console.log("save", this.state.displayName);
 		this.props.save(this.state.displayName);
 	};
 	onChangeText = (displayName) => {
@@ -58,7 +58,17 @@ class ProfileScreen extends React.Component {
 			displayName,
 		});
 	};
+	onFocus = () => {
+		console.log("this.state.displayName", !this.state.hasTapped);
+		if (!this.state.hasTapped) {
+			this.setState({
+				hasTapped: true,
+			});
+		}
+	};
 	renderProfile = () => {
+		const placeholder = this.props.user.displayName || "Update your name";
+		console.log("placeholder", this.state.hasTapped, placeholder);
 		return (
 			<View
 				style={{
@@ -79,10 +89,8 @@ class ProfileScreen extends React.Component {
 								flexGrow: 1,
 							}}>
 							<Input
-								placeholder={
-									this.props.user.displayName ||
-									"Update your name"
-								}
+								placeholder={placeholder}
+								onFocus={this.onFocus}
 								onChangeText={this.onChangeText}
 								style={styles.displayNameInput}
 							/>

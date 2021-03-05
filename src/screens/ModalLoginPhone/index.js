@@ -54,7 +54,10 @@ class ModalLoginPhone extends React.Component {
 					iconStyle={{ paddingTop: 2 }}
 					onPress={this.goBack}></ButtonCircle>
 				<View style={[styles.modal]}>
-					<Join navigation={this.props.navigation} />
+					<Join
+						navigation={this.props.navigation}
+						setUserDataLocal={this.props.setUserDataLocal}
+					/>
 				</View>
 				<TouchableOpacity onPress={this.goBack} style={styles.screen} />
 			</React.Fragment>

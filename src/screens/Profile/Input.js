@@ -12,6 +12,7 @@ const Input = (props) => {
 				onChangeText(text);
 			}}
 			value={value}
+			onFocus={props.onFocus}
 		/>
 	);
 };

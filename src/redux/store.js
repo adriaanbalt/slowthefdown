@@ -119,8 +119,6 @@ function handleSetAction(state, action) {
 		}
 	}
 
-	console.log("Was not successful in updating state: " + path);
-
 	return state;
 }
 
