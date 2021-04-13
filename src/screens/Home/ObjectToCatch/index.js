@@ -13,8 +13,7 @@ export default class ObjectToCatch {
 			transparent: true,
 		});
 		const hit = new THREE.Mesh(geometry, hitMaterial);
-		hit.position.set(1.75, 2, 0);
-		hit.position.z = -1;
+		// hit.position.set(1.75, 2, -1);
 
 		//create a group and add the two cubes
 		//These cubes can now be rotated / scaled etc as a group
@@ -76,7 +75,7 @@ export default class ObjectToCatch {
 	createText = async (text) => {
 		this.fontData = await this.loadFont();
 
-		const textGeoDark = new THREE.TextBufferGeometry(text, {
+		const textGeoExtension = new THREE.TextBufferGeometry(text, {
 			font: this.fontData,
 			size: 4,
 			height: -1000,
@@ -88,14 +87,22 @@ export default class ObjectToCatch {
 			height: 1,
 		});
 
+		const textPosition = {
+			x: -1.75,
+			y: -2,
+		};
 		const materialsDark = new THREE.MeshPhongMaterial({ color: 0x222222 });
-		const textMeshDark = new THREE.Mesh(textGeoDark, materialsDark);
-		textMeshDark.position.set(0, 0, 0);
-		this.mesh.add(textMeshDark);
+		const textMeshExtension = new THREE.Mesh(
+			textGeoExtension,
+			materialsDark,
+		);
+		textMeshExtension.position.set(textPosition.x, textPosition.y, 0);
+		this.mesh.add(textMeshExtension);
 		const materials = new THREE.MeshPhongMaterial({ color: 0xffffff });
 		materials.customProgramCacheKey = () => {};
 		const textMesh = new THREE.Mesh(textGeo, materials);
-		textMesh.position.set(0, 0, -1);
+		textMesh.position.set(textPosition.x, textPosition.y, -1);
+
 		this.mesh.add(textMesh);
 
 		// let centerOffset =
