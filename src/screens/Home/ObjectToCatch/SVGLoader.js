@@ -5,7 +5,7 @@
  * @author yomboprime / https://yombo.org
  */
 
-THREE.SVGLoader = function(manager) {
+THREE.SVGLoader = function (manager) {
 	this.manager =
 		manager !== undefined ? manager : THREE.DefaultLoadingManager;
 };
@@ -13,14 +13,14 @@ THREE.SVGLoader = function(manager) {
 THREE.SVGLoader.prototype = {
 	constructor: THREE.SVGLoader,
 
-	load: function(url, onLoad, onProgress, onError) {
+	load: function (url, onLoad, onProgress, onError) {
 		var scope = this;
 
 		var loader = new THREE.FileLoader(scope.manager);
 		loader.setPath(scope.path);
 		loader.load(
 			url,
-			function(text) {
+			function (text) {
 				onLoad(scope.parse(text));
 			},
 			onProgress,
@@ -28,12 +28,12 @@ THREE.SVGLoader.prototype = {
 		);
 	},
 
-	setPath: function(value) {
+	setPath: function (value) {
 		this.path = value;
 		return this;
 	},
 
-	parse: function(text) {
+	parse: function (text) {
 		function parseNode(node, style) {
 			if (node.nodeType !== 1) return;
 
@@ -86,7 +86,7 @@ THREE.SVGLoader.prototype = {
 					break;
 
 				default:
-					console.log(node);
+				// console.log(node);
 			}
 
 			if (path) {
@@ -1013,10 +1013,6 @@ THREE.SVGLoader.prototype = {
 			return Math.sqrt(te[3] * te[3] + te[4] * te[4]);
 		}
 
-		//
-
-		console.log("THREE.SVGLoader");
-
 		var paths = [];
 
 		var transformStack = [];
@@ -1060,7 +1056,7 @@ THREE.SVGLoader.prototype = {
 	},
 };
 
-THREE.SVGLoader.getStrokeStyle = function(
+THREE.SVGLoader.getStrokeStyle = function (
 	width,
 	color,
 	opacity,
@@ -1092,7 +1088,7 @@ THREE.SVGLoader.getStrokeStyle = function(
 	};
 };
 
-THREE.SVGLoader.pointsToStroke = function(
+THREE.SVGLoader.pointsToStroke = function (
 	points,
 	style,
 	arcDivisions,
@@ -1138,7 +1134,7 @@ THREE.SVGLoader.pointsToStroke = function(
 	return geometry;
 };
 
-THREE.SVGLoader.pointsToStrokeWithBuffers = (function() {
+THREE.SVGLoader.pointsToStrokeWithBuffers = (function () {
 	var tempV2_1 = new THREE.Vector2();
 	var tempV2_2 = new THREE.Vector2();
 	var tempV2_3 = new THREE.Vector2();
@@ -1161,7 +1157,7 @@ THREE.SVGLoader.pointsToStrokeWithBuffers = (function() {
 	var tempTransform1 = new THREE.Matrix3();
 	var tempTransform2 = new THREE.Matrix3();
 
-	return function(
+	return function (
 		points,
 		style,
 		arcDivisions,
@@ -1266,10 +1262,7 @@ THREE.SVGLoader.pointsToStrokeWithBuffers = (function() {
 					var miterSide = strokeWidth2 / dot;
 					tempV2_3.multiplyScalar(-miterSide);
 					tempV2_4.subVectors(currentPoint, previousPoint);
-					tempV2_5
-						.copy(tempV2_4)
-						.setLength(miterSide)
-						.add(tempV2_3);
+					tempV2_5.copy(tempV2_4).setLength(miterSide).add(tempV2_3);
 					innerPoint.copy(tempV2_5).negate();
 					var miterLength2 = tempV2_5.length();
 					var segmentLengthPrev = tempV2_4.length();
@@ -1586,14 +1579,8 @@ THREE.SVGLoader.pointsToStrokeWithBuffers = (function() {
 			// param p1, p2: Points in the circle arc.
 			// p1 and p2 are in clockwise direction.
 
-			tempV2_1
-				.copy(p1)
-				.sub(center)
-				.normalize();
-			tempV2_2
-				.copy(p2)
-				.sub(center)
-				.normalize();
+			tempV2_1.copy(p1).sub(center).normalize();
+			tempV2_2.copy(p2).sub(center).normalize();
 
 			var angle = Math.PI;
 			var dot = tempV2_1.dot(tempV2_2);

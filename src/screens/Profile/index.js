@@ -59,7 +59,6 @@ class ProfileScreen extends React.Component {
 		});
 	};
 	onFocus = () => {
-		console.log("this.state.displayName", !this.state.hasTapped);
 		if (!this.state.hasTapped) {
 			this.setState({
 				hasTapped: true,
@@ -68,7 +67,6 @@ class ProfileScreen extends React.Component {
 	};
 	renderProfile = () => {
 		const placeholder = this.props.user.displayName || "Update your name";
-		console.log("placeholder", this.state.hasTapped, placeholder);
 		return (
 			<View
 				style={{

@@ -12,7 +12,7 @@ export default class Particles {
 		let geometry = new ParticlePrefabGeometry(prefab, prefabCount);
 
 		// add a time offset for each prefab, spreading them out along the Z axis
-		geometry.createAttribute("aOffset", 1, function(data, i, count) {
+		geometry.createAttribute("aOffset", 1, function (data, i, count) {
 			data[0] = i / count;
 		});
 
@@ -77,8 +77,8 @@ export default class Particles {
 
 		// super( geometry, material );
 		this.material.customProgramCacheKey = () => {
-			console.log('particles customProgramCacheKey')
-		}
+			// console.log('particles customProgramCacheKey')
+		};
 		this.mesh = new THREE.Mesh(geometry, this.material);
 		this.frustumCulled = false;
 	}

@@ -189,10 +189,6 @@ export default function App(props) {
 								const phoneNumberWithCallingCode = `+${
 									countryCallingCode + phoneNumber
 								}`;
-								console.log(
-									"phoneNumberWithCallingCode",
-									phoneNumberWithCallingCode,
-								);
 								const phoneProvider = new firebase.auth.PhoneAuthProvider();
 								const verificationId = await phoneProvider.verifyPhoneNumber(
 									phoneNumberWithCallingCode,

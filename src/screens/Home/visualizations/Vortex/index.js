@@ -2,7 +2,6 @@ import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 
 export default class Vortex {
 	constructor(texture) {
-		console.log ( 'vortex shader')
 		// texture = this.loadTexture()
 		this.shader = {
 			vertexShader: `varying vec2 vUv;
@@ -87,7 +86,6 @@ export default class Vortex {
 	}
 
 	over(progress, mouse) {
-		console.log("over", mouse.y);
 		// this.progress = progress
 		this.shaderMat.uniforms["iWaves"].value = 10;
 		this.shaderMat.uniforms["iMouseX"].value = mouse.x;

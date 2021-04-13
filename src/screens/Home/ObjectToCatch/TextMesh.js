@@ -25,19 +25,16 @@ bevelSegments — Integer. Number of bevel segments. Default is 3.
 		}
 
 		const { font } = this.params;
-		console.log("font", font, font instanceof THREE.Font);
 		if (!font) {
 			console.warn(
 				"TextMesh.updateWithParams: font is required to create TextBufferGeometry!",
 			);
 			return;
 		} else if (!(font instanceof THREE.Font)) {
-			console.log("here", typeof font);
 			if (typeof font === "object") {
 				this.params.font = this.loadFontFromJson(font);
 			}
 		}
-		console.log("this.params", this.params);
 		this.geometry = new THREE.TextBufferGeometry(
 			this.params.text || this.text,
 			this.params,
@@ -47,7 +44,6 @@ bevelSegments — Integer. Number of bevel segments. Default is 3.
 		return this.geometry;
 	};
 	loadFontFromJson = (json) => {
-		console.log("loadfontfromjson", json);
 		const font = new THREE.FontLoader().parse(json);
 		this.update({ font });
 		return font;

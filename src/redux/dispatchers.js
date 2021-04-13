@@ -1,5 +1,4 @@
 import Expo from "expo";
-import * as Updates from "expo-updates";
 const actions = require("./actions");
 import store from "./store";
 import * as SecureStore from "expo-secure-store";
