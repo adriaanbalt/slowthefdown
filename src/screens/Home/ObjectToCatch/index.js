@@ -13,8 +13,8 @@ export default class ObjectToCatch {
 			transparent: true,
 		});
 		const hit = new THREE.Mesh(geometry, hitMaterial);
-		hit.position.set(1.5, 2, 0);
-		// hit.position.z = 10
+		hit.position.set(1.75, 2, 0);
+		hit.position.z = -1;
 
 		//create a group and add the two cubes
 		//These cubes can now be rotated / scaled etc as a group
