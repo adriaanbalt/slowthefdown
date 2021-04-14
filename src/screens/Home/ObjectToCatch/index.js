@@ -6,14 +6,14 @@ export default class ObjectToCatch {
 	constructor() {
 		this.simplex = new SimplexNoise(Math.random);
 
-		let geometry = new THREE.CircleGeometry(3.5, 20);
+		let geometry = new THREE.CircleGeometry(2.5, 20);
 		let hitMaterial = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			opacity: 0.0,
 			transparent: true,
 		});
 		const hit = new THREE.Mesh(geometry, hitMaterial);
-		// hit.position.set(1.75, 2, -1);
+		hit.position.set(0, 1.5, 0);
 
 		//create a group and add the two cubes
 		//These cubes can now be rotated / scaled etc as a group
@@ -91,17 +91,21 @@ export default class ObjectToCatch {
 			x: -1.75,
 			y: -2,
 		};
-		const materialsDark = new THREE.MeshPhongMaterial({ color: 0x222222 });
+		const textMaterialsExtension = new THREE.MeshPhongMaterial({
+			color: 0x222222,
+		});
 		const textMeshExtension = new THREE.Mesh(
 			textGeoExtension,
-			materialsDark,
+			textMaterialsExtension,
 		);
 		textMeshExtension.position.set(textPosition.x, textPosition.y, 0);
 		this.mesh.add(textMeshExtension);
-		const materials = new THREE.MeshPhongMaterial({ color: 0xffffff });
-		materials.customProgramCacheKey = () => {};
-		const textMesh = new THREE.Mesh(textGeo, materials);
-		textMesh.position.set(textPosition.x, textPosition.y, -1);
+		const textMaterials = new THREE.MeshPhongMaterial({
+			color: 0xffffff,
+		});
+		textMaterials.customProgramCacheKey = () => {};
+		const textMesh = new THREE.Mesh(textGeo, textMaterials);
+		textMesh.position.set(textPosition.x, textPosition.y, 0);
 
 		this.mesh.add(textMesh);
 

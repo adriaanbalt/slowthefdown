@@ -31,12 +31,11 @@ import ParticlesLevel from "./levels/ParticlesLevel";
 
 import Colors from "../../constants/Colors";
 
-const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Colors.backgroundColor,
-		width,
+		width: "100%",
 		height: "100%",
 	},
 	contentContainer: {
@@ -82,6 +81,7 @@ class HomeScreen extends React.Component {
 		},
 		onPanResponderMove: ({ nativeEvent }, gestureState) => {
 			if (this.state.gl) {
+				const { height, width } = Dimensions.get("window");
 				// ratio of mouse position to the width of the screen
 				// todo something is wrong with the sizing
 				this.state.mouse.x = (nativeEvent.locationX / width) * 2 - 1;
@@ -141,7 +141,6 @@ class HomeScreen extends React.Component {
 		this.scene.add(objectToCatchMesh);
 
 		const startTime = Date.now();
-		let intersects;
 		this.startHowLongHeldMilliseconds = 0;
 		this.elapsedHowLongHeldMilliseconds = 0;
 		let elapsedSeconds;
@@ -210,7 +209,10 @@ class HomeScreen extends React.Component {
 			);
 
 			raycaster.setFromCamera(this.state.mouse, camera);
-			intersects = raycaster.intersectObjects(this.scene.children, true);
+			const intersects = raycaster.intersectObjects(
+				this.scene.children,
+				true,
+			);
 
 			// the particle center will follow the object that is moving
 			// const objectPosX = objectToCatchMesh.position.x / 10;
@@ -246,14 +248,16 @@ class HomeScreen extends React.Component {
 						top: 30,
 						left: 0,
 						height: 30,
+						width: "100%",
 						backgroundColor: "transparent",
+						alignItems: "center",
 					}}>
 					<Text
 						style={{
 							color: "#fff",
 							fontSize: 16,
 							lineHeight: 25,
-							width,
+							width: "100%",
 							textAlign: "center",
 						}}>
 						{this.props.highscore}
@@ -263,7 +267,7 @@ class HomeScreen extends React.Component {
 							color: "#fff",
 							fontSize: 16,
 							lineHeight: 25,
-							width,
+							width: "100%",
 							textAlign: "center",
 						}}>
 						{this.props.deltaTime}
