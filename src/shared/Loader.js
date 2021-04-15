@@ -1,18 +1,10 @@
 import React from "react";
 import * as Updates from "expo-updates";
-import {
-	StyleSheet,
-	View,
-	Dimensions,
-	ActivityIndicator,
-	Text,
-} from "react-native";
-
-var { width } = Dimensions.get("window");
+import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
 
 const styles = StyleSheet.create({
 	container: {
-		width: width,
+		width: "100%",
 		height: "100%",
 		flex: 1,
 		position: "absolute",
@@ -22,7 +14,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	modal: {
-		width: width / 1.25,
+		width: "75%",
 		height: "50%",
 		backgroundColor: "rgba(0, 0, 0, 0.8)",
 		borderColor: "#FFF",

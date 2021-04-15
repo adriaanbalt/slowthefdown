@@ -1,25 +1,15 @@
 import Expo from "expo";
 import React from "react";
 import { connect } from "react-redux";
-import {
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	TouchableOpacity,
-	Dimensions,
-} from "react-native";
-import { isAuthenticated, highscores } from "../../redux/selectors";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { highscores } from "../../redux/selectors";
 import Dispatchers from "../../redux/dispatchers";
-import StyledButton from "../../shared/StyledButton";
 import Colors from "../../constants/Colors";
 import Header from "../../shared/Header";
 
-var { width } = Dimensions.get("window");
-
 const styles = StyleSheet.create({
 	container: {
-		width,
+		width: "100%",
 		height: "100%",
 		flex: 1,
 		paddingTop: 50, // for smaller phones

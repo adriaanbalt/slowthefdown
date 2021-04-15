@@ -130,6 +130,7 @@ class HomeScreen extends React.Component {
 			0.1,
 			20000,
 		);
+		this.objectsToIntersect = [];
 		this.scene = new THREE.Scene();
 		const raycaster = new THREE.Raycaster();
 
@@ -137,8 +138,9 @@ class HomeScreen extends React.Component {
 		const objectToCatchMesh = objectToCatch.getMesh();
 
 		camera.position.set(0, 0, 1.0).multiplyScalar(20);
-		this.addLevelToScene(this.currentLevel);
+		this.scene.add(this.currentLevel.getMesh());
 		this.scene.add(objectToCatchMesh);
+		this.objectsToIntersect.push(objectToCatchMesh);
 
 		const startTime = Date.now();
 		this.startHowLongHeldMilliseconds = 0;
@@ -210,7 +212,7 @@ class HomeScreen extends React.Component {
 
 			raycaster.setFromCamera(this.state.mouse, camera);
 			const intersects = raycaster.intersectObjects(
-				this.scene.children,
+				this.objectsToIntersect,
 				true,
 			);
 
@@ -224,6 +226,7 @@ class HomeScreen extends React.Component {
 			if (this.currentLevel)
 				this.currentLevel.mouseAdjust(this.state.mouse);
 
+			// console.log("intersects.length", intersects.length);
 			if (intersects.length > 0) {
 				over();
 			} else {

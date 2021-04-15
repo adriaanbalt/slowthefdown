@@ -1,19 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import {
-	StyleSheet,
-	View,
-	Dimensions,
-	TouchableOpacity,
-	Text,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import Dispatchers from "../../redux/dispatchers";
 import COLORS from "../../constants/Colors";
 import ButtonCircle from "../../shared/ButtonCircle";
 import Join from "./Join";
-
-var { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
 	container: {
@@ -33,7 +24,7 @@ const styles = StyleSheet.create({
 		backgroundColor: COLORS.backgroundColor,
 		// alignItems: "center",
 		bottom: 10,
-		width,
+		width: "100%",
 		padding: 20,
 	},
 });

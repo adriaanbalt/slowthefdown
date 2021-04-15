@@ -2,22 +2,15 @@ import { AdMobBanner } from "expo-ads-admob";
 import Expo from "expo";
 import React from "react";
 import { connect } from "react-redux";
-import {
-	StyleSheet,
-	View,
-	Text,
-	Dimensions,
-	TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import Dispatchers from "../redux/dispatchers";
 import AdMob from "../constants/AdMob";
 
-var { width } = Dimensions.get("window");
-
 const styles = StyleSheet.create({
 	container: {
+		width: "100%",
 		paddingBottom: 0,
-		transform: [{ translateX: (width - 320) / 2 }],
+		transform: [{ translateX: "25%" }],
 	},
 });
 

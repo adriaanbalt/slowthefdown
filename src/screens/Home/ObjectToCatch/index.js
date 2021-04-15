@@ -2,18 +2,20 @@ import ExpoTHREE, { THREE } from "expo-three"; // 3.0.0-alpha.4
 import SimplexNoise from "simplex-noise";
 const PATH_TO_ASSETS = "../../../assets/";
 
+const MAX_SPEED = 5;
+const MIN_SPEED = 0.7;
 export default class ObjectToCatch {
 	constructor() {
 		this.simplex = new SimplexNoise(Math.random);
 
-		let geometry = new THREE.CircleGeometry(2.5, 20);
+		let geometry = new THREE.CircleGeometry(4, 100);
 		let hitMaterial = new THREE.MeshBasicMaterial({
-			color: 0xffffff,
-			opacity: 0.001,
+			color: 0x000000,
+			opacity: 0.00001,
 			transparent: true,
 		});
 		const hit = new THREE.Mesh(geometry, hitMaterial);
-		hit.position.set(0, 1.5, 0);
+		hit.position.set(0, 0, 0);
 
 		//create a group and add the two cubes
 		//These cubes can now be rotated / scaled etc as a group
@@ -25,7 +27,7 @@ export default class ObjectToCatch {
 		// this.velocity = .04// + .0001 * (1 - window.innerWidth/2000)
 		this.radius = 9;
 		this.noiseAccum = 0;
-		this.speed = 5;
+		this.speed = MAX_SPEED;
 		this.isOver = false;
 
 		// light so you can see the object
@@ -154,13 +156,13 @@ export default class ObjectToCatch {
 		this.radius = newRadius;
 	}
 	over(time) {
-		this.speed = 0.7;
+		this.speed = MIN_SPEED;
 		// to speed up while playing
 		this.overProgress = 1; //time / 10000
 		// this.mesh.children[0].color.setHex(0xff00ff)
 	}
 	out() {
-		this.speed = 5;
+		this.speed = MAX_SPEED;
 		this.overProgress = 1;
 	}
 	getMesh() {

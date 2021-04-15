@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-	Text,
-	View,
-	Dimensions,
-	TouchableOpacity,
-	Platform,
-} from "react-native";
+import { Text, View, TouchableOpacity, Platform } from "react-native";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import * as firebase from "firebase";
 import firebaseApp from "../../constants/firebase";
@@ -15,8 +9,6 @@ import Input from "../../shared/Input";
 import COLORS from "../../constants/Colors";
 import CountrySelector from "./CountrySelector";
 import PrivacyPolicyLink from "../PrivacyPolicyLink";
-
-var { width, height } = Dimensions.get("window");
 
 export default function App(props) {
 	const recaptchaVerifier = React.useRef(null);
@@ -164,7 +156,7 @@ export default function App(props) {
 								marginTop: 5,
 								marginBottom: 5,
 								textAlign: "center",
-								width: width,
+								width: "100%",
 								fontStyle: "italic",
 							},
 						]}>
@@ -180,7 +172,7 @@ export default function App(props) {
 									alignSelf: "center",
 									marginBottom: 5,
 									textAlign: "center",
-									width: width / 2,
+									width: "50%",
 									fontStyle: "italic",
 								},
 							]}>

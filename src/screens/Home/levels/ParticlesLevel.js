@@ -13,7 +13,7 @@ export default class ParticlesLevel extends Level {
 	}
 
 	getMesh() {
-		return this.visualization.getMesh();
+		return this.particlesMesh;
 	}
 
 	over() {
@@ -32,16 +32,16 @@ export default class ParticlesLevel extends Level {
 	// };
 
 	mouseAdjust = (position) => {
-		// adjusting perspective of particles to make it look like it moves versus the finger
-		if (position.y != -10) {
-			this.particlesMesh.rotation.y = (25 * position.x * Math.PI) / 180;
-		} else {
-			this.particlesMesh.rotation.y = (0 * Math.PI) / 180;
-		}
-		if (position.x != -10) {
-			this.particlesMesh.rotation.x = -(25 * position.y * Math.PI) / 180;
-		} else {
-			this.particlesMesh.rotation.x = (0 * Math.PI) / 180;
-		}
+		// // adjusting perspective of particles to make it look like it moves versus the finger
+		// if (position.y != -10) {
+		// 	this.particlesMesh.rotation.y = (25 * position.x * Math.PI) / 180;
+		// } else {
+		// 	this.particlesMesh.rotation.y = (0 * Math.PI) / 180;
+		// }
+		// if (position.x != -10) {
+		// 	this.particlesMesh.rotation.x = -(25 * position.y * Math.PI) / 180;
+		// } else {
+		// 	this.particlesMesh.rotation.x = (0 * Math.PI) / 180;
+		// }
 	};
 }
