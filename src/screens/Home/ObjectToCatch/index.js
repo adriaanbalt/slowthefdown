@@ -9,7 +9,7 @@ export default class ObjectToCatch {
 		let geometry = new THREE.CircleGeometry(2.5, 20);
 		let hitMaterial = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
-			opacity: 0.0,
+			opacity: 0.001,
 			transparent: true,
 		});
 		const hit = new THREE.Mesh(geometry, hitMaterial);
