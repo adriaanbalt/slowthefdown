@@ -91,7 +91,7 @@ export default class ObjectToCatch {
 
 		const textPosition = {
 			x: -1.75,
-			y: -2,
+			y: -5,
 		};
 		const textMaterialsExtension = new THREE.MeshPhongMaterial({
 			color: 0x222222,
