@@ -99,7 +99,6 @@ export default class ObjectToCatch {
 			textMaterialsExtension,
 		);
 		textMeshExtension.position.set(textPosition.x, textPosition.y, 0);
-		this.mesh.add(textMeshExtension);
 		const textMaterials = new THREE.MeshPhongMaterial({
 			color: 0xffffff,
 		});
@@ -108,6 +107,7 @@ export default class ObjectToCatch {
 		textMesh.position.set(textPosition.x, textPosition.y, 0);
 
 		this.mesh.add(textMesh);
+		this.mesh.add(textMeshExtension);
 
 		// let centerOffset =
 		//     -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x)
