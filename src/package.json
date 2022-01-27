@@ -43,7 +43,7 @@
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "simplex-noise": "^2.4.0",
-    "three": "^0.123.0",
+    "three": "^0.137.0",
     "three-bas": "^2.12.0"
   },
   "devDependencies": {
