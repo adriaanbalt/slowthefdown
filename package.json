@@ -9,7 +9,7 @@
         "start": "cd src && yarn start",
         "build": "cd src && yarn build",
         "expopublish": "cd src && yarn expopublish",
-        "test": "cd src && jest"
+        "test": "cd src && yarn test"
     },
     "repository": {
         "type": "git",
