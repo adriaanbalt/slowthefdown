@@ -1,15 +1,11 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "types": []
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["game/**/*.ts", "vitest.config.mts"]
+  "include": ["**/*.ts", "**/*.tsx", "vitest.config.mts", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

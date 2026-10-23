@@ -1,6 +1,28 @@
 .DS_Store
 node_modules
 .env
+.env.*
 *.log
 .expo
 .expo/*
+
+# secrets
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*service-account*.json
+*-firebase-adminsdk-*.json
+server/secrets/
+
+# generated native projects (expo prebuild)
+ios/
+android/
+
+# expo / metro
+dist/
+web-build/
+expo-env.d.ts
+.metro-health-check*
+.kotlin/
+*.tsbuildinfo
