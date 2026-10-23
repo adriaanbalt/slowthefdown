@@ -1,7 +1,14 @@
 import { useIsFocused } from "expo-router";
 import { GLView, type ExpoWebGLRenderingContext } from "expo-gl";
 import { useEffect, useRef } from "react";
-import { PanResponder, StyleSheet, Text, View, type LayoutChangeEvent } from "react-native";
+import {
+	PanResponder,
+	StyleSheet,
+	Text,
+	View,
+	type LayoutChangeEvent,
+	type PanResponderInstance,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PerspectiveCamera, Raycaster, Scene, Vector2 } from "three";
 
@@ -15,6 +22,7 @@ import Particles from "./Particles";
 
 const OFF_SCREEN = -10;
 const MAX_FRAME_S = 0.1;
+const INTERRUPTED_S = 0.5;
 
 export default function HomeScreen() {
 	const highscore = useUserStore((s) => s.highscore);
@@ -34,15 +42,15 @@ export default function HomeScreen() {
 
 	useEffect(() => () => stopRef.current?.(), []);
 
-	const panResponder = useRef(
-		PanResponder.create({
-			onStartShouldSetPanResponder: () => true,
-			onPanResponderGrant: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
-			onPanResponderMove: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
-			onPanResponderRelease: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
-			onPanResponderTerminate: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
-		}),
-	).current;
+	const panResponderRef = useRef<PanResponderInstance | null>(null);
+	panResponderRef.current ??= PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onPanResponderGrant: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
+		onPanResponderMove: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
+		onPanResponderRelease: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
+		onPanResponderTerminate: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
+	});
+	const panResponder = panResponderRef.current;
 
 	function setPointer(x: number, y: number) {
 		const { width, height } = size.current;
@@ -84,8 +92,11 @@ export default function HomeScreen() {
 		const frame = () => {
 			frameId = requestAnimationFrame(frame);
 			const now = performance.now();
-			const dt = Math.min((now - lastMs) / 1000, MAX_FRAME_S);
+			const gapS = (now - lastMs) / 1000;
+			const dt = Math.min(gapS, MAX_FRAME_S);
 			lastMs = now;
+			// A hold interrupted by a tab switch or the app backgrounding doesn't count.
+			if (!focusedRef.current || gapS > INTERRUPTED_S) heldSinceMs = 0;
 			if (!focusedRef.current) return;
 			const frames = dt * 60;
 

@@ -17,7 +17,8 @@ const config: ExpoConfig = {
 		supportsTablet: true,
 		googleServicesFile: "./GoogleService-Info.plist",
 		entitlements: {
-			"aps-environment": "development",
+			// Release builds (TestFlight / App Store) must set APS_ENVIRONMENT=production in their EAS profile.
+			"aps-environment": process.env.APS_ENVIRONMENT === "production" ? "production" : "development",
 		},
 		infoPlist: {
 			UIBackgroundModes: ["remote-notification"],

@@ -33,10 +33,18 @@ function reportError(context: string) {
 export const useUserStore = create<UserState>()((set, get) => {
 	async function onSignedIn(user: User) {
 		set({ uid: user.uid });
-		const [local, record] = await Promise.all([readLocalHighscore(), fetchUser(user.uid)]);
+		const local = await readLocalHighscore();
+		let record: Awaited<ReturnType<typeof fetchUser>>;
+		try {
+			record = await fetchUser(user.uid);
+		} catch (error) {
+			// Offline with a cached session: play on the device best and merge on the next launch.
+			if (currentUid() === user.uid) set({ highscore: Math.max(local, get().highscore), ready: true });
+			throw error;
+		}
 		if (currentUid() !== user.uid) return;
 		const merged = mergeHighscore(Math.max(local, get().highscore), record?.highscore);
-		set({ displayName: record?.displayName ?? null, highscore: merged.highscore, ready: true });
+		set({ uid: user.uid, displayName: record?.displayName ?? null, highscore: merged.highscore, ready: true });
 		await writeLocalHighscore(merged.highscore);
 		await updateUser(user.uid, {
 			lastLoginAt: Date.now(),
@@ -46,6 +54,7 @@ export const useUserStore = create<UserState>()((set, get) => {
 
 	async function onSignedOut() {
 		const local = await readLocalHighscore();
+		if (currentUid() !== null) return;
 		set({ uid: null, displayName: null, highscore: local, ready: true });
 	}
 
