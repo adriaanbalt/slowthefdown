@@ -86,7 +86,6 @@ export default function HomeScreen() {
 		let heldSinceMs = 0;
 		let lastMs = performance.now();
 		let frameId = 0;
-
 		const heldTenths = (now: number) => Math.ceil((now - heldSinceMs) / 100);
 
 		const frame = () => {

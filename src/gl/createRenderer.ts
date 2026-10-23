@@ -41,12 +41,25 @@ export function createRenderer(gl: ExpoWebGLRenderingContext): WebGLRenderer {
 		getContext: () => gl,
 	} as unknown as HTMLCanvasElement;
 
-	const renderer = new WebGLRenderer({
-		canvas,
-		context: gl as unknown as WebGL2RenderingContext,
-		antialias: false,
-		depth: true,
-	});
+	if (!(gl as { supportsWebGL2?: boolean }).supportsWebGL2) {
+		throw new Error("This device's GL context has no WebGL2 support, which three.js requires.");
+	}
+	// expo-gl's WebGL2RenderingContext extends WebGLRenderingContext (browsers' doesn't), so three's
+	// constructor-only `instanceof WebGLRenderingContext` WebGL 1 guard rejects a real WebGL2 context.
+	const globals = globalThis as { WebGLRenderingContext?: unknown };
+	const webgl1 = globals.WebGLRenderingContext;
+	globals.WebGLRenderingContext = undefined;
+	let renderer: WebGLRenderer;
+	try {
+		renderer = new WebGLRenderer({
+			canvas,
+			context: gl as unknown as WebGL2RenderingContext,
+			antialias: false,
+			depth: true,
+		});
+	} finally {
+		globals.WebGLRenderingContext = webgl1;
+	}
 	renderer.setPixelRatio(1);
 	renderer.setSize(width, height, false);
 	renderer.setClearColor(0x000000, 1);

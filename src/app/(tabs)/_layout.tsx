@@ -4,7 +4,7 @@ import FloatingTabBar from "@/components/FloatingTabBar";
 import Colors from "@/constants/Colors";
 
 export const unstable_settings = {
-	initialRouteName: "index",
+	anchor: "index",
 };
 
 export default function TabsLayout() {

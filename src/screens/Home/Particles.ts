@@ -54,7 +54,7 @@ export default class Particles {
 	private readonly material: ShaderMaterial;
 
 	constructor({ width, height, depth, count, size, color, scale }: ParticlesOptions) {
-		const prefab = new TetrahedronGeometry(size).toNonIndexed();
+		const prefab = new TetrahedronGeometry(size);
 		const prefabPositions = prefab.getAttribute("position");
 		const vertsPerPrefab = prefabPositions.count;
 		const total = vertsPerPrefab * count;
