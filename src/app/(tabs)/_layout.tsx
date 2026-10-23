@@ -14,6 +14,8 @@ export default function TabsLayout() {
 			screenOptions={{
 				headerShown: false,
 				sceneStyle: { backgroundColor: Colors.backgroundColor },
+				// Keep the GL game loop scheduling reliable when switching tabs.
+				freezeOnBlur: false,
 			}}>
 			<Tabs.Screen name="times" options={{ title: "Times" }} />
 			<Tabs.Screen name="index" options={{ title: "Game" }} />

@@ -1,6 +1,6 @@
-import { useIsFocused } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { GLView, type ExpoWebGLRenderingContext } from "expo-gl";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
 	PanResponder,
 	StyleSheet,
@@ -27,18 +27,25 @@ const INTERRUPTED_S = 0.5;
 export default function HomeScreen() {
 	const highscore = useUserStore((s) => s.highscore);
 	const currentRun = useUserStore((s) => s.currentRun);
-	const isFocused = useIsFocused();
 	const insets = useSafeAreaInsets();
 
 	const pointer = useRef(new Vector2(OFF_SCREEN, OFF_SCREEN));
 	const size = useRef({ width: 1, height: 1 });
-	const focusedRef = useRef(isFocused);
+	/** When false, keep animating but don't score (tab switch / background). */
+	const scoringRef = useRef(true);
+	const resetHoldRef = useRef<(() => void) | null>(null);
 	const stopRef = useRef<(() => void) | null>(null);
 
-	useEffect(() => {
-		focusedRef.current = isFocused;
-		if (!isFocused) pointer.current.set(OFF_SCREEN, OFF_SCREEN);
-	}, [isFocused]);
+	useFocusEffect(
+		useCallback(() => {
+			scoringRef.current = true;
+			return () => {
+				scoringRef.current = false;
+				pointer.current.set(OFF_SCREEN, OFF_SCREEN);
+				resetHoldRef.current?.();
+			};
+		}, []),
+	);
 
 	useEffect(() => () => stopRef.current?.(), []);
 
@@ -87,17 +94,21 @@ export default function HomeScreen() {
 		let lastMs = performance.now();
 		let frameId = 0;
 		const heldTenths = (now: number) => Math.ceil((now - heldSinceMs) / 100);
+		resetHoldRef.current = () => {
+			heldSinceMs = 0;
+		};
 
 		const frame = () => {
 			frameId = requestAnimationFrame(frame);
 			const now = performance.now();
 			const gapS = (now - lastMs) / 1000;
+			if (gapS <= 0) return;
 			const dt = Math.min(gapS, MAX_FRAME_S);
 			lastMs = now;
-			// A hold interrupted by a tab switch or the app backgrounding doesn't count.
-			if (!focusedRef.current || gapS > INTERRUPTED_S) heldSinceMs = 0;
-			if (!focusedRef.current) return;
 			const frames = dt * 60;
+			const scoring = scoringRef.current;
+			// Long pause (background / debugger): don't count the gap as hold time.
+			if (!scoring || gapS > INTERRUPTED_S) heldSinceMs = 0;
 
 			target.update(frames);
 			camera.updateMatrixWorld();
@@ -105,12 +116,14 @@ export default function HomeScreen() {
 			const over = raycaster.intersectObjects(target.hitTargets, false).length > 0;
 
 			if (over) {
-				if (heldSinceMs === 0) heldSinceMs = Date.now();
-				else setCurrentRun(heldTenths(Date.now()));
+				if (scoring) {
+					if (heldSinceMs === 0) heldSinceMs = Date.now();
+					else setCurrentRun(heldTenths(Date.now()));
+				}
 				particles.advance(frames / 240);
 				target.over();
 			} else {
-				if (heldSinceMs !== 0) {
+				if (scoring && heldSinceMs !== 0) {
 					void recordRun(heldTenths(Date.now()));
 					heldSinceMs = 0;
 				}
@@ -124,6 +137,7 @@ export default function HomeScreen() {
 		frame();
 
 		stopRef.current = () => {
+			resetHoldRef.current = null;
 			cancelAnimationFrame(frameId);
 			target.dispose();
 			particles.dispose();
