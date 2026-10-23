@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
 import { GLView, type ExpoWebGLRenderingContext } from "expo-gl";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	PanResponder,
 	StyleSheet,
@@ -10,31 +10,28 @@ import {
 	type PanResponderInstance,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { PerspectiveCamera, Raycaster, Scene, Vector2 } from "three";
+import { Vector2 } from "three";
 
 import Colors from "@/constants/Colors";
 import { formatFocusTime } from "@/game/format";
-import { createRenderer } from "@/gl/createRenderer";
 import { useUserStore } from "@/state/userStore";
 
-import ObjectToCatch from "./ObjectToCatch";
-import Particles from "./Particles";
+import { createGameEngine, isInterruptedFrame, type GameEngine } from "./gameEngine";
 
 const OFF_SCREEN = -10;
-const MAX_FRAME_S = 0.1;
-const INTERRUPTED_S = 0.5;
 
 export default function HomeScreen() {
 	const highscore = useUserStore((s) => s.highscore);
 	const currentRun = useUserStore((s) => s.currentRun);
 	const insets = useSafeAreaInsets();
+	// Fresh native GL surface per mount (Fast Refresh won't call onContextCreate again otherwise).
+	const [glViewKey] = useState(() => Date.now());
 
 	const pointer = useRef(new Vector2(OFF_SCREEN, OFF_SCREEN));
 	const size = useRef({ width: 1, height: 1 });
-	/** When false, keep animating but don't score (tab switch / background). */
 	const scoringRef = useRef(true);
+	const engineRef = useRef<GameEngine | null>(null);
 	const resetHoldRef = useRef<(() => void) | null>(null);
-	const stopRef = useRef<(() => void) | null>(null);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -47,7 +44,40 @@ export default function HomeScreen() {
 		}, []),
 	);
 
-	useEffect(() => () => stopRef.current?.(), []);
+	const onContextCreate = useCallback((gl: ExpoWebGLRenderingContext) => {
+		engineRef.current?.dispose();
+		const { setCurrentRun, recordRun } = useUserStore.getState();
+		const engine = createGameEngine(gl, {
+			pointer: pointer.current,
+			scoring: () => scoringRef.current,
+			onHoldTick: setCurrentRun,
+			onHoldEnd: (tenths) => void recordRun(tenths),
+		});
+		engineRef.current = engine;
+		resetHoldRef.current = () => engine.resetHold();
+	}, []);
+
+	useEffect(() => {
+		let frameId = 0;
+		let lastMs = Date.now();
+		const tick = () => {
+			frameId = requestAnimationFrame(tick);
+			const engine = engineRef.current;
+			if (!engine) return;
+			const now = Date.now();
+			const gapS = (now - lastMs) / 1000;
+			lastMs = now;
+			if (isInterruptedFrame(gapS)) engine.resetHold();
+			engine.frame(gapS);
+		};
+		tick();
+		return () => {
+			cancelAnimationFrame(frameId);
+			engineRef.current?.dispose();
+			engineRef.current = null;
+			resetHoldRef.current = null;
+		};
+	}, []);
 
 	const panResponderRef = useRef<PanResponderInstance | null>(null);
 	panResponderRef.current ??= PanResponder.create({
@@ -69,89 +99,13 @@ export default function HomeScreen() {
 		size.current = { width, height };
 	}
 
-	function onContextCreate(gl: ExpoWebGLRenderingContext) {
-		const renderer = createRenderer(gl);
-		const camera = new PerspectiveCamera(100, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 20000);
-		camera.position.set(0, 0, 20);
-		const scene = new Scene();
-		const raycaster = new Raycaster();
-
-		const particles = new Particles({
-			width: 40,
-			height: 40,
-			depth: 40,
-			count: 3000,
-			size: 0.005,
-			color: 0xffffff,
-			scale: 1000,
-		});
-		particles.mesh.position.y = -15;
-		const target = new ObjectToCatch();
-		scene.add(particles.mesh, target.mesh);
-
-		const { setCurrentRun, recordRun } = useUserStore.getState();
-		let heldSinceMs = 0;
-		let lastMs = performance.now();
-		let frameId = 0;
-		const heldTenths = (now: number) => Math.ceil((now - heldSinceMs) / 100);
-		resetHoldRef.current = () => {
-			heldSinceMs = 0;
-		};
-
-		const frame = () => {
-			frameId = requestAnimationFrame(frame);
-			const now = performance.now();
-			const gapS = (now - lastMs) / 1000;
-			if (gapS <= 0) return;
-			const dt = Math.min(gapS, MAX_FRAME_S);
-			lastMs = now;
-			const frames = dt * 60;
-			const scoring = scoringRef.current;
-			// Long pause (background / debugger): don't count the gap as hold time.
-			if (!scoring || gapS > INTERRUPTED_S) heldSinceMs = 0;
-
-			target.update(frames);
-			camera.updateMatrixWorld();
-			raycaster.setFromCamera(pointer.current, camera);
-			const over = raycaster.intersectObjects(target.hitTargets, false).length > 0;
-
-			if (over) {
-				if (scoring) {
-					if (heldSinceMs === 0) heldSinceMs = Date.now();
-					else setCurrentRun(heldTenths(Date.now()));
-				}
-				particles.advance(frames / 240);
-				target.over();
-			} else {
-				if (scoring && heldSinceMs !== 0) {
-					void recordRun(heldTenths(Date.now()));
-					heldSinceMs = 0;
-				}
-				particles.advance(frames / 60);
-				target.out();
-			}
-
-			renderer.render(scene, camera);
-			gl.endFrameEXP();
-		};
-		frame();
-
-		stopRef.current = () => {
-			resetHoldRef.current = null;
-			cancelAnimationFrame(frameId);
-			target.dispose();
-			particles.dispose();
-			renderer.dispose();
-		};
-	}
-
 	return (
 		<View style={styles.container} onLayout={onLayout} {...panResponder.panHandlers}>
 			<View style={[styles.hud, { top: Math.max(30, insets.top) }]} pointerEvents="none">
 				<Text style={styles.hudText}>{formatFocusTime(highscore)}</Text>
 				<Text style={styles.hudText}>{formatFocusTime(currentRun)}</Text>
 			</View>
-			<GLView style={styles.gl} onContextCreate={onContextCreate} />
+			<GLView key={glViewKey} style={styles.gl} onContextCreate={onContextCreate} msaaSamples={0} />
 		</View>
 	);
 }
