@@ -1,15 +1,15 @@
 {
     "name": "slowthefdown",
-    "version": "8.0.9",
+    "version": "10.0.0",
     "license": "MIT",
     "description": "Meditative game",
     "author": "Adriaan Balt",
-    "private": false,
+    "private": true,
     "scripts": {
-        "start": "cd src && yarn start",
-        "build": "cd src && yarn build",
-        "expopublish": "cd src && yarn expopublish",
-        "test": "cd src && jest"
+        "start": "npm --prefix src start",
+        "ios": "npm --prefix src run ios",
+        "test": "npm --prefix src test",
+        "typecheck": "npm --prefix src run typecheck"
     },
     "repository": {
         "type": "git",

@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "users": {
+      ".indexOn": ["highscore", "focusHighscore"],
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    }
+  }
+}
