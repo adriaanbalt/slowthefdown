@@ -50,6 +50,13 @@ const config: ExpoConfig = {
 		typedRoutes: true,
 		reactCompiler: true,
 	},
+	extra: {
+		eas: {
+			projectId: "af7c27e3-70bf-4bd4-9671-e2f4ff2255cf",
+		},
+		router: {},
+	},
+	owner: "adriaanbalt",
 };
 
 export default config;
