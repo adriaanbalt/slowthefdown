@@ -115,7 +115,7 @@ export default function HomeScreen() {
 			const now = Date.now();
 			const gapS = (now - lastMs) / 1000;
 			lastMs = now;
-			if (isInterruptedFrame(gapS)) engine.resetRun();
+			if (isInterruptedFrame(gapS)) engine.onInterrupted();
 			engine.frame(gapS);
 		};
 		tick();

@@ -25,7 +25,13 @@ const INTERRUPTED_S = 0.5;
 
 export interface GameEngine {
 	frame(dtS: number): void;
+	/** Full reset when switching modes or leaving the Game tab. */
 	resetRun(): void;
+	/**
+	 * Long hitch / background: classic clears the hold; focus keeps the run
+	 * (FocusMeter already clamps dt via maxFrameS).
+	 */
+	onInterrupted(): void;
 	dispose(): void;
 }
 
@@ -92,21 +98,17 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 		},
 	);
 
-	let lastMode: GameMode | null = null;
-
 	return {
 		resetRun() {
 			classic.resetHold();
 			focus.reset();
 		},
+		onInterrupted() {
+			if (input.mode() === "classic") classic.resetHold();
+			// focus: do not reset — meter clamps dt; ending the run on a hitch is wrong
+		},
 		frame(dtS: number) {
 			const mode = input.mode();
-			if (lastMode !== null && lastMode !== mode) {
-				classic.resetHold();
-				focus.reset();
-			}
-			lastMode = mode;
-
 			const onTarget = raycast();
 			const touching = input.touching();
 
