@@ -4,7 +4,7 @@ const config: ExpoConfig = {
 	name: "Slow the F Down",
 	slug: "snack-slowitdown",
 	description: "Adriaan Balt",
-	version: "10.0.0",
+	version: "10.0.1",
 	orientation: "portrait",
 	icon: "./assets/app-icon.png",
 	scheme: "slowthefdown",
@@ -21,6 +21,7 @@ const config: ExpoConfig = {
 			"aps-environment": process.env.APS_ENVIRONMENT === "production" ? "production" : "development",
 		},
 		infoPlist: {
+			CFBundleDisplayName: "Slow the F Down",
 			UIBackgroundModes: ["remote-notification"],
 			ITSAppUsesNonExemptEncryption: false,
 		},
