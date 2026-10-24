@@ -10,7 +10,12 @@
     "ios": "expo run:ios",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build": "eas build -p ios --profile development",
+    "build:dev": "eas build -p ios --profile development-simulator",
+    "deploy:preview": "eas build -p ios --profile preview",
+    "deploy": "eas build -p ios --profile production",
+    "submit": "eas submit -p ios --profile production --latest"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

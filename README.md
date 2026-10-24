@@ -8,9 +8,30 @@
 6. Start ngrok tunnel in different terminal window `ngrok http -subdomain=slowitdown 4337`
 7. On your mobile device, open Expo and load project (having an Expo login helps)
 
-## How to publish to Apple store
+## Local iOS (dev client)
 
-1. will add this soon...
+From the repo root:
+
+```bash
+npm run ios          # pod install + Xcode build + simulator (from src/)
+npm start            # Metro with expo-dev-client
+```
+
+Generated `src/ios/` is gitignored; Expo prebuild creates it when you run `expo run:ios`.
+
+## EAS builds (same flow as GREATFLIX mobile)
+
+Run from the repo root or from `src/` (profiles in `src/eas.json`):
+
+```bash
+npm run build:dev        # iOS Simulator dev client
+npm run build            # physical device dev client
+npm run deploy:preview   # internal preview (APS production)
+npm run deploy             # App Store / TestFlight (auto-increment build number)
+npm run submit             # submit latest production build to ASC
+```
+
+`preview` and `production` set `APS_ENVIRONMENT=production` so push entitlements match TestFlight/App Store (`app.config.ts`).
 
 ## Expo + Firebase
 

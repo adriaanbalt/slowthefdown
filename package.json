@@ -9,7 +9,12 @@
         "start": "npm --prefix src start",
         "ios": "npm --prefix src run ios",
         "test": "npm --prefix src test",
-        "typecheck": "npm --prefix src run typecheck"
+        "typecheck": "npm --prefix src run typecheck",
+        "build": "npm --prefix src run build",
+        "build:dev": "npm --prefix src run build:dev",
+        "deploy:preview": "npm --prefix src run deploy:preview",
+        "deploy": "npm --prefix src run deploy",
+        "submit": "npm --prefix src run submit"
     },
     "repository": {
         "type": "git",
