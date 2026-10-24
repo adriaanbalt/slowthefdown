@@ -1,10 +1,11 @@
 {
   "rules": {
     "users": {
-      ".indexOn": ["highscore", "focusHighscore"],
       ".read": true,
+      ".indexOn": ["highscore", "focusHighscore"],
       "$uid": {
-        ".write": "auth != null && auth.uid == $uid"
+        ".write": "auth != null && auth.uid == $uid",
+        ".read": true
       }
     }
   }
