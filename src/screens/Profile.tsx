@@ -1,17 +1,41 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
+import ModeToggle from "@/components/ModeToggle";
 import Colors from "@/constants/Colors";
 import Styles from "@/constants/Styles";
-import { formatFocusTime } from "@/game/format";
+import { formatStoredScore } from "@/game/format";
 import Header from "@/shared/Header";
 import StyledButton from "@/shared/StyledButton";
+import { useSettingsStore } from "@/state/settingsStore";
 import { useUserStore } from "@/state/userStore";
+
+function ModeControls() {
+	const defaultMode = useSettingsStore((s) => s.defaultMode);
+	const sessionMode = useSettingsStore((s) => s.sessionMode);
+	const setDefaultMode = useSettingsStore((s) => s.setDefaultMode);
+	const setSessionMode = useSettingsStore((s) => s.setSessionMode);
+
+	return (
+		<View style={styles.modeBlock}>
+			<ModeToggle
+				label="Default when app opens"
+				value={defaultMode}
+				onChange={setDefaultMode}
+			/>
+			<ModeToggle label="Play mode now" value={sessionMode} onChange={setSessionMode} />
+			<Text style={styles.hint}>
+				Classic is the hold timer. Focus adds a meter, grace, and recoveries.
+			</Text>
+		</View>
+	);
+}
 
 function SignedIn() {
 	const displayName = useUserStore((s) => s.displayName);
 	const highscore = useUserStore((s) => s.highscore);
+	const focusHighscore = useUserStore((s) => s.focusHighscore);
 	const saveDisplayName = useUserStore((s) => s.saveDisplayName);
 	const logout = useUserStore((s) => s.logout);
 	const [edited, setName] = useState<string | null>(null);
@@ -35,6 +59,7 @@ function SignedIn() {
 	return (
 		<View style={styles.body}>
 			<View style={{ flexGrow: 1 }}>
+				<ModeControls />
 				<View style={styles.nameRow}>
 					<Text style={styles.nameLabel}>Name:</Text>
 					<View style={styles.nameField}>
@@ -52,8 +77,10 @@ function SignedIn() {
 					</View>
 				</View>
 				{message && <Text style={styles.message}>{message}</Text>}
-				<Text style={styles.text}>How long you slowed the F down:</Text>
-				<Text style={Styles.h1}>{formatFocusTime(highscore)}</Text>
+				<Text style={styles.text}>Classic best:</Text>
+				<Text style={Styles.h1}>{formatStoredScore(highscore)}</Text>
+				<Text style={styles.text}>Focus best:</Text>
+				<Text style={Styles.h1}>{formatStoredScore(focusHighscore)}</Text>
 			</View>
 			<View>
 				<StyledButton title="Save" onPress={save} disabled={saving || !name.trim()} />
@@ -65,11 +92,13 @@ function SignedIn() {
 
 function SignedOut() {
 	const highscore = useUserStore((s) => s.highscore);
+	const focusHighscore = useUserStore((s) => s.focusHighscore);
 	return (
 		<>
+			<ModeControls />
 			<StyledButton title="Login / Signup" onPress={() => router.push("/login-phone")} />
 			<Text style={styles.text}>
-				{`To post your time of ${formatFocusTime(highscore)} on the score board, sign up or login above`}
+				{`Classic ${formatStoredScore(highscore)} · Focus ${formatStoredScore(focusHighscore)}. Sign up to post on the boards.`}
 			</Text>
 		</>
 	);
@@ -78,10 +107,10 @@ function SignedOut() {
 export default function ProfileScreen() {
 	const uid = useUserStore((s) => s.uid);
 	return (
-		<View style={Styles.container}>
+		<ScrollView style={Styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
 			<Header style={{ paddingBottom: 0 }}>Profile</Header>
 			{uid ? <SignedIn key={uid} /> : <SignedOut />}
-		</View>
+		</ScrollView>
 	);
 }
 
@@ -89,6 +118,15 @@ const styles = StyleSheet.create({
 	body: {
 		justifyContent: "space-between",
 		flexGrow: 1,
+	},
+	modeBlock: {
+		marginTop: 12,
+		marginBottom: 8,
+	},
+	hint: {
+		color: Colors.grayColor,
+		fontSize: 13,
+		marginTop: 4,
 	},
 	nameRow: {
 		width: "100%",

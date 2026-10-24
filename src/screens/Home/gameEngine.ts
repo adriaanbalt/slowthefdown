@@ -1,31 +1,42 @@
 import type { ExpoWebGLRenderingContext } from "expo-gl";
 import { PerspectiveCamera, Raycaster, Scene, Vector2 } from "three";
 
+import type { RunSnapshot } from "@/game/RunController";
+import type { GameMode } from "@/state/settingsStore";
 import { createRenderer } from "@/gl/createRenderer";
 
+import { createClassicDriver, type ClassicDriver } from "./classicDriver";
+import { createFocusDriver, type FocusDriver } from "./focusDriver";
 import ObjectToCatch from "./ObjectToCatch";
 import Particles from "./Particles";
 
 export interface GameEngineInput {
 	pointer: Vector2;
+	touching: () => boolean;
+	mode: () => GameMode;
 	scoring: () => boolean;
-	onHoldTick: (tenths: number) => void;
-	onHoldEnd: (tenths: number) => void;
+	onHoldTick: (ms: number) => void;
+	onHoldEnd: (ms: number) => void;
+	onFocusHud: (snap: RunSnapshot) => void;
+	onFocusRunEnd: (snap: RunSnapshot) => void;
 }
 
-const MAX_FRAME_S = 0.1;
-const MIN_FRAME_S = 1 / 120;
 const INTERRUPTED_S = 0.5;
 
 export interface GameEngine {
 	frame(dtS: number): void;
-	resetHold(): void;
+	resetRun(): void;
 	dispose(): void;
 }
 
 export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngineInput): GameEngine {
 	const renderer = createRenderer(gl);
-	const camera = new PerspectiveCamera(100, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 20000);
+	const camera = new PerspectiveCamera(
+		100,
+		gl.drawingBufferWidth / gl.drawingBufferHeight,
+		0.1,
+		20000,
+	);
 	camera.position.set(0, 0, 20);
 	const scene = new Scene();
 	const raycaster = new Raycaster();
@@ -43,38 +54,66 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 	const target = new ObjectToCatch();
 	scene.add(particles.mesh, target.mesh);
 
-	let heldSinceMs = 0;
-	const heldTenths = (now: number) => Math.ceil((now - heldSinceMs) / 100);
+	const raycast = () => {
+		camera.updateMatrixWorld();
+		raycaster.setFromCamera(input.pointer, camera);
+		return raycaster.intersectObjects(target.hitTargets, false).length > 0;
+	};
+
+	const classic: ClassicDriver = createClassicDriver(
+		gl,
+		renderer,
+		scene,
+		camera,
+		raycaster,
+		target,
+		particles,
+		{
+			pointer: input.pointer,
+			scoring: input.scoring,
+			onHoldTick: input.onHoldTick,
+			onHoldEnd: input.onHoldEnd,
+		},
+		raycast,
+	);
+
+	const focus: FocusDriver = createFocusDriver(
+		gl,
+		renderer,
+		scene,
+		camera,
+		raycaster,
+		target,
+		particles,
+		{
+			scoring: input.scoring,
+			onHud: input.onFocusHud,
+			onRunEnd: input.onFocusRunEnd,
+		},
+	);
+
+	let lastMode: GameMode | null = null;
 
 	return {
-		resetHold() {
-			heldSinceMs = 0;
+		resetRun() {
+			classic.resetHold();
+			focus.reset();
 		},
 		frame(dtS: number) {
-			const dt = Math.min(Math.max(dtS, MIN_FRAME_S), MAX_FRAME_S);
-			const frames = dt * 60;
-			const scoring = input.scoring();
-			if (!scoring) heldSinceMs = 0;
+			const mode = input.mode();
+			if (lastMode !== null && lastMode !== mode) {
+				classic.resetHold();
+				focus.reset();
+			}
+			lastMode = mode;
 
-			target.update(frames);
-			camera.updateMatrixWorld();
-			raycaster.setFromCamera(input.pointer, camera);
-			const over = raycaster.intersectObjects(target.hitTargets, false).length > 0;
+			const onTarget = raycast();
+			const touching = input.touching();
 
-			if (over) {
-				if (scoring) {
-					if (heldSinceMs === 0) heldSinceMs = Date.now();
-					else input.onHoldTick(heldTenths(Date.now()));
-				}
-				particles.advance(frames / 240);
-				target.over();
+			if (mode === "focus") {
+				focus.frame(dtS, onTarget, touching);
 			} else {
-				if (scoring && heldSinceMs !== 0) {
-					input.onHoldEnd(heldTenths(Date.now()));
-					heldSinceMs = 0;
-				}
-				particles.advance(frames / 60);
-				target.out();
+				classic.frame(dtS);
 			}
 
 			renderer.render(scene, camera);

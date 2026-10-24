@@ -1,22 +1,36 @@
 import { create } from "zustand";
 
-import { watchLeaderboard } from "@/services/firebase";
+import { watchFocusLeaderboard, watchLeaderboard } from "@/services/firebase";
 import { sortLeaderboard, type LeaderboardEntry } from "@/services/highscoreMerge";
 
 interface LeaderboardState {
-	entries: LeaderboardEntry[];
-	loaded: boolean;
+	classic: LeaderboardEntry[];
+	focus: LeaderboardEntry[];
+	classicLoaded: boolean;
+	focusLoaded: boolean;
 	error: string | null;
 	subscribe: () => () => void;
 }
 
 export const useLeaderboardStore = create<LeaderboardState>()((set) => ({
-	entries: [],
-	loaded: false,
+	classic: [],
+	focus: [],
+	classicLoaded: false,
+	focusLoaded: false,
 	error: null,
-	subscribe: () =>
-		watchLeaderboard(
-			(entries) => set({ entries: sortLeaderboard(entries), loaded: true, error: null }),
-			(error) => set({ error: error.message, loaded: true }),
-		),
+	subscribe: () => {
+		const stopClassic = watchLeaderboard(
+			(entries) =>
+				set({ classic: sortLeaderboard(entries), classicLoaded: true, error: null }),
+			(error) => set({ error: error.message, classicLoaded: true }),
+		);
+		const stopFocus = watchFocusLeaderboard(
+			(entries) => set({ focus: sortLeaderboard(entries), focusLoaded: true, error: null }),
+			(error) => set({ error: error.message, focusLoaded: true }),
+		);
+		return () => {
+			stopClassic();
+			stopFocus();
+		};
+	},
 }));

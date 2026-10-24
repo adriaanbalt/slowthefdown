@@ -35,6 +35,7 @@ export interface UserRecord {
 	uid?: string;
 	displayName?: string;
 	highscore?: number;
+	focusHighscore?: number;
 	lastLoginAt?: number;
 }
 
@@ -47,20 +48,40 @@ export function updateUser(uid: string, values: UserRecord): Promise<void> {
 	return update(ref(db, `users/${uid}`), { uid, ...values });
 }
 
-export function watchLeaderboard(
+function watchOrdered(
+	childKey: "highscore" | "focusHighscore",
 	listener: (entries: LeaderboardEntry[]) => void,
 	onError: (error: Error) => void,
 ): () => void {
 	return onValue(
-		query(ref(db, "users"), orderByChild("highscore")),
+		query(ref(db, "users"), orderByChild(childKey)),
 		(snapshot) => {
 			const entries: LeaderboardEntry[] = [];
 			snapshot.forEach((child) => {
-				if (child.key) entries.push(toLeaderboardEntry(child.key, child.val()));
+				if (!child.key) return undefined;
+				const val = child.val() as Record<string, unknown> | null;
+				if (childKey === "focusHighscore" && !(val && "focusHighscore" in val)) {
+					return undefined;
+				}
+				entries.push(toLeaderboardEntry(child.key, val, childKey));
 				return undefined;
 			});
 			listener(entries);
 		},
 		onError,
 	);
+}
+
+export function watchLeaderboard(
+	listener: (entries: LeaderboardEntry[]) => void,
+	onError: (error: Error) => void,
+): () => void {
+	return watchOrdered("highscore", listener, onError);
+}
+
+export function watchFocusLeaderboard(
+	listener: (entries: LeaderboardEntry[]) => void,
+	onError: (error: Error) => void,
+): () => void {
+	return watchOrdered("focusHighscore", listener, onError);
 }

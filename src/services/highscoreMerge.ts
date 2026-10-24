@@ -27,12 +27,16 @@ export interface LeaderboardEntry {
 	highscore: number;
 }
 
-export function toLeaderboardEntry(uid: string, value: unknown): LeaderboardEntry {
-	const v = (value ?? {}) as { displayName?: unknown; highscore?: unknown };
+export function toLeaderboardEntry(
+	uid: string,
+	value: unknown,
+	scoreKey: "highscore" | "focusHighscore" = "highscore",
+): LeaderboardEntry {
+	const v = (value ?? {}) as Record<string, unknown>;
 	return {
 		uid,
 		displayName: typeof v.displayName === "string" ? v.displayName : "",
-		highscore: parseHighscore(v.highscore),
+		highscore: parseHighscore(v[scoreKey]),
 	};
 }
 

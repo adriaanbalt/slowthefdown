@@ -8,20 +8,30 @@ import {
 	watchAuth,
 	type User,
 } from "@/services/firebase";
-import { isNewBest, mergeHighscore } from "@/services/highscoreMerge";
-import { clearLegacyUid, readLocalHighscore, writeLocalHighscore } from "@/services/localHighscore";
+import { submitClassicScore, submitFocusScore } from "@/services/highscores";
+import { mergeHighscore } from "@/services/highscoreMerge";
+import {
+	clearLegacyUid,
+	readLocalFocusHighscore,
+	readLocalHighscore,
+	writeLocalFocusHighscore,
+	writeLocalHighscore,
+} from "@/services/localHighscore";
 
 interface UserState {
 	ready: boolean;
 	uid: string | null;
 	displayName: string | null;
-	/** Best run, in tenths of a second. */
+	/** Classic best, tenths of a second. */
 	highscore: number;
-	/** The run in progress (or the last one), in tenths of a second. */
+	/** Focus best, tenths of weighted focus time. */
+	focusHighscore: number;
+	/** Classic run in progress (or last), milliseconds. */
 	currentRun: number;
 	init: () => () => void;
-	setCurrentRun: (tenths: number) => void;
-	recordRun: (tenths: number) => Promise<void>;
+	setCurrentRun: (ms: number) => void;
+	recordRun: (ms: number) => Promise<void>;
+	recordFocusScore: (tenths: number) => Promise<void>;
 	saveDisplayName: (displayName: string) => Promise<void>;
 	logout: () => Promise<void>;
 }
@@ -33,29 +43,58 @@ function reportError(context: string) {
 export const useUserStore = create<UserState>()((set, get) => {
 	async function onSignedIn(user: User) {
 		set({ uid: user.uid });
-		const local = await readLocalHighscore();
+		const [localClassic, localFocus] = await Promise.all([
+			readLocalHighscore(),
+			readLocalFocusHighscore(),
+		]);
 		let record: Awaited<ReturnType<typeof fetchUser>>;
 		try {
 			record = await fetchUser(user.uid);
 		} catch (error) {
-			// Offline with a cached session: play on the device best and merge on the next launch.
-			if (currentUid() === user.uid) set({ highscore: Math.max(local, get().highscore), ready: true });
+			if (currentUid() === user.uid) {
+				set({
+					highscore: Math.max(localClassic, get().highscore),
+					focusHighscore: Math.max(localFocus, get().focusHighscore),
+					ready: true,
+				});
+			}
 			throw error;
 		}
 		if (currentUid() !== user.uid) return;
-		const merged = mergeHighscore(Math.max(local, get().highscore), record?.highscore);
-		set({ uid: user.uid, displayName: record?.displayName ?? null, highscore: merged.highscore, ready: true });
-		await writeLocalHighscore(merged.highscore);
+		const classic = mergeHighscore(Math.max(localClassic, get().highscore), record?.highscore);
+		const focus = mergeHighscore(
+			Math.max(localFocus, get().focusHighscore),
+			record?.focusHighscore,
+		);
+		set({
+			uid: user.uid,
+			displayName: record?.displayName ?? null,
+			highscore: classic.highscore,
+			focusHighscore: focus.highscore,
+			ready: true,
+		});
+		await writeLocalHighscore(classic.highscore);
+		await writeLocalFocusHighscore(focus.highscore);
 		await updateUser(user.uid, {
 			lastLoginAt: Date.now(),
-			...(merged.pushToServer && { highscore: merged.highscore }),
+			...(classic.pushToServer && { highscore: classic.highscore }),
+			...(focus.pushToServer && { focusHighscore: focus.highscore }),
 		});
 	}
 
 	async function onSignedOut() {
-		const local = await readLocalHighscore();
+		const [localClassic, localFocus] = await Promise.all([
+			readLocalHighscore(),
+			readLocalFocusHighscore(),
+		]);
 		if (currentUid() !== null) return;
-		set({ uid: null, displayName: null, highscore: local, ready: true });
+		set({
+			uid: null,
+			displayName: null,
+			highscore: localClassic,
+			focusHighscore: localFocus,
+			ready: true,
+		});
 	}
 
 	return {
@@ -63,6 +102,7 @@ export const useUserStore = create<UserState>()((set, get) => {
 		uid: null,
 		displayName: null,
 		highscore: 0,
+		focusHighscore: 0,
 		currentRun: 0,
 
 		init: () =>
@@ -71,17 +111,27 @@ export const useUserStore = create<UserState>()((set, get) => {
 				work.catch(reportError("Failed to load user"));
 			}),
 
-		setCurrentRun: (tenths) => {
-			if (get().currentRun !== tenths) set({ currentRun: tenths });
+		setCurrentRun: (ms) => {
+			if (get().currentRun !== ms) set({ currentRun: ms });
 		},
 
-		recordRun: async (tenths) => {
-			const local = await readLocalHighscore();
-			if (!isNewBest(tenths, local, get().highscore)) return;
-			set({ highscore: tenths });
-			await writeLocalHighscore(tenths);
-			const uid = get().uid;
-			if (uid) await updateUser(uid, { highscore: tenths }).catch(reportError("Failed to post highscore"));
+		recordRun: async (ms) => {
+			const tenths = Math.ceil(Math.max(0, ms) / 100);
+			try {
+				const next = await submitClassicScore(tenths, get().uid, get().highscore);
+				if (next !== null) set({ highscore: next });
+			} catch (error) {
+				reportError("Failed to post highscore")(error);
+			}
+		},
+
+		recordFocusScore: async (tenths) => {
+			try {
+				const next = await submitFocusScore(tenths, get().uid, get().focusHighscore);
+				if (next !== null) set({ focusHighscore: next });
+			} catch (error) {
+				reportError("Failed to post focus highscore")(error);
+			}
 		},
 
 		saveDisplayName: async (displayName) => {
@@ -94,9 +144,15 @@ export const useUserStore = create<UserState>()((set, get) => {
 
 		logout: async () => {
 			await clearLegacyUid();
-			// The old app reset the device best on logout so the next person starts at 0.
 			await writeLocalHighscore(0);
-			set({ uid: null, displayName: null, highscore: 0, currentRun: 0 });
+			await writeLocalFocusHighscore(0);
+			set({
+				uid: null,
+				displayName: null,
+				highscore: 0,
+				focusHighscore: 0,
+				currentRun: 0,
+			});
 			await logOut();
 		},
 	};

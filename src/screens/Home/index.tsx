@@ -4,57 +4,105 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	PanResponder,
 	StyleSheet,
-	Text,
 	View,
 	type LayoutChangeEvent,
 	type PanResponderInstance,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Vector2 } from "three";
 
 import Colors from "@/constants/Colors";
-import { formatFocusTime } from "@/game/format";
+import type { RunSnapshot } from "@/game/RunController";
+import { recordRunTelemetry } from "@/game/telemetry";
+import { useSettingsStore } from "@/state/settingsStore";
 import { useUserStore } from "@/state/userStore";
 
+import DebugPanel from "./DebugPanel";
+import GameHud, { type FocusHudState } from "./GameHud";
 import { createGameEngine, isInterruptedFrame, type GameEngine } from "./gameEngine";
+import RunSummary, { type RunSummaryData } from "./RunSummary";
 
 const OFF_SCREEN = -10;
+const HUD_INTERVAL_MS = 100;
 
 export default function HomeScreen() {
 	const highscore = useUserStore((s) => s.highscore);
+	const focusHighscore = useUserStore((s) => s.focusHighscore);
 	const currentRun = useUserStore((s) => s.currentRun);
-	const insets = useSafeAreaInsets();
-	// Fresh native GL surface per mount (Fast Refresh won't call onContextCreate again otherwise).
+	const sessionMode = useSettingsStore((s) => s.sessionMode);
 	const [glViewKey] = useState(() => Date.now());
+	const [focusHud, setFocusHud] = useState<FocusHudState | null>(null);
+	const [summary, setSummary] = useState<RunSummaryData | null>(null);
+	const [debugOpen, setDebugOpen] = useState(false);
 
 	const pointer = useRef(new Vector2(OFF_SCREEN, OFF_SCREEN));
 	const size = useRef({ width: 1, height: 1 });
+	const touchingRef = useRef(false);
 	const scoringRef = useRef(true);
 	const engineRef = useRef<GameEngine | null>(null);
-	const resetHoldRef = useRef<(() => void) | null>(null);
+	const modeRef = useRef(sessionMode);
+	const lastHudMs = useRef(0);
+	const fingerCount = useRef(0);
+	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	modeRef.current = sessionMode;
+
+	useEffect(() => {
+		engineRef.current?.resetRun();
+		setFocusHud(null);
+		setSummary(null);
+		useUserStore.getState().setCurrentRun(0);
+	}, [sessionMode]);
 
 	useFocusEffect(
 		useCallback(() => {
 			scoringRef.current = true;
 			return () => {
 				scoringRef.current = false;
+				touchingRef.current = false;
 				pointer.current.set(OFF_SCREEN, OFF_SCREEN);
-				resetHoldRef.current?.();
+				engineRef.current?.resetRun();
 			};
 		}, []),
 	);
 
 	const onContextCreate = useCallback((gl: ExpoWebGLRenderingContext) => {
 		engineRef.current?.dispose();
-		const { setCurrentRun, recordRun } = useUserStore.getState();
+		const { setCurrentRun, recordRun, recordFocusScore } = useUserStore.getState();
 		const engine = createGameEngine(gl, {
 			pointer: pointer.current,
+			touching: () => touchingRef.current,
+			mode: () => modeRef.current,
 			scoring: () => scoringRef.current,
 			onHoldTick: setCurrentRun,
-			onHoldEnd: (tenths) => void recordRun(tenths),
+			onHoldEnd: (ms) => void recordRun(ms),
+			onFocusHud: (snap: RunSnapshot) => {
+				const now = Date.now();
+				if (now - lastHudMs.current < HUD_INTERVAL_MS) return;
+				lastHudMs.current = now;
+				setFocusHud({
+					focus: snap.focus,
+					focusTimeMs: snap.focusTime * 1000,
+					isDraining: snap.isDraining,
+					phase: snap.phase,
+				});
+			},
+			onFocusRunEnd: (snap: RunSnapshot) => {
+				void recordFocusScore(snap.scoreTenths);
+				void recordRunTelemetry({
+					focusTenths: snap.scoreTenths,
+					runTimeS: snap.runTime,
+					recoveries: snap.recoveries,
+					difficulty: snap.difficulty,
+				});
+				setSummary({
+					focusTenths: snap.scoreTenths,
+					runTimeS: snap.runTime,
+					recoveries: snap.recoveries,
+					bestTenths: Math.max(useUserStore.getState().focusHighscore, snap.scoreTenths),
+				});
+			},
 		});
 		engineRef.current = engine;
-		resetHoldRef.current = () => engine.resetHold();
 	}, []);
 
 	useEffect(() => {
@@ -67,7 +115,7 @@ export default function HomeScreen() {
 			const now = Date.now();
 			const gapS = (now - lastMs) / 1000;
 			lastMs = now;
-			if (isInterruptedFrame(gapS)) engine.resetHold();
+			if (isInterruptedFrame(gapS)) engine.resetRun();
 			engine.frame(gapS);
 		};
 		tick();
@@ -75,17 +123,45 @@ export default function HomeScreen() {
 			cancelAnimationFrame(frameId);
 			engineRef.current?.dispose();
 			engineRef.current = null;
-			resetHoldRef.current = null;
 		};
 	}, []);
+
+	function clearLongPress() {
+		if (longPressTimer.current) {
+			clearTimeout(longPressTimer.current);
+			longPressTimer.current = null;
+		}
+	}
 
 	const panResponderRef = useRef<PanResponderInstance | null>(null);
 	panResponderRef.current ??= PanResponder.create({
 		onStartShouldSetPanResponder: () => true,
-		onPanResponderGrant: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
-		onPanResponderMove: ({ nativeEvent }) => setPointer(nativeEvent.locationX, nativeEvent.locationY),
-		onPanResponderRelease: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
-		onPanResponderTerminate: () => pointer.current.set(OFF_SCREEN, OFF_SCREEN),
+		onPanResponderGrant: ({ nativeEvent }) => {
+			fingerCount.current = nativeEvent.touches?.length ?? 1;
+			touchingRef.current = true;
+			setPointer(nativeEvent.locationX, nativeEvent.locationY);
+			clearLongPress();
+			if (fingerCount.current >= 3) {
+				longPressTimer.current = setTimeout(() => setDebugOpen(true), 600);
+			}
+		},
+		onPanResponderMove: ({ nativeEvent }) => {
+			fingerCount.current = nativeEvent.touches?.length ?? 1;
+			setPointer(nativeEvent.locationX, nativeEvent.locationY);
+			if (fingerCount.current < 3) clearLongPress();
+		},
+		onPanResponderRelease: () => {
+			clearLongPress();
+			fingerCount.current = 0;
+			touchingRef.current = false;
+			pointer.current.set(OFF_SCREEN, OFF_SCREEN);
+		},
+		onPanResponderTerminate: () => {
+			clearLongPress();
+			fingerCount.current = 0;
+			touchingRef.current = false;
+			pointer.current.set(OFF_SCREEN, OFF_SCREEN);
+		},
 	});
 	const panResponder = panResponderRef.current;
 
@@ -101,11 +177,25 @@ export default function HomeScreen() {
 
 	return (
 		<View style={styles.container} onLayout={onLayout} {...panResponder.panHandlers}>
-			<View style={[styles.hud, { top: Math.max(30, insets.top) }]} pointerEvents="none">
-				<Text style={styles.hudText}>{formatFocusTime(highscore)}</Text>
-				<Text style={styles.hudText}>{formatFocusTime(currentRun)}</Text>
-			</View>
+			<GameHud
+				mode={sessionMode}
+				classicBestTenths={highscore}
+				classicRunMs={currentRun}
+				focusBestTenths={focusHighscore}
+				focusHud={focusHud}
+			/>
 			<GLView key={glViewKey} style={styles.gl} onContextCreate={onContextCreate} msaaSamples={0} />
+			{summary && sessionMode === "focus" ? (
+				<RunSummary
+					data={summary}
+					onDismiss={() => {
+						setSummary(null);
+						engineRef.current?.resetRun();
+						setFocusHud(null);
+					}}
+				/>
+			) : null}
+			{debugOpen ? <DebugPanel onClose={() => setDebugOpen(false)} /> : null}
 		</View>
 	);
 }
@@ -117,19 +207,5 @@ const styles = StyleSheet.create({
 	},
 	gl: {
 		flex: 1,
-	},
-	hud: {
-		position: "absolute",
-		zIndex: 1000,
-		left: 0,
-		width: "100%",
-		alignItems: "center",
-	},
-	hudText: {
-		color: "#fff",
-		fontSize: 16,
-		lineHeight: 25,
-		width: "100%",
-		textAlign: "center",
 	},
 });

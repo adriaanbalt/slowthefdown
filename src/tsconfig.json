@@ -7,5 +7,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "vitest.config.mts", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "vitest.config.mts", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["scripts/**", "node_modules"]
 }

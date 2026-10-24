@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Colors from "@/constants/Colors";
 import Loader from "@/shared/Loader";
 import { useLeaderboardStore } from "@/state/leaderboardStore";
+import { useSettingsStore } from "@/state/settingsStore";
 import { useUserStore } from "@/state/userStore";
 
 void SplashScreen.preventAutoHideAsync();
@@ -23,6 +24,7 @@ const SPLASH_TIMEOUT_MS = 3000;
 
 export default function RootLayout() {
 	const ready = useUserStore((s) => s.ready);
+	const settingsHydrated = useSettingsStore((s) => s.hydrated);
 
 	useEffect(() => {
 		const stopUser = useUserStore.getState().init();
@@ -34,6 +36,10 @@ export default function RootLayout() {
 			clearTimeout(splashTimeout);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (settingsHydrated) useSettingsStore.getState().applyDefaultOnLaunch();
+	}, [settingsHydrated]);
 
 	useEffect(() => {
 		if (ready) void SplashScreen.hideAsync();
