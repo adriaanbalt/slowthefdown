@@ -15,8 +15,20 @@ describe("formatTimerMs", () => {
 });
 
 describe("formatStoredScore", () => {
-	it("maps tenths to the same 8-digit ms display", () => {
-		expect(formatStoredScore(1234)).toBe("00123400");
+	it.each([
+		[0, "0:00"],
+		[7, "0:00"],
+		[10, "0:01"],
+		[50, "0:05"],
+		[600, "1:00"],
+		[1234, "2:03"],
+		[35999, "59:59"],
+		[36000, "1:00:00"],
+		[36610, "1:01:01"],
+		[360000, "10:00:00"],
+		[-5, "0:00"],
+	])("%i tenths -> %s", (tenths, expected) => {
+		expect(formatStoredScore(tenths)).toBe(expected);
 	});
 });
 

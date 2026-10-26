@@ -7,9 +7,22 @@ export function formatTimerMs(ms: number): string {
 	return String(clamped).padStart(TIMER_DIGITS, "0");
 }
 
-/** Leaderboard / profile: stored scores are tenths of a second. */
+/**
+ * Leaderboard / profile. Stored scores are tenths of a second.
+ * Whole seconds, as H:MM:SS. Hours are omitted when zero, and neither
+ * hours nor minutes get a leading zero.
+ */
 export function formatStoredScore(tenths: number): string {
-	return formatTimerMs(Math.max(0, Math.floor(tenths)) * 100);
+	const totalSeconds = Math.floor(Math.max(0, Math.floor(tenths)) / 10);
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = totalSeconds % 60;
+	const ss = String(seconds).padStart(2, "0");
+	if (hours > 0) {
+		const mm = String(minutes).padStart(2, "0");
+		return `${hours}:${mm}:${ss}`;
+	}
+	return `${minutes}:${ss}`;
 }
 
 /** @deprecated Prefer formatTimerMs / formatStoredScore. Kept for focus-meter tests. */

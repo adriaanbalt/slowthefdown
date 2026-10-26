@@ -1,9 +1,10 @@
 import { DarkTheme, Stack, ThemeProvider, type Theme } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import Colors from "@/constants/Colors";
+import { applyLaunchUpdate, type LaunchUpdateStatus } from "@/services/updates";
 import Loader from "@/shared/Loader";
 import { useLeaderboardStore } from "@/state/leaderboardStore";
 import { useSettingsStore } from "@/state/settingsStore";
@@ -25,11 +26,14 @@ const SPLASH_TIMEOUT_MS = 3000;
 export default function RootLayout() {
 	const ready = useUserStore((s) => s.ready);
 	const settingsHydrated = useSettingsStore((s) => s.hydrated);
+	const [updateStatus, setUpdateStatus] = useState<LaunchUpdateStatus>("idle");
+	const [launchUpdateDone, setLaunchUpdateDone] = useState(false);
 
 	useEffect(() => {
 		const stopUser = useUserStore.getState().init();
 		const stopLeaderboard = useLeaderboardStore.getState().subscribe();
 		const splashTimeout = setTimeout(() => void SplashScreen.hideAsync(), SPLASH_TIMEOUT_MS);
+		void applyLaunchUpdate(setUpdateStatus).finally(() => setLaunchUpdateDone(true));
 		return () => {
 			stopUser();
 			stopLeaderboard();
@@ -42,8 +46,8 @@ export default function RootLayout() {
 	}, [settingsHydrated]);
 
 	useEffect(() => {
-		if (ready) void SplashScreen.hideAsync();
-	}, [ready]);
+		if (ready && launchUpdateDone) void SplashScreen.hideAsync();
+	}, [ready, launchUpdateDone]);
 
 	return (
 		<ThemeProvider value={theme}>
@@ -52,7 +56,7 @@ export default function RootLayout() {
 				<Stack.Screen name="(tabs)" />
 				<Stack.Screen name="login-phone" options={{ presentation: "modal" }} />
 			</Stack>
-			<Loader />
+			<Loader status={updateStatus} />
 		</ThemeProvider>
 	);
 }

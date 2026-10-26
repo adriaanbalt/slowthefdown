@@ -1,0 +1,34 @@
+---
+description: Slow the F Down — Expo game app conventions (src/ game layer, Zustand, Firebase RTDB, EAS)
+alwaysApply: false
+globs: src/**/*.{ts,tsx},database.rules.json,docs/**/*.md
+---
+
+# Slow the F Down — Conventions (quick reference)
+
+Full doc: [docs/CODING_CONVENTIONS.md](../../docs/CODING_CONVENTIONS.md).
+
+## Layout
+- **Ship from `src/`** (Expo 58, expo-router). Root `package.json` delegates scripts. **`server/`** = legacy GraphQL/Functions; **mobile does not call it** — RTDB via `services/firebase.ts`.
+- `@/*` → `src/*`. `ios/` is gitignored (prebuild). Config: `app.config.ts` + `eas.json`.
+
+## Layers
+- **`game/`** — pure rules (`RunController`, `FocusMeter`, tuning). Vitest-first. No React, GL, or Firebase.
+- **`screens/Home/`** — `gameEngine` + GL/Three + drivers; `Home/index.tsx` = `GLView` + input + HUD.
+- **`state/`** — Zustand only (`userStore`, `leaderboardStore`, `settingsStore`). Init in `app/_layout.tsx`.
+- **`services/`** — Firebase auth/RTDB, highscores, SecureStore locals. **Only layer** that imports `@react-native-firebase/*` for data/auth.
+
+## Scoring
+- Persisted bests = **integer tenths** (legacy). `parseHighscore` / `mergeHighscore` / `isNewBest` in `highscoreMerge.ts`. Submit: local SecureStore → `updateUser` when signed in. MS → tenths at boundary (`recordRun`).
+
+## Auth & RTDB
+- Phone auth; writes only `users/{auth.uid}`. Rules: public read for leaderboards, self write — see `database.rules.json`. Re-check `currentUid()` after awaits in auth flows.
+
+## Routing
+- Thin `app/` routes → `screens/`. Tabs: `freezeOnBlur: false` on game tab for GL scheduling.
+
+## Tests & quality
+- `npm test` → Vitest: `game/**/*.test.ts`, `services/**/*.test.ts`. `npm run typecheck` in `src/`. No secrets in git (rotate tracked `serviceAccountKey.json` — see Known Issues in doc).
+
+## Principles
+- Expo/Firebase/Zustand/SecureStore primitives over custom glue. Game logic testable without device. Fail soft on storage/network (`console.warn`); don't mask bugs in pure `game/` code.

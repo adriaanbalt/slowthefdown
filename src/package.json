@@ -1,6 +1,6 @@
 {
   "name": "slowthefdown",
-  "version": "10.0.1",
+  "version": "10.0.3",
   "description": "Meditative game",
   "author": "Adriaan Balt",
   "private": true,
@@ -14,8 +14,10 @@
     "build": "eas build -p ios --profile development",
     "build:dev": "eas build -p ios --profile development-simulator",
     "deploy:preview": "eas build -p ios --profile preview",
-    "deploy": "eas build -p ios --profile production",
-    "submit": "eas submit -p ios --profile production --latest"
+    "deploy": "eas build -p ios --profile production --auto-submit",
+    "submit": "eas submit -p ios --profile production --latest",
+    "update:preview": "eas update --channel preview",
+    "update:production": "eas update --channel production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

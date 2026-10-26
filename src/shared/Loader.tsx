@@ -1,31 +1,14 @@
-import * as Updates from "expo-updates";
-import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-export default function Loader() {
-	const [updating, setUpdating] = useState(false);
+import type { LaunchUpdateStatus } from "@/services/updates";
 
-	useEffect(() => {
-		if (__DEV__ || !Updates.isEnabled) return;
-		let cancelled = false;
-		(async () => {
-			try {
-				const update = await Updates.checkForUpdateAsync();
-				if (!update.isAvailable || cancelled) return;
-				setUpdating(true);
-				await Updates.fetchUpdateAsync();
-				setTimeout(() => void Updates.reloadAsync(), 1000);
-			} catch (error) {
-				console.warn("Update check failed", error);
-				if (!cancelled) setUpdating(false);
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
-	}, []);
+type Props = {
+	status: LaunchUpdateStatus;
+};
 
-	if (!updating) return null;
+export default function Loader({ status }: Props) {
+	const visible = status === "downloading" || status === "reloading";
+	if (!visible) return null;
 
 	return (
 		<View style={styles.container}>

@@ -4,7 +4,16 @@ const config: ExpoConfig = {
 	name: "Slow the F Down",
 	slug: "snack-slowitdown",
 	description: "Adriaan Balt",
-	version: "10.0.1",
+	version: "10.0.3",
+	runtimeVersion: {
+		policy: "appVersion",
+	},
+	updates: {
+		url: "https://u.expo.dev/af7c27e3-70bf-4bd4-9671-e2f4ff2255cf",
+		enabled: true,
+		checkAutomatically: "ON_ERROR_RECOVERY",
+		fallbackToCacheTimeout: 0,
+	},
 	orientation: "portrait",
 	icon: "./assets/app-icon.png",
 	scheme: "slowthefdown",
@@ -13,7 +22,6 @@ const config: ExpoConfig = {
 	platforms: ["ios"],
 	ios: {
 		bundleIdentifier: "com.balt.slowitdown",
-		buildNumber: "1",
 		supportsTablet: true,
 		googleServicesFile: "./GoogleService-Info.plist",
 		entitlements: {
@@ -21,12 +29,12 @@ const config: ExpoConfig = {
 			"aps-environment": process.env.APS_ENVIRONMENT === "production" ? "production" : "development",
 		},
 		infoPlist: {
-			CFBundleDisplayName: "Slow the F Down",
 			UIBackgroundModes: ["remote-notification"],
 			ITSAppUsesNonExemptEncryption: false,
 		},
 	},
 	plugins: [
+		"./plugins/withIosAppName.js",
 		"expo-router",
 		[
 			"expo-splash-screen",
