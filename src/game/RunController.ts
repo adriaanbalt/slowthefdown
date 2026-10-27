@@ -1,13 +1,8 @@
 import { type Tuning, tuning as liveTuning } from "./constants";
 import { type DifficultyParams, difficultyAt, paramsAt } from "./difficulty";
 import { FocusMeter, type MeterEvent, type MeterInput, type MeterPhase } from "./FocusMeter";
-import { createRng } from "./random";
-import {
-	FIXED_WORLDS,
-	RELEASED_POOL,
-	type WorldId,
-	WorldSchedule,
-} from "./worldSchedule";
+import type { WorldId } from "./worldSchedule";
+import { WorldRotation } from "./worldRotation";
 
 export type RunEvent = MeterEvent | "worldChange";
 
@@ -42,17 +37,20 @@ export interface RunControllerOptions {
 // what the finger is doing and draws whatever the snapshot says.
 export class RunController {
 	private readonly tuning: Tuning;
-	private readonly options: RunControllerOptions;
 	private readonly meter: FocusMeter;
-	private schedule: WorldSchedule;
+	private readonly worldRotation: WorldRotation;
 	private runs = 0;
-	private lastSwitchRunTime = -Infinity;
 
 	constructor(options: RunControllerOptions = {}) {
-		this.options = options;
 		this.tuning = options.tuning ?? liveTuning;
 		this.meter = new FocusMeter(this.tuning);
-		this.schedule = this.createSchedule();
+		this.worldRotation = new WorldRotation({
+			tuning: this.tuning,
+			seed: options.seed,
+			startWorld: options.startWorld,
+			fixed: options.fixedWorlds,
+			pool: options.worldPool,
+		});
 	}
 
 	get phase(): MeterPhase {
@@ -62,8 +60,7 @@ export class RunController {
 	reset(): void {
 		this.meter.reset();
 		this.runs += 1;
-		this.schedule = this.createSchedule();
-		this.lastSwitchRunTime = -Infinity;
+		this.worldRotation.reset(this.runs);
 	}
 
 	step(dtS: number, input: MeterInput): RunSnapshot {
@@ -78,14 +75,13 @@ export class RunController {
 		const params = paramsAt(difficulty, this.tuning);
 
 		if (meter.phase === "running") {
-			// the fade cooldown is wall-clock run time, not focus time: a fade
-			// keeps playing through slips
-			const canSwitch =
-				input.onTarget &&
-				meter.focus > this.tuning.worldMinFocus &&
-				meter.runTime - this.lastSwitchRunTime >= this.tuning.worldFadeS;
-			if (this.schedule.update(meter.focusTime, canSwitch) !== null) {
-				this.lastSwitchRunTime = meter.runTime;
+			if (
+				this.worldRotation.step(
+					meter.focusTime,
+					meter.runTime,
+					input.onTarget && meter.focus > this.tuning.worldMinFocus,
+				) !== null
+			) {
 				events.push("worldChange");
 			}
 		}
@@ -103,8 +99,8 @@ export class RunController {
 			isDraining: meter.isDraining,
 			inGrace: meter.inGrace,
 			isLow: meter.isLow,
-			world: this.schedule.current,
-			worldsReached: this.schedule.reached,
+			world: this.worldRotation.current,
+			worldsReached: this.worldRotation.reached,
 			events,
 		};
 	}
@@ -112,17 +108,5 @@ export class RunController {
 	private targetSpeed(input: MeterInput, params: DifficultyParams): number {
 		if (this.meter.phase !== "running") return this.tuning.idleSpeed;
 		return input.onTarget ? params.heldSpeed : params.looseSpeed;
-	}
-
-	private createSchedule(): WorldSchedule {
-		const { seed, startWorld, fixedWorlds, worldPool } = this.options;
-		let fixed = fixedWorlds ?? FIXED_WORLDS;
-		if (startWorld) fixed = [startWorld, ...fixed.filter((w) => w !== startWorld)];
-		return new WorldSchedule({
-			fixed,
-			pool: worldPool ?? RELEASED_POOL,
-			rng: createRng(seed === undefined ? Date.now() : seed + this.runs),
-			tuning: this.tuning,
-		});
 	}
 }
