@@ -8,7 +8,7 @@ import { createRenderer } from "@/gl/createRenderer";
 import { createClassicDriver, type ClassicDriver } from "./classicDriver";
 import { createFocusDriver, type FocusDriver } from "./focusDriver";
 import ObjectToCatch from "./ObjectToCatch";
-import Particles from "./Particles";
+import WorldLayer from "./worlds/WorldLayer";
 
 export interface GameEngineInput {
 	pointer: Vector2;
@@ -47,18 +47,10 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 	const scene = new Scene();
 	const raycaster = new Raycaster();
 
-	const particles = new Particles({
-		width: 40,
-		height: 40,
-		depth: 40,
-		count: 3000,
-		size: 0.005,
-		color: 0xffffff,
-		scale: 1000,
-	});
-	particles.mesh.position.y = -15;
+	const worlds = new WorldLayer(scene, renderer);
+	worlds.show("particles");
 	const target = new ObjectToCatch();
-	scene.add(particles.mesh, target.mesh);
+	scene.add(target.mesh);
 
 	const raycast = () => {
 		camera.updateMatrixWorld();
@@ -73,7 +65,6 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 		camera,
 		raycaster,
 		target,
-		particles,
 		{
 			pointer: input.pointer,
 			scoring: input.scoring,
@@ -90,7 +81,6 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 		camera,
 		raycaster,
 		target,
-		particles,
 		{
 			scoring: input.scoring,
 			onHud: input.onFocusHud,
@@ -112,18 +102,22 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 			const onTarget = raycast();
 			const touching = input.touching();
 
-			if (mode === "focus") {
-				focus.frame(dtS, onTarget, touching);
-			} else {
-				classic.frame(dtS);
-			}
+			const result =
+				mode === "focus"
+					? focus.frame(dtS, onTarget, touching)
+					: classic.frame(dtS);
+
+			if (result.changed) worlds.transitionTo(result.world);
+			else if (result.world !== worlds.target) worlds.show(result.world);
+
+			worlds.update(dtS, result.pace);
 
 			renderer.render(scene, camera);
 			gl.endFrameEXP();
 		},
 		dispose() {
 			target.dispose();
-			particles.dispose();
+			worlds.dispose();
 			renderer.dispose();
 		},
 	};

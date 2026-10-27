@@ -59,9 +59,9 @@ describe("RunController", () => {
 		expect(last.params.heldSpeed).toBeGreaterThan(0.21);
 	});
 
-	it("changes world after 45 s of focus time while holding", () => {
+	it("changes world after 30 s of focus time while holding", () => {
 		const run = controller();
-		const early = play(run, 44, HOLD);
+		const early = play(run, 29, HOLD);
 		expect(early.events).not.toContain("worldChange");
 		const later = play(run, 2, HOLD);
 		expect(later.events).toContain("worldChange");
@@ -73,11 +73,11 @@ describe("RunController", () => {
 		// a high threshold keeps focus under it for the whole climb back
 		const tuning = { ...cloneTuning(), worldMinFocus: 0.95 };
 		const run = new RunController({ tuning, seed: 1 });
-		play(run, 44, HOLD);
+		play(run, 29, HOLD);
 		// 1.3 s off target drops focus to about 46%
 		play(run, 1.3, SLIP);
 		const blocked = play(run, 2, HOLD);
-		expect(blocked.last.focusTime).toBeGreaterThan(45);
+		expect(blocked.last.focusTime).toBeGreaterThan(30);
 		expect(blocked.last.focus).toBeLessThan(0.95);
 		expect(blocked.events).not.toContain("worldChange");
 		const resumed = play(run, 1, HOLD);

@@ -143,7 +143,8 @@ All new gameplay rules belong here first, with Vitest coverage, before touching 
 ### Bridge layer — `screens/Home/`
 
 - **`gameEngine.ts`**: creates Three.js scene, `createClassicDriver` / `createFocusDriver`, wires `RunController` to GL frame loop, pointer input, and callbacks (`onHoldEnd`, `onFocusRunEnd`).
-- **`classicDriver.ts` / `focusDriver.ts`**: mode-specific behavior on top of the same engine.
+- **`classicDriver.ts` / `focusDriver.ts`**: mode-specific behavior on top of the same engine; each `frame()` returns a `DriverFrame` (`world`, `changed`, `pace`).
+- **`worlds/`**: one scene per scheduled world; `WorldLayer` crossfades between them from the driver's `DriverFrame`.
 - **`Home/index.tsx`**: `GLView`, `PanResponder`, HUD throttling (`HUD_INTERVAL_MS`), tab focus via `useFocusEffect`, calls `useUserStore` for scores.
 
 **Rules**

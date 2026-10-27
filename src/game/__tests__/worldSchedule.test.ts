@@ -13,7 +13,7 @@ function schedule(seed = 1, pool?: readonly WorldId[]): WorldSchedule {
 function sequence(s: WorldSchedule, count: number): WorldId[] {
 	const shown: WorldId[] = [s.current];
 	for (let i = 1; i < count; i++) {
-		const next = s.update(i * 45, true);
+		const next = s.update(i * 30, true);
 		if (next) shown.push(next);
 	}
 	return shown;
@@ -29,11 +29,11 @@ describe("WorldSchedule", () => {
 		]);
 	});
 
-	it("switches only once a 45 s focus-time milestone passes", () => {
+	it("switches only once a 30 s focus-time milestone passes", () => {
 		const s = schedule();
-		expect(s.update(44.9, true)).toBeNull();
-		expect(s.update(45, true)).toBe("ink");
-		expect(s.update(60, true)).toBeNull();
+		expect(s.update(29.9, true)).toBeNull();
+		expect(s.update(30, true)).toBe("ink");
+		expect(s.update(45, true)).toBeNull();
 	});
 
 	it("waits while switching isn't allowed, then switches", () => {
@@ -46,10 +46,10 @@ describe("WorldSchedule", () => {
 
 	it("doesn't stack milestones passed while waiting", () => {
 		const s = schedule();
-		expect(s.update(140, false)).toBeNull();
-		expect(s.update(141, true)).toBe("ink");
-		expect(s.update(142, true)).toBeNull();
-		expect(s.update(180, true)).toBe("starfield");
+		expect(s.update(100, false)).toBeNull();
+		expect(s.update(101, true)).toBe("ink");
+		expect(s.update(102, true)).toBeNull();
+		expect(s.update(120, true)).toBe("starfield");
 	});
 
 	it("uses the pool after the fixed four", () => {
