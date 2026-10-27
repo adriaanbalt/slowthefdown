@@ -2,6 +2,8 @@ import type { Vector2 } from "three";
 import type { PerspectiveCamera, Raycaster, Scene, WebGLRenderer } from "three";
 import type { ExpoWebGLRenderingContext } from "expo-gl";
 
+import { ClassicController } from "@/game/ClassicController";
+
 import type ObjectToCatch from "./ObjectToCatch";
 import type Particles from "./Particles";
 
@@ -14,6 +16,7 @@ export interface ClassicDriverInput {
 
 export interface ClassicDriver {
 	frame(dtS: number): void;
+	reset(): void;
 	resetHold(): void;
 }
 
@@ -31,10 +34,15 @@ export function createClassicDriver(
 	input: ClassicDriverInput,
 	raycast: () => boolean,
 ): ClassicDriver {
+	const controller = new ClassicController();
 	let heldSinceMs = 0;
 	const heldMs = (now: number) => now - heldSinceMs;
 
 	return {
+		reset() {
+			controller.reset();
+			heldSinceMs = 0;
+		},
 		resetHold() {
 			heldSinceMs = 0;
 		},
@@ -46,6 +54,8 @@ export function createClassicDriver(
 
 			target.update(frames);
 			const over = raycast();
+
+			controller.step(dt, { onTarget: over, scoring });
 
 			if (over) {
 				if (scoring) {

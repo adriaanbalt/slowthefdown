@@ -100,7 +100,7 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 
 	return {
 		resetRun() {
-			classic.resetHold();
+			classic.reset();
 			focus.reset();
 		},
 		onInterrupted() {
