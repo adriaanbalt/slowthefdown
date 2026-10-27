@@ -15,15 +15,25 @@ export type WorldId =
 	| "bioluminescent"
 	| "nebula";
 
-export const FIXED_WORLDS: readonly WorldId[] = [
+export const FIXED_WORLDS = [
 	"particles",
 	"ink",
 	"starfield",
 	"aurora",
-];
+] as const satisfies readonly WorldId[];
 
 // worlds shipped in the first release beyond the fixed opening four
-export const RELEASED_POOL: readonly WorldId[] = ["vortex", "caustics"];
+export const RELEASED_POOL = ["vortex", "caustics"] as const satisfies readonly WorldId[];
+
+export type RotationWorldId =
+	| (typeof FIXED_WORLDS)[number]
+	| (typeof RELEASED_POOL)[number];
+
+const ROTATION_SET = new Set<WorldId>([...FIXED_WORLDS, ...RELEASED_POOL]);
+
+export function isRotationWorld(id: WorldId): id is RotationWorldId {
+	return ROTATION_SET.has(id);
+}
 
 export interface WorldScheduleOptions {
 	fixed?: readonly WorldId[];

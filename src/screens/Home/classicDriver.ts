@@ -3,9 +3,15 @@ import type { PerspectiveCamera, Raycaster, Scene, WebGLRenderer } from "three";
 import type { ExpoWebGLRenderingContext } from "expo-gl";
 
 import { ClassicController } from "@/game/ClassicController";
+import type { WorldId } from "@/game/worldSchedule";
 
 import type ObjectToCatch from "./ObjectToCatch";
-import type Particles from "./Particles";
+
+export interface DriverFrame {
+	world: WorldId;
+	changed: boolean;
+	pace: number;
+}
 
 export interface ClassicDriverInput {
 	pointer: Vector2;
@@ -15,7 +21,7 @@ export interface ClassicDriverInput {
 }
 
 export interface ClassicDriver {
-	frame(dtS: number): void;
+	frame(dtS: number): DriverFrame;
 	reset(): void;
 	resetHold(): void;
 }
@@ -30,7 +36,6 @@ export function createClassicDriver(
 	_camera: PerspectiveCamera,
 	_raycaster: Raycaster,
 	target: ObjectToCatch,
-	particles: Particles,
 	input: ClassicDriverInput,
 	raycast: () => boolean,
 ): ClassicDriver {
@@ -55,23 +60,27 @@ export function createClassicDriver(
 			target.update(frames);
 			const over = raycast();
 
-			controller.step(dt, { onTarget: over, scoring });
+			const snap = controller.step(dt, { onTarget: over, scoring });
 
 			if (over) {
 				if (scoring) {
 					if (heldSinceMs === 0) heldSinceMs = Date.now();
 					else input.onHoldTick(heldMs(Date.now()));
 				}
-				particles.advance(frames / 240);
 				target.over();
 			} else {
 				if (scoring && heldSinceMs !== 0) {
 					input.onHoldEnd(heldMs(Date.now()));
 					heldSinceMs = 0;
 				}
-				particles.advance(frames / 60);
 				target.out();
 			}
+
+			return {
+				world: snap.world,
+				changed: snap.events.includes("worldChange"),
+				pace: over ? 0.25 : 1,
+			};
 		},
 	};
 }

@@ -4,8 +4,8 @@ import type { PerspectiveCamera, Raycaster, Scene, WebGLRenderer } from "three";
 import { tuning } from "@/game/constants";
 import { RunController, type RunSnapshot } from "@/game/RunController";
 
+import type { DriverFrame } from "./classicDriver";
 import type ObjectToCatch from "./ObjectToCatch";
-import type Particles from "./Particles";
 
 export interface FocusDriverInput {
 	scoring: () => boolean;
@@ -14,7 +14,7 @@ export interface FocusDriverInput {
 }
 
 export interface FocusDriver {
-	frame(dtS: number, onTarget: boolean, touching: boolean): void;
+	frame(dtS: number, onTarget: boolean, touching: boolean): DriverFrame;
 	reset(): void;
 }
 
@@ -27,7 +27,6 @@ export function createFocusDriver(
 	_camera: PerspectiveCamera,
 	_raycaster: Raycaster,
 	target: ObjectToCatch,
-	particles: Particles,
 	input: FocusDriverInput,
 ): FocusDriver {
 	const controller = new RunController();
@@ -50,14 +49,9 @@ export function createFocusDriver(
 			const easeS = onTarget ? tuning.easeCatchS : tuning.easeSlipS;
 			target.updateFocus(dt, snap.targetSpeed, snap.params, easeS);
 
-			if (snap.phase === "running" && onTarget) {
-				particles.advance(dt * 0.25);
-			} else if (snap.phase === "running") {
-				const rate = 1 + (1 - snap.focus);
-				particles.advance(dt * rate);
-			} else {
-				particles.advance(dt);
-			}
+			let pace = 1;
+			if (snap.phase === "running" && onTarget) pace = 0.25;
+			else if (snap.phase === "running") pace = 1 + (1 - snap.focus);
 
 			input.onHud(snap);
 
@@ -67,6 +61,12 @@ export function createFocusDriver(
 			}
 			if (snap.phase === "idle") endedHandled = false;
 			if (snap.phase === "running") endedHandled = false;
+
+			return {
+				world: snap.world,
+				changed: snap.events.includes("worldChange"),
+				pace,
+			};
 		},
 	};
 }

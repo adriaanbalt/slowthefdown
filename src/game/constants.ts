@@ -72,7 +72,7 @@ export const DEFAULT_TUNING: DeepReadonly<Tuning> = deepFreeze<Tuning>({
 	easeCatchS: 0.6,
 	easeSlipS: 0.8,
 
-	worldEveryS: 45,
+	worldEveryS: 30,
 	worldFadeS: 5,
 	worldMinFocus: 0.5,
 

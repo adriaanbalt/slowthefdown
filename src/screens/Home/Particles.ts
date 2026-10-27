@@ -28,9 +28,10 @@ void main() {
 
 const fragmentShader = /* glsl */ `
 uniform vec3 uColor;
+uniform float uOpacity;
 
 void main() {
-	gl_FragColor = vec4(uColor, 1.0);
+	gl_FragColor = vec4(uColor, uOpacity);
 }
 `;
 
@@ -93,11 +94,14 @@ export default class Particles {
 			vertexShader,
 			fragmentShader,
 			side: DoubleSide,
+			transparent: true,
+			depthWrite: false,
 			uniforms: {
 				uTime: { value: 0 },
 				uDuration: { value: 1 },
 				uScale: { value: scale },
 				uColor: { value: new Color(color) },
+				uOpacity: { value: 1 },
 			},
 		});
 
@@ -108,6 +112,11 @@ export default class Particles {
 	advance(delta: number) {
 		const uTime = this.material.uniforms.uTime;
 		if (uTime) uTime.value += delta;
+	}
+
+	setOpacity(alpha: number) {
+		const uOpacity = this.material.uniforms.uOpacity;
+		if (uOpacity) uOpacity.value = alpha;
 	}
 
 	dispose() {
