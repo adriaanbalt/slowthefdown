@@ -4,7 +4,7 @@ const config: ExpoConfig = {
 	name: "Slow the F Down",
 	slug: "snack-slowitdown",
 	description: "Adriaan Balt",
-	version: "10.0.3",
+	version: "10.0.4",
 	runtimeVersion: {
 		policy: "appVersion",
 	},
