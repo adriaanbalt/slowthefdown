@@ -26,3 +26,6 @@ expo-env.d.ts
 .metro-health-check*
 .kotlin/
 *.tsbuildinfo
+
+# simulator captures (regenerate with screenshots/capture.sh)
+screenshots/raw/
