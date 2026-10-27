@@ -120,6 +120,7 @@ Conventions:
 - **`firebase.ts`**: module-level `getAuth()` / `getDatabase()`, `watchAuth`, phone sign-in, `fetchUser` / `updateUser`, `watchLeaderboard` / `watchFocusLeaderboard` (ordered queries on `users` by `highscore` / `focusHighscore`).
 - **`highscores.ts`**: `submitClassicScore` / `submitFocusScore` — local SecureStore first, then `updateUser` when signed in and `isNewBest`.
 - **`updates.ts`**: EAS Update launch check (`expo-updates`); fail-soft `console.warn` on network errors.
+- **`appStoreVersion.ts`**: App Store (iTunes lookup) newer-binary check; pure `compareVersions` / `isStoreNewer` are unit-tested, `fetchAppStoreUpdate` is fail-soft. Compares against `Constants.nativeAppVersion` (the binary, not the OTA bundle).
 - **`highscoreMerge.ts`**: pure parsing, merge, sort, leaderboard row shape — **no Firebase imports**; unit-test here.
 - **`localHighscore.ts`**: SecureStore read/write; never change `HIGHSCORE_KEY` / `FOCUS_HIGHSCORE_KEY` without a migration plan (SDK 39 legacy installs).
 
@@ -194,7 +195,7 @@ Conventions if you touch `server/`:
 ## Build, EAS & Config
 
 - **Versioning**: `version` / iOS `buildNumber` in `app.config.ts`; production EAS profile uses `autoIncrement` (`eas.json`).
-- **EAS Update (OTA)**: `runtimeVersion` uses the `appVersion` policy; `updates.url` points at the EAS project. `preview` / `production` build profiles set matching `channel` values in `eas.json`. Launch-time check lives in `services/updates.ts` and runs from `app/_layout.tsx` (not in screens). Dev client / `__DEV__` skips OTA; release builds use `shared/Loader` only while downloading/reloading.
+- **EAS Update (OTA)**: `runtimeVersion` uses the `appVersion` policy; `updates.url` points at the EAS project. `preview` / `production` build profiles set matching `channel` values in `eas.json`. Launch-time check lives in `services/updates.ts` and runs from `app/_layout.tsx` (not in screens). Dev client / `__DEV__` skips OTA; release builds use `shared/Loader` only while downloading/reloading. After the OTA check finishes without reloading, `app/_layout.tsx` runs the App Store check and shows `shared/UpdatePrompt` (generic two-button prompt) with an "Update" button that opens the store listing; "Later" dismisses for the session.
 - **APS / push**: `APS_ENVIRONMENT=production` on `preview` and `production` EAS profiles; `app.config.ts` maps that to `aps-environment` entitlement — keep preview/production aligned with TestFlight/App Store.
 - **Scripts** (repo root): `npm run build`, `deploy`, `submit`, `update:preview`, `update:production` delegate to `src/` EAS commands documented in README.
 - **Change native capabilities** via `app.config.ts` `plugins` and `ios.infoPlist`, then prebuild — not by editing gitignored `ios/` in place on one machine.
