@@ -19,12 +19,14 @@ interface Layer {
 	world: World;
 	container: Group;
 	opacity: number;
+	exiting: boolean;
 }
 
 // Worlds stack: each new world fades in on top while the ones before it stay,
 // dimmed, and keep animating underneath.
 export default class WorldLayer {
 	target: WorldId = "particles";
+	private baseId: WorldId = "particles";
 
 	// bottom (oldest) to top (newest)
 	private layers: Layer[] = [];
@@ -40,6 +42,7 @@ export default class WorldLayer {
 
 	show(id: WorldId) {
 		this.clearLive();
+		this.baseId = id;
 		this.target = id;
 		const layer = this.addLayer(id);
 		layer.opacity = 1;
@@ -57,7 +60,7 @@ export default class WorldLayer {
 		this.fromBg.copy(this.lerpedBg.copy(this.fromBg).lerp(this.toBg, this.bgT));
 		this.bgT = 0;
 
-		const existing = this.layers.findIndex((l) => l.id === id);
+		const existing = this.layers.findIndex((l) => l.id === id && !l.exiting);
 		if (existing >= 0) {
 			const [layer] = this.layers.splice(existing, 1);
 			if (layer) this.layers.push(layer);
@@ -70,19 +73,45 @@ export default class WorldLayer {
 		if (top) this.toBg.copy(top.world.background);
 	}
 
+	// The hold broke: fade every world but the opening one back out.
+	revert() {
+		this.target = this.baseId;
+		let base = this.layers.find((l) => l.id === this.baseId && !l.exiting);
+		if (!base) base = this.addLayer(this.baseId);
+		this.layers = [base, ...this.layers.filter((l) => l !== base)];
+		for (const layer of this.layers) {
+			if (layer !== base) layer.exiting = true;
+		}
+		this.applyRenderOrder();
+
+		this.fromBg.copy(this.lerpedBg.copy(this.fromBg).lerp(this.toBg, this.bgT));
+		this.toBg.copy(base.world.background);
+		this.bgT = 0;
+	}
+
 	update(dtS: number, pace: number) {
 		const step = dtS / Math.max(0.05, tuning.worldFadeS);
-		const topIndex = this.layers.length - 1;
+		const active = this.layers.filter((l) => !l.exiting);
+		const topIndex = active.length - 1;
+		const gone: Layer[] = [];
 
-		for (let i = 0; i < this.layers.length; i++) {
-			const layer = this.layers[i];
-			if (!layer) continue;
-			const depth = topIndex - i;
-			const goal = depth === 0 ? 1 : Math.max(STACK_FLOOR, STACK_DECAY ** depth);
-			if (layer.opacity < goal) layer.opacity = Math.min(goal, layer.opacity + step);
-			else if (layer.opacity > goal) layer.opacity = Math.max(goal, layer.opacity - step);
+		for (const layer of this.layers) {
+			if (layer.exiting) {
+				layer.opacity = Math.max(0, layer.opacity - step);
+				if (layer.opacity === 0) gone.push(layer);
+			} else {
+				const depth = topIndex - active.indexOf(layer);
+				const goal = depth === 0 ? 1 : Math.max(STACK_FLOOR, STACK_DECAY ** depth);
+				if (layer.opacity < goal) layer.opacity = Math.min(goal, layer.opacity + step);
+				else if (layer.opacity > goal) layer.opacity = Math.max(goal, layer.opacity - step);
+			}
 			layer.world.setOpacity(layer.opacity);
 			layer.world.update(dtS, pace);
+		}
+
+		for (const layer of gone) {
+			this.removeLayer(layer);
+			this.layers = this.layers.filter((l) => l !== layer);
 		}
 
 		if (this.bgT < 1) {
@@ -102,7 +131,7 @@ export default class WorldLayer {
 		const container = new Group();
 		container.add(world.object);
 		this.scene.add(container);
-		const layer: Layer = { id, world, container, opacity: 0 };
+		const layer: Layer = { id, world, container, opacity: 0, exiting: false };
 		this.layers.push(layer);
 		while (this.layers.length > MAX_LAYERS) {
 			const oldest = this.layers.shift();

@@ -2,7 +2,7 @@ import { type Tuning, tuning as liveTuning } from "./constants";
 import type { WorldId } from "./worldSchedule";
 import { WorldRotation, type WorldRotationOptions } from "./worldRotation";
 
-export type ClassicEvent = "worldChange";
+export type ClassicEvent = "worldChange" | "worldReset";
 
 export interface ClassicInput {
 	onTarget: boolean;
@@ -28,6 +28,8 @@ export class ClassicController {
 	private holdTimeS = 0;
 	private sessionTimeS = 0;
 	private runs = 0;
+	// true after the finger has been on the F this streak
+	private streak = false;
 
 	constructor(options: ClassicControllerOptions = {}) {
 		this.options = options;
@@ -38,6 +40,7 @@ export class ClassicController {
 	reset(): void {
 		this.holdTimeS = 0;
 		this.sessionTimeS = 0;
+		this.streak = false;
 		this.runs += 1;
 		this.worldRotation.reset(this.runs);
 	}
@@ -48,13 +51,18 @@ export class ClassicController {
 
 		if (input.scoring) {
 			this.sessionTimeS += dt;
-			if (input.onTarget) this.holdTimeS += dt;
-
-			if (
-				this.worldRotation.step(this.holdTimeS, this.sessionTimeS, input.onTarget) !==
-				null
-			) {
-				events.push("worldChange");
+			if (input.onTarget) {
+				this.streak = true;
+				this.holdTimeS += dt;
+				if (this.worldRotation.step(this.holdTimeS, this.sessionTimeS, true) !== null) {
+					events.push("worldChange");
+				}
+			} else if (this.streak) {
+				// the stack belongs to this hold; losing the F clears it
+				this.streak = false;
+				this.holdTimeS = 0;
+				this.worldRotation.reset(this.runs);
+				events.push("worldReset");
 			}
 		}
 

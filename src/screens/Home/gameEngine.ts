@@ -107,7 +107,8 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 					? focus.frame(dtS, onTarget, touching)
 					: classic.frame(dtS);
 
-			if (result.changed) worlds.transitionTo(result.world);
+			if (result.reset) worlds.revert();
+			else if (result.changed) worlds.transitionTo(result.world);
 			else if (result.world !== worlds.target) worlds.show(result.world);
 
 			worlds.update(dtS, result.pace);
