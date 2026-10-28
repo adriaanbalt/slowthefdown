@@ -27,9 +27,9 @@ describe("ClassicController", () => {
 		expect(play(run, 0.1, false).last.world).toBe("particles");
 	});
 
-	it("changes world after 30 s of hold time while on target", () => {
+	it("changes world after 15 s of hold time while on target", () => {
 		const run = new ClassicController({ tuning: cloneTuning(), seed: 1 });
-		const early = play(run, 29, true);
+		const early = play(run, 14, true);
 		expect(early.events).not.toContain("worldChange");
 		const later = play(run, 2, true);
 		expect(later.events).toContain("worldChange");

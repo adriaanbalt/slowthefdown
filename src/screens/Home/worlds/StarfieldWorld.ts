@@ -12,6 +12,8 @@ import type { World } from "./types";
 
 const COUNT = 4000;
 const DEPTH = 80;
+// worlds run at pace 0.25 while the F is held; this keeps the drift visible there
+const TEMPO = 3;
 
 const vertexShader = /* glsl */ `
 attribute float aPhase;
@@ -85,9 +87,10 @@ export default class StarfieldWorld implements World {
 	}
 
 	update(dtS: number, pace: number) {
+		const dt = dtS * pace * TEMPO;
 		const uTime = this.material.uniforms.uTime;
-		if (uTime) uTime.value += dtS * pace;
-		const drift = dtS * pace * 4;
+		if (uTime) uTime.value += dt;
+		const drift = dt * 4;
 		for (let i = 0; i < COUNT; i++) {
 			const zi = i * 3 + 2;
 			let z = (this.positions[zi] ?? 0) + drift;

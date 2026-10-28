@@ -12,6 +12,8 @@ import type { World } from "./types";
 
 const COUNT = 6000;
 const RIM = 28;
+// worlds run at pace 0.25 while the F is held; this keeps the swirl visible there
+const TEMPO = 3;
 
 const vertexShader = /* glsl */ `
 attribute float aRadius;
@@ -94,7 +96,7 @@ export default class VortexWorld implements World {
 	}
 
 	update(dtS: number, pace: number) {
-		const dt = dtS * pace;
+		const dt = dtS * pace * TEMPO;
 		for (let i = 0; i < COUNT; i++) {
 			const r = this.radii[i] ?? 0;
 			const omega = MathUtils.lerp(2.4, 0.35, r / RIM);
