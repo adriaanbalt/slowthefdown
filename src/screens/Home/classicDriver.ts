@@ -10,6 +10,7 @@ import type ObjectToCatch from "./ObjectToCatch";
 export interface DriverFrame {
 	world: WorldId;
 	changed: boolean;
+	reset: boolean;
 	pace: number;
 }
 
@@ -79,6 +80,7 @@ export function createClassicDriver(
 			return {
 				world: snap.world,
 				changed: snap.events.includes("worldChange"),
+				reset: snap.events.includes("worldReset"),
 				pace: over ? 0.25 : 1,
 			};
 		},

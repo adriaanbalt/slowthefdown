@@ -4,7 +4,7 @@ import { FocusMeter, type MeterEvent, type MeterInput, type MeterPhase } from ".
 import type { WorldId } from "./worldSchedule";
 import { WorldRotation } from "./worldRotation";
 
-export type RunEvent = MeterEvent | "worldChange";
+export type RunEvent = MeterEvent | "worldChange" | "worldReset";
 
 export interface RunSnapshot {
 	phase: MeterPhase;
@@ -40,6 +40,9 @@ export class RunController {
 	private readonly meter: FocusMeter;
 	private readonly worldRotation: WorldRotation;
 	private runs = 0;
+	// seconds on the F since the last slip; the world stack follows this streak
+	private worldHoldS = 0;
+	private streak = false;
 
 	constructor(options: RunControllerOptions = {}) {
 		this.tuning = options.tuning ?? liveTuning;
@@ -59,6 +62,8 @@ export class RunController {
 
 	reset(): void {
 		this.meter.reset();
+		this.worldHoldS = 0;
+		this.streak = false;
 		this.runs += 1;
 		this.worldRotation.reset(this.runs);
 	}
@@ -74,16 +79,23 @@ export class RunController {
 			meter.phase === "idle" ? 0 : difficultyAt(meter.runTime, this.tuning);
 		const params = paramsAt(difficulty, this.tuning);
 
-		if (meter.phase === "running") {
+		if (meter.phase === "running" && input.onTarget) {
+			this.streak = true;
+			this.worldHoldS += Math.min(Math.max(dtS, 0), this.tuning.maxFrameS);
 			if (
 				this.worldRotation.step(
-					meter.focusTime,
+					this.worldHoldS,
 					meter.runTime,
-					input.onTarget && meter.focus > this.tuning.worldMinFocus,
+					meter.focus > this.tuning.worldMinFocus,
 				) !== null
 			) {
 				events.push("worldChange");
 			}
+		} else if (this.streak) {
+			this.streak = false;
+			this.worldHoldS = 0;
+			this.worldRotation.reset(this.runs);
+			events.push("worldReset");
 		}
 
 		return {

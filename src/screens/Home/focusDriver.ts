@@ -65,6 +65,7 @@ export function createFocusDriver(
 			return {
 				world: snap.world,
 				changed: snap.events.includes("worldChange"),
+				reset: snap.events.includes("worldReset"),
 				pace,
 			};
 		},
