@@ -37,26 +37,13 @@ describe("ClassicController", () => {
 		expect(later.last.worldsReached).toBe(2);
 	});
 
-	it("clears the world streak when the F is lost", () => {
+	it("does not advance hold progress off target", () => {
 		const run = new ClassicController({ tuning: cloneTuning(), seed: 1 });
-		const held = play(run, 20, true);
-		expect(held.last.world).toBe("ink");
-
-		const lost = play(run, 0.1, false);
-		expect(lost.events).toContain("worldReset");
-		expect(lost.last.world).toBe("particles");
-		expect(lost.last.holdTimeS).toBe(0);
-		expect(lost.last.worldsReached).toBe(1);
-
-		const stillOff = play(run, 5, false);
-		expect(stillOff.events).not.toContain("worldReset");
-		expect(stillOff.last.holdTimeS).toBe(0);
-
-		const early = play(run, 14, true);
-		expect(early.events).not.toContain("worldChange");
-		const next = play(run, 2, true);
-		expect(next.events).toContain("worldChange");
-		expect(next.last.world).toBe("ink");
+		play(run, 30, true);
+		const mid = play(run, 20, false);
+		expect(mid.last.holdTimeS).toBeCloseTo(30, 1);
+		expect(mid.last.world).toBe("ink");
+		expect(mid.events).not.toContain("worldChange");
 	});
 
 	it("resets worlds on reset", () => {

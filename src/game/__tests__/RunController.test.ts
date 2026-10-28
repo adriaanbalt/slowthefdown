@@ -69,32 +69,28 @@ describe("RunController", () => {
 		expect(later.last.worldsReached).toBe(2);
 	});
 
-	it("clears the world streak when the F is lost and keeps the score", () => {
+	it("keeps the reached world across a slip", () => {
 		const run = controller();
 		play(run, 20, HOLD);
-		const lost = play(run, 0.2, SLIP);
-		expect(lost.events).toContain("worldReset");
-		expect(lost.last.world).toBe("particles");
-		expect(lost.last.focusTime).toBeGreaterThan(15);
+		const lost = play(run, 0.5, SLIP);
+		expect(lost.last.world).toBe("ink");
+		expect(lost.last.worldsReached).toBe(2);
+		expect(lost.events).not.toContain("worldChange");
 		expect(lost.last.phase).toBe("running");
-
-		const early = play(run, 14, HOLD);
-		expect(early.events).not.toContain("worldChange");
-		const later = play(run, 2, HOLD);
-		expect(later.events).toContain("worldChange");
-		expect(later.last.world).toBe("ink");
 	});
 
 	it("holds a world change while focus is at or below worldMinFocus", () => {
-		const tuning = { ...cloneTuning(), worldMinFocus: 0.95, worldFirstS: 1, worldStepS: 0 };
+		// a high threshold keeps focus under it for the whole climb back
+		const tuning = { ...cloneTuning(), worldMinFocus: 0.95, worldFirstS: 30 };
 		const run = new RunController({ tuning, seed: 1 });
-		play(run, 0.6, HOLD);
-		// 1.3 s off target drops focus to about 46% and clears the streak
+		play(run, 29, HOLD);
+		// 1.3 s off target drops focus to about 46%
 		play(run, 1.3, SLIP);
-		const blocked = play(run, 1.2, HOLD);
+		const blocked = play(run, 2, HOLD);
+		expect(blocked.last.focusTime).toBeGreaterThan(30);
 		expect(blocked.last.focus).toBeLessThan(0.95);
 		expect(blocked.events).not.toContain("worldChange");
-		const resumed = play(run, 2, HOLD);
+		const resumed = play(run, 1, HOLD);
 		expect(resumed.events).toContain("worldChange");
 	});
 
