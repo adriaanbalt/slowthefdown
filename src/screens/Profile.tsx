@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -90,6 +91,14 @@ function SignedIn() {
 	);
 }
 
+function AppVersion() {
+	const version = Constants.nativeAppVersion ?? Constants.expoConfig?.version;
+	const build = Constants.nativeBuildVersion;
+	if (!version) return null;
+	const label = build ? `Version ${version} (${build})` : `Version ${version}`;
+	return <Text style={styles.version}>{label}</Text>;
+}
+
 function SignedOut() {
 	const highscore = useUserStore((s) => s.highscore);
 	const focusHighscore = useUserStore((s) => s.focusHighscore);
@@ -110,6 +119,7 @@ export default function ProfileScreen() {
 		<ScrollView style={Styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
 			<Header style={{ paddingBottom: 0 }}>Profile</Header>
 			{uid ? <SignedIn key={uid} /> : <SignedOut />}
+			<AppVersion />
 		</ScrollView>
 	);
 }
@@ -155,5 +165,11 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 		color: Colors.fontColor,
 		fontSize: 20,
+	},
+	version: {
+		color: Colors.grayColor,
+		fontSize: 13,
+		textAlign: "center",
+		marginTop: 24,
 	},
 });
