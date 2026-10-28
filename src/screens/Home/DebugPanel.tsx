@@ -133,13 +133,24 @@ export default function DebugPanel({ onClose }: Props) {
 					}}
 				/>
 				<SliderRow
-					label="World every (s focus)"
-					value={tuning.worldEveryS}
+					label="First world (s focus)"
+					value={tuning.worldFirstS}
 					min={5}
 					max={90}
 					step={5}
 					onChange={(v) => {
-						tuning.worldEveryS = v;
+						tuning.worldFirstS = v;
+						refresh();
+					}}
+				/>
+				<SliderRow
+					label="World step (s longer each)"
+					value={tuning.worldStepS}
+					min={0}
+					max={30}
+					step={1}
+					onChange={(v) => {
+						tuning.worldStepS = v;
 						refresh();
 					}}
 				/>

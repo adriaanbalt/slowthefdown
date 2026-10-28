@@ -46,6 +46,9 @@ const RIBBONS: { color: number; y: number; phase: number }[] = [
 	{ color: 0x8f5cff, y: -6, phase: 4.2 },
 ];
 
+// worlds run at pace 0.25 while the F is held; this keeps the waves visible there
+const TEMPO = 4;
+
 export default class AuroraWorld implements World {
 	readonly object: Object3D;
 	readonly background = new Color(0x020611);
@@ -86,7 +89,7 @@ export default class AuroraWorld implements World {
 	update(dtS: number, pace: number) {
 		for (const material of this.materials) {
 			const uTime = material.uniforms.uTime;
-			if (uTime) uTime.value += dtS * pace;
+			if (uTime) uTime.value += dtS * pace * TEMPO;
 		}
 	}
 

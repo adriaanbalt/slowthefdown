@@ -42,8 +42,9 @@ export interface WorldScheduleOptions {
 	tuning?: Tuning;
 }
 
-// Decides which world is showing. A new world is due every `worldEveryS` of
-// focus time; the switch itself waits until the caller says it may happen.
+// Decides which world is showing. The first new world is due after
+// `worldFirstS` of focus time and each gap after that is `worldStepS` longer
+// (15, 20, 25, ...); the switch itself waits until the caller says it may happen.
 export class WorldSchedule {
 	current: WorldId;
 	// worlds shown this run, including the first
@@ -54,6 +55,7 @@ export class WorldSchedule {
 	private readonly rng: Rng;
 	private readonly tuning: Tuning;
 	private queue: WorldId[] = [];
+	private interval: number;
 	private nextMilestone: number;
 	private pending = false;
 
@@ -71,7 +73,8 @@ export class WorldSchedule {
 
 		this.queue = this.fixed.slice(1);
 		this.current = this.fixed[0] ?? this.takeFromPool();
-		this.nextMilestone = this.tuning.worldEveryS;
+		this.interval = Math.max(1, this.tuning.worldFirstS);
+		this.nextMilestone = this.interval;
 	}
 
 	get isPending(): boolean {
@@ -84,7 +87,8 @@ export class WorldSchedule {
 			this.pending = true;
 			// milestones passed while a switch was waiting don't stack up
 			while (focusTimeS >= this.nextMilestone) {
-				this.nextMilestone += this.tuning.worldEveryS;
+				this.interval += Math.max(0, this.tuning.worldStepS);
+				this.nextMilestone += this.interval;
 			}
 		}
 		if (!this.pending || !canSwitch) return null;

@@ -16,7 +16,7 @@ function Row({ entry, index }: { entry: LeaderboardEntry; index: number }) {
 	return (
 		<View style={styles.row}>
 			<Text style={text}>{index + 1}. </Text>
-			<Text style={text} numberOfLines={1}>
+			<Text style={[text, styles.name]} numberOfLines={1}>
 				{entry.displayName.substring(0, 20)}
 			</Text>
 			<Text style={[text, styles.score]}>{formatStoredScore(entry.highscore)}</Text>
@@ -82,8 +82,13 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#FFF",
 		borderBottomWidth: 1,
 	},
+	name: {
+		flexShrink: 1,
+	},
 	score: {
-		flex: 1,
+		flexGrow: 1,
+		flexShrink: 0,
+		marginLeft: 8,
 		textAlign: "right",
 		fontVariant: ["tabular-nums"],
 	},

@@ -32,8 +32,10 @@ export interface Tuning {
 	easeCatchS: number;
 	easeSlipS: number;
 
-	// worlds, spacing in seconds of focus time
-	worldEveryS: number;
+	// worlds, spacing in seconds of focus time: the first world arrives after
+	// `worldFirstS`, and each later gap is `worldStepS` longer than the one before
+	worldFirstS: number;
+	worldStepS: number;
 	worldFadeS: number;
 	worldMinFocus: number;
 
@@ -72,7 +74,8 @@ export const DEFAULT_TUNING: DeepReadonly<Tuning> = deepFreeze<Tuning>({
 	easeCatchS: 0.6,
 	easeSlipS: 0.8,
 
-	worldEveryS: 30,
+	worldFirstS: 15,
+	worldStepS: 5,
 	worldFadeS: 5,
 	worldMinFocus: 0.5,
 

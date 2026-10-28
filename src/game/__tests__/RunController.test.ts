@@ -59,9 +59,9 @@ describe("RunController", () => {
 		expect(last.params.heldSpeed).toBeGreaterThan(0.21);
 	});
 
-	it("changes world after 30 s of focus time while holding", () => {
+	it("changes world after 15 s of focus time while holding", () => {
 		const run = controller();
-		const early = play(run, 29, HOLD);
+		const early = play(run, 14, HOLD);
 		expect(early.events).not.toContain("worldChange");
 		const later = play(run, 2, HOLD);
 		expect(later.events).toContain("worldChange");
@@ -71,7 +71,7 @@ describe("RunController", () => {
 
 	it("holds a world change while focus is at or below worldMinFocus", () => {
 		// a high threshold keeps focus under it for the whole climb back
-		const tuning = { ...cloneTuning(), worldMinFocus: 0.95 };
+		const tuning = { ...cloneTuning(), worldMinFocus: 0.95, worldFirstS: 30 };
 		const run = new RunController({ tuning, seed: 1 });
 		play(run, 29, HOLD);
 		// 1.3 s off target drops focus to about 46%
@@ -85,7 +85,7 @@ describe("RunController", () => {
 	});
 
 	it("doesn't start a world change while the previous fade is running", () => {
-		const tuning = { ...cloneTuning(), worldEveryS: 2 };
+		const tuning = { ...cloneTuning(), worldFirstS: 2, worldStepS: 0 };
 		const run = new RunController({ tuning, seed: 1 });
 		const { events } = play(run, 9, HOLD);
 		// milestones every 2 s, but fades take 5 s: switches at about 2 s and 7 s

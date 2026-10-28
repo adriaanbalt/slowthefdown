@@ -43,6 +43,9 @@ void main() {
 }
 `;
 
+// worlds run at pace 0.25 while the F is held; this keeps the ripples visible there
+const TEMPO = 3;
+
 export default class CausticsWorld implements World {
 	readonly object: Object3D;
 	readonly background = new Color(0x001018);
@@ -71,7 +74,7 @@ export default class CausticsWorld implements World {
 
 	update(dtS: number, pace: number) {
 		const uTime = this.material.uniforms.uTime;
-		if (uTime) uTime.value += dtS * pace;
+		if (uTime) uTime.value += dtS * pace * TEMPO;
 	}
 
 	setOpacity(alpha: number) {

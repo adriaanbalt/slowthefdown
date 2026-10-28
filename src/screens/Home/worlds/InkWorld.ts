@@ -36,6 +36,8 @@ void main() {
 
 const COLORS = [0x2b2f8f, 0x11706b];
 const COUNT = 40;
+// worlds run at pace 0.25 while the F is held; this keeps the drift visible there
+const TEMPO = 4;
 
 interface Blob {
 	mesh: Mesh;
@@ -99,7 +101,7 @@ export default class InkWorld implements World {
 	}
 
 	update(dtS: number, pace: number) {
-		this.time += dtS * pace;
+		this.time += dtS * pace * TEMPO;
 		for (const blob of this.blobs) {
 			const t = this.time * blob.speed;
 			const dx = this.noise2D(blob.seedX + t, blob.seedY) * 6;

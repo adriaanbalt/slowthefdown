@@ -1,28 +1,21 @@
-const TIMER_DIGITS = 8;
-const MAX_TIMER_MS = 10 ** TIMER_DIGITS - 1;
+const pad = (n: number, width = 2) => String(n).padStart(width, "0");
 
-/** Live HUD: milliseconds, zero-padded to 8 digits (no colons). */
+/** Live HUD and scores: HH:MM:SS.mmm, always zero-padded. */
 export function formatTimerMs(ms: number): string {
-	const clamped = Math.min(Math.max(0, Math.floor(ms)), MAX_TIMER_MS);
-	return String(clamped).padStart(TIMER_DIGITS, "0");
+	const total = Math.max(0, Math.floor(ms));
+	const hours = Math.floor(total / 3_600_000);
+	const minutes = Math.floor((total % 3_600_000) / 60_000);
+	const seconds = Math.floor((total % 60_000) / 1000);
+	const millis = total % 1000;
+	return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(millis, 3)}`;
 }
 
 /**
- * Leaderboard / profile. Stored scores are tenths of a second.
- * Whole seconds, as H:MM:SS. Hours are omitted when zero, and neither
- * hours nor minutes get a leading zero.
+ * Leaderboard / profile / best. Stored scores are tenths of a second, so the
+ * last two millisecond digits are always zero.
  */
 export function formatStoredScore(tenths: number): string {
-	const totalSeconds = Math.floor(Math.max(0, Math.floor(tenths)) / 10);
-	const hours = Math.floor(totalSeconds / 3600);
-	const minutes = Math.floor((totalSeconds % 3600) / 60);
-	const seconds = totalSeconds % 60;
-	const ss = String(seconds).padStart(2, "0");
-	if (hours > 0) {
-		const mm = String(minutes).padStart(2, "0");
-		return `${hours}:${mm}:${ss}`;
-	}
-	return `${minutes}:${ss}`;
+	return formatTimerMs(Math.max(0, Math.floor(tenths)) * 100);
 }
 
 /** @deprecated Prefer formatTimerMs / formatStoredScore. Kept for focus-meter tests. */
