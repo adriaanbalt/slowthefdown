@@ -8,6 +8,7 @@ export type WorldId =
 	| "aurora"
 	| "vortex"
 	| "caustics"
+	| "wormhole"
 	| "rain"
 	| "smoke"
 	| "fireflies"
@@ -23,13 +24,25 @@ export const FIXED_WORLDS = [
 ] as const satisfies readonly WorldId[];
 
 // worlds shipped in the first release beyond the fixed opening four
-export const RELEASED_POOL = ["vortex", "caustics"] as const satisfies readonly WorldId[];
+export const RELEASED_POOL = ["vortex", "caustics", "wormhole"] as const satisfies readonly WorldId[];
 
 export type RotationWorldId =
 	| (typeof FIXED_WORLDS)[number]
 	| (typeof RELEASED_POOL)[number];
 
 const ROTATION_SET = new Set<WorldId>([...FIXED_WORLDS, ...RELEASED_POOL]);
+
+export const WORLD_LABELS: Record<RotationWorldId, string> = {
+	particles: "Particles",
+	ink: "Ink",
+	starfield: "Starfield",
+	aurora: "Aurora",
+	vortex: "Vortex",
+	caustics: "Caustics",
+	wormhole: "Wormhole",
+};
+
+export const SELECTABLE_WORLDS: readonly RotationWorldId[] = [...FIXED_WORLDS, ...RELEASED_POOL];
 
 export function isRotationWorld(id: WorldId): id is RotationWorldId {
 	return ROTATION_SET.has(id);

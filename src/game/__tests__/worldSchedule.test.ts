@@ -62,8 +62,8 @@ describe("WorldSchedule", () => {
 	});
 
 	it("uses the pool after the fixed four", () => {
-		const shown = sequence(schedule(), 6);
-		expect(new Set(shown.slice(4))).toEqual(new Set(["vortex", "caustics"]));
+		const shown = sequence(schedule(), 7);
+		expect(new Set(shown.slice(4))).toEqual(new Set(["vortex", "caustics", "wormhole"]));
 	});
 
 	it("gives the same order for the same seed", () => {

@@ -10,6 +10,7 @@ import InkWorld from "./InkWorld";
 import ParticlesWorld from "./ParticlesWorld";
 import StarfieldWorld from "./StarfieldWorld";
 import VortexWorld from "./VortexWorld";
+import WormholeWorld from "./WormholeWorld";
 import type { World } from "./types";
 
 const WORLD_FACTORIES: Record<RotationWorldId, () => World> = {
@@ -19,6 +20,7 @@ const WORLD_FACTORIES: Record<RotationWorldId, () => World> = {
 	aurora: () => new AuroraWorld(),
 	vortex: () => new VortexWorld(),
 	caustics: () => new CausticsWorld(),
+	wormhole: () => new WormholeWorld(),
 };
 
 export function createWorld(id: WorldId): World {

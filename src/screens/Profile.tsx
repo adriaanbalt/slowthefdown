@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 import ModeToggle from "@/components/ModeToggle";
+import WorldPicker from "@/components/WorldPicker";
 import Colors from "@/constants/Colors";
 import Styles from "@/constants/Styles";
 import { formatStoredScore } from "@/game/format";
@@ -17,6 +18,8 @@ function ModeControls() {
 	const sessionMode = useSettingsStore((s) => s.sessionMode);
 	const setDefaultMode = useSettingsStore((s) => s.setDefaultMode);
 	const setSessionMode = useSettingsStore((s) => s.setSessionMode);
+	const startWorld = useSettingsStore((s) => s.startWorld);
+	const setStartWorld = useSettingsStore((s) => s.setStartWorld);
 
 	return (
 		<View style={styles.modeBlock}>
@@ -29,6 +32,13 @@ function ModeControls() {
 			<Text style={styles.hint}>
 				Classic is the hold timer. Focus adds a meter, grace, and recoveries.
 			</Text>
+			<View style={styles.worldBlock}>
+				<WorldPicker label="Starting world" value={startWorld} onChange={setStartWorld} />
+				<Text style={styles.hint}>
+					Every run opens on this world, then the rest follow as you hold on. Auto
+					starts on Particles.
+				</Text>
+			</View>
 		</View>
 	);
 }
@@ -132,6 +142,9 @@ const styles = StyleSheet.create({
 	modeBlock: {
 		marginTop: 12,
 		marginBottom: 8,
+	},
+	worldBlock: {
+		marginTop: 16,
 	},
 	hint: {
 		color: Colors.grayColor,

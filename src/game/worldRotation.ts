@@ -13,6 +13,8 @@ export interface WorldRotationOptions extends WorldScheduleOptions {
 	seed?: number;
 	runIndex?: number;
 	startWorld?: WorldId;
+	// read on every reset, so a setting changed between runs applies to the next run
+	getStartWorld?: () => WorldId | undefined;
 }
 
 // Milestone timing + fade cooldown shared by focus and classic runs.
@@ -55,7 +57,8 @@ export class WorldRotation {
 	}
 
 	private createSchedule(options: WorldRotationOptions): WorldSchedule {
-		const { startWorld, fixed, pool, rng, seed, runIndex = 0 } = options;
+		const { fixed, pool, rng, seed, runIndex = 0 } = options;
+		const startWorld = options.getStartWorld?.() ?? options.startWorld;
 		let fixedWorlds = fixed ?? FIXED_WORLDS;
 		if (startWorld) {
 			fixedWorlds = [startWorld, ...fixedWorlds.filter((w) => w !== startWorld)];

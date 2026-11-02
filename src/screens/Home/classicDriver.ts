@@ -19,6 +19,7 @@ export interface ClassicDriverInput {
 	scoring: () => boolean;
 	onHoldTick: (ms: number) => void;
 	onHoldEnd: (ms: number) => void;
+	startWorld?: () => WorldId | undefined;
 }
 
 export interface ClassicDriver {
@@ -40,7 +41,7 @@ export function createClassicDriver(
 	input: ClassicDriverInput,
 	raycast: () => boolean,
 ): ClassicDriver {
-	const controller = new ClassicController();
+	const controller = new ClassicController({ getStartWorld: input.startWorld });
 	let heldSinceMs = 0;
 	const heldMs = (now: number) => now - heldSinceMs;
 

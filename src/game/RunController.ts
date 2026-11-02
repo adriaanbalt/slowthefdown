@@ -29,6 +29,7 @@ export interface RunControllerOptions {
 	tuning?: Tuning;
 	seed?: number;
 	startWorld?: WorldId;
+	getStartWorld?: () => WorldId | undefined;
 	fixedWorlds?: readonly WorldId[];
 	worldPool?: readonly WorldId[];
 }
@@ -48,6 +49,7 @@ export class RunController {
 			tuning: this.tuning,
 			seed: options.seed,
 			startWorld: options.startWorld,
+			getStartWorld: options.getStartWorld,
 			fixed: options.fixedWorlds,
 			pool: options.worldPool,
 		});

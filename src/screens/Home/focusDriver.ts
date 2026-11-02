@@ -3,6 +3,7 @@ import type { PerspectiveCamera, Raycaster, Scene, WebGLRenderer } from "three";
 
 import { tuning } from "@/game/constants";
 import { RunController, type RunSnapshot } from "@/game/RunController";
+import type { WorldId } from "@/game/worldSchedule";
 
 import type { DriverFrame } from "./classicDriver";
 import type ObjectToCatch from "./ObjectToCatch";
@@ -11,6 +12,7 @@ export interface FocusDriverInput {
 	scoring: () => boolean;
 	onHud: (snap: RunSnapshot) => void;
 	onRunEnd: (snap: RunSnapshot) => void;
+	startWorld?: () => WorldId | undefined;
 }
 
 export interface FocusDriver {
@@ -29,7 +31,7 @@ export function createFocusDriver(
 	target: ObjectToCatch,
 	input: FocusDriverInput,
 ): FocusDriver {
-	const controller = new RunController();
+	const controller = new RunController({ getStartWorld: input.startWorld });
 	let endedHandled = false;
 
 	return {
