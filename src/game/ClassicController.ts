@@ -42,6 +42,15 @@ export class ClassicController {
 		this.worldRotation.reset(this.runs);
 	}
 
+	get currentWorld(): WorldId {
+		return this.worldRotation.current;
+	}
+
+	/** Rebuild the world schedule from settings without resetting hold time. */
+	syncWorldSchedule(): void {
+		this.worldRotation.reset(this.runs);
+	}
+
 	step(dtS: number, input: ClassicInput): ClassicSnapshot {
 		const events: ClassicEvent[] = [];
 		const dt = Math.min(Math.max(dtS, 0), this.tuning.maxFrameS);

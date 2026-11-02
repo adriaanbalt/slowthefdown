@@ -30,6 +30,8 @@ export interface GameEngine {
 	frame(dtS: number): void;
 	/** Full reset when switching modes or leaving the Game tab. */
 	resetRun(): void;
+	/** Apply Profile “Starting world” immediately (fade to the new background). */
+	applyStartWorldPreference(): void;
 	/**
 	 * Long hitch / background: classic clears the hold; focus keeps the run
 	 * (FocusMeter already clamps dt via maxFrameS).
@@ -93,11 +95,20 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 		},
 	);
 
+	const applyStartWorldPreference = () => {
+		classic.syncWorldSchedule();
+		focus.syncWorldSchedule();
+		const world =
+			input.mode() === "focus" ? focus.currentWorld() : classic.currentWorld();
+		if (world !== worlds.target) worlds.transitionTo(world);
+	};
+
 	return {
 		resetRun() {
 			classic.reset();
 			focus.reset();
 		},
+		applyStartWorldPreference,
 		onInterrupted() {
 			if (input.mode() === "classic") classic.resetHold();
 			// focus: do not reset — meter clamps dt; ending the run on a hitch is wrong

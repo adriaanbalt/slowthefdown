@@ -65,6 +65,15 @@ export class RunController {
 		this.worldRotation.reset(this.runs);
 	}
 
+	get currentWorld(): WorldId {
+		return this.worldRotation.current;
+	}
+
+	/** Rebuild the world schedule from settings without resetting the focus run. */
+	syncWorldSchedule(): void {
+		this.worldRotation.reset(this.runs);
+	}
+
 	step(dtS: number, input: MeterInput): RunSnapshot {
 		const meter = this.meter;
 		const d = meter.phase === "running" ? difficultyAt(meter.runTime, this.tuning) : 0;
