@@ -1,13 +1,15 @@
 const pad = (n: number, width = 2) => String(n).padStart(width, "0");
 
-/** Live HUD and scores: HH:MM:SS.mmm, always zero-padded. */
+/** Live HUD and scores: HH:MM:SS.mmm when hours > 0, else MM:SS.mmm. */
 export function formatTimerMs(ms: number): string {
 	const total = Math.max(0, Math.floor(ms));
 	const hours = Math.floor(total / 3_600_000);
 	const minutes = Math.floor((total % 3_600_000) / 60_000);
 	const seconds = Math.floor((total % 60_000) / 1000);
 	const millis = total % 1000;
-	return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(millis, 3)}`;
+	const tail = `${pad(minutes)}:${pad(seconds)}.${pad(millis, 3)}`;
+	if (hours === 0) return tail;
+	return `${pad(hours)}:${tail}`;
 }
 
 /**

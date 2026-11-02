@@ -35,8 +35,8 @@ function ModeControls() {
 			<View style={styles.worldBlock}>
 				<WorldPicker label="Starting world" value={startWorld} onChange={setStartWorld} />
 				<Text style={styles.hint}>
-					Every run opens on this world, then the rest follow as you hold on. Auto
-					starts on Particles.
+					Switches the background right away. Every run also opens on this world;
+					the rest follow as you hold on. Auto starts on Particles.
 				</Text>
 			</View>
 		</View>

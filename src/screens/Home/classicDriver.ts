@@ -26,6 +26,8 @@ export interface ClassicDriver {
 	frame(dtS: number): DriverFrame;
 	reset(): void;
 	resetHold(): void;
+	syncWorldSchedule(): void;
+	currentWorld(): WorldId;
 }
 
 const MIN_FRAME_S = 1 / 120;
@@ -52,6 +54,12 @@ export function createClassicDriver(
 		},
 		resetHold() {
 			heldSinceMs = 0;
+		},
+		syncWorldSchedule() {
+			controller.syncWorldSchedule();
+		},
+		currentWorld() {
+			return controller.currentWorld;
 		},
 		frame(dtS: number) {
 			const dt = Math.min(Math.max(dtS, MIN_FRAME_S), MAX_FRAME_S);

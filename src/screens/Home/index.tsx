@@ -30,6 +30,7 @@ export default function HomeScreen() {
 	const focusHighscore = useUserStore((s) => s.focusHighscore);
 	const currentRun = useUserStore((s) => s.currentRun);
 	const sessionMode = useSettingsStore((s) => s.sessionMode);
+	const startWorld = useSettingsStore((s) => s.startWorld);
 	const [glViewKey] = useState(() => Date.now());
 	const [focusHud, setFocusHud] = useState<FocusHudState | null>(null);
 	const [summary, setSummary] = useState<RunSummaryData | null>(null);
@@ -53,6 +54,10 @@ export default function HomeScreen() {
 		setSummary(null);
 		useUserStore.getState().setCurrentRun(0);
 	}, [sessionMode]);
+
+	useEffect(() => {
+		engineRef.current?.applyStartWorldPreference();
+	}, [startWorld]);
 
 	useFocusEffect(
 		useCallback(() => {

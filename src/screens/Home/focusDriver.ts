@@ -18,6 +18,8 @@ export interface FocusDriverInput {
 export interface FocusDriver {
 	frame(dtS: number, onTarget: boolean, touching: boolean): DriverFrame;
 	reset(): void;
+	syncWorldSchedule(): void;
+	currentWorld(): WorldId;
 }
 
 const MIN_FRAME_S = 1 / 120;
@@ -39,6 +41,12 @@ export function createFocusDriver(
 			controller.reset();
 			target.resetFocusMotion();
 			endedHandled = false;
+		},
+		syncWorldSchedule() {
+			controller.syncWorldSchedule();
+		},
+		currentWorld() {
+			return controller.currentWorld;
 		},
 		frame(dtS: number, onTarget: boolean, touching: boolean) {
 			const dt = Math.min(Math.max(dtS, MIN_FRAME_S), tuning.maxFrameS);
