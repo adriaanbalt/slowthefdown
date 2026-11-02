@@ -13,6 +13,7 @@ import { Vector2 } from "three";
 import Colors from "@/constants/Colors";
 import type { RunSnapshot } from "@/game/RunController";
 import { recordRunTelemetry } from "@/game/telemetry";
+import { isRotationWorld } from "@/game/worldSchedule";
 import { useSettingsStore } from "@/state/settingsStore";
 import { useUserStore } from "@/state/userStore";
 
@@ -73,6 +74,10 @@ export default function HomeScreen() {
 			touching: () => touchingRef.current,
 			mode: () => modeRef.current,
 			scoring: () => scoringRef.current,
+			startWorld: () => {
+				const id = useSettingsStore.getState().startWorld;
+				return id && isRotationWorld(id) ? id : undefined;
+			},
 			onHoldTick: setCurrentRun,
 			onHoldEnd: (ms) => void recordRun(ms),
 			onFocusHud: (snap: RunSnapshot) => {

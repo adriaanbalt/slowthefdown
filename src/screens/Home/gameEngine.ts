@@ -1,6 +1,7 @@
 import type { ExpoWebGLRenderingContext } from "expo-gl";
 import { PerspectiveCamera, Raycaster, Scene, Vector2 } from "three";
 
+import type { WorldId } from "@/game/worldSchedule";
 import type { RunSnapshot } from "@/game/RunController";
 import type { GameMode } from "@/state/settingsStore";
 import { createRenderer } from "@/gl/createRenderer";
@@ -19,6 +20,8 @@ export interface GameEngineInput {
 	onHoldEnd: (ms: number) => void;
 	onFocusHud: (snap: RunSnapshot) => void;
 	onFocusRunEnd: (snap: RunSnapshot) => void;
+	/** The world each run opens on; undefined keeps the default order. */
+	startWorld: () => WorldId | undefined;
 }
 
 const INTERRUPTED_S = 0.5;
@@ -48,7 +51,7 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 	const raycaster = new Raycaster();
 
 	const worlds = new WorldLayer(scene, renderer);
-	worlds.show("particles");
+	worlds.show(input.startWorld() ?? "particles");
 	const target = new ObjectToCatch();
 	scene.add(target.mesh);
 
@@ -70,6 +73,7 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 			scoring: input.scoring,
 			onHoldTick: input.onHoldTick,
 			onHoldEnd: input.onHoldEnd,
+			startWorld: input.startWorld,
 		},
 		raycast,
 	);
@@ -85,6 +89,7 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 			scoring: input.scoring,
 			onHud: input.onFocusHud,
 			onRunEnd: input.onFocusRunEnd,
+			startWorld: input.startWorld,
 		},
 	);
 
