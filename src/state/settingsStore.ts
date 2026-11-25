@@ -6,6 +6,13 @@ import type { WorldId } from "@/game/worldSchedule";
 
 export type GameMode = "classic" | "focus";
 
+/** Game engine registers this so Profile world picks update the GL layer immediately. */
+let startWorldApplier: (() => void) | null = null;
+
+export function setStartWorldApplier(fn: (() => void) | null) {
+	startWorldApplier = fn;
+}
+
 interface SettingsState {
 	hydrated: boolean;
 	/** Cold-start mode after launch. */
@@ -32,7 +39,10 @@ export const useSettingsStore = create<SettingsState>()(
 			launchApplied: false,
 			startWorld: null,
 
-			setStartWorld: (world) => set({ startWorld: world }),
+			setStartWorld: (world) => {
+				set({ startWorld: world });
+				startWorldApplier?.();
+			},
 
 			setDefaultMode: (mode) => set({ defaultMode: mode }),
 

@@ -14,7 +14,7 @@ import Colors from "@/constants/Colors";
 import type { RunSnapshot } from "@/game/RunController";
 import { recordRunTelemetry } from "@/game/telemetry";
 import { isRotationWorld } from "@/game/worldSchedule";
-import { useSettingsStore } from "@/state/settingsStore";
+import { setStartWorldApplier, useSettingsStore } from "@/state/settingsStore";
 import { useUserStore } from "@/state/userStore";
 
 import DebugPanel from "./DebugPanel";
@@ -30,7 +30,6 @@ export default function HomeScreen() {
 	const focusHighscore = useUserStore((s) => s.focusHighscore);
 	const currentRun = useUserStore((s) => s.currentRun);
 	const sessionMode = useSettingsStore((s) => s.sessionMode);
-	const startWorld = useSettingsStore((s) => s.startWorld);
 	const [glViewKey] = useState(() => Date.now());
 	const [focusHud, setFocusHud] = useState<FocusHudState | null>(null);
 	const [summary, setSummary] = useState<RunSummaryData | null>(null);
@@ -55,20 +54,26 @@ export default function HomeScreen() {
 		useUserStore.getState().setCurrentRun(0);
 	}, [sessionMode]);
 
-	useEffect(() => {
+	const applyStartWorld = useCallback(() => {
 		engineRef.current?.applyStartWorldPreference();
-	}, [startWorld]);
+	}, []);
+
+	useEffect(() => {
+		setStartWorldApplier(applyStartWorld);
+		return () => setStartWorldApplier(null);
+	}, [applyStartWorld]);
 
 	useFocusEffect(
 		useCallback(() => {
 			scoringRef.current = true;
+			applyStartWorld();
 			return () => {
 				scoringRef.current = false;
 				touchingRef.current = false;
 				pointer.current.set(OFF_SCREEN, OFF_SCREEN);
 				engineRef.current?.resetRun();
 			};
-		}, []),
+		}, [applyStartWorld]),
 	);
 
 	const onContextCreate = useCallback((gl: ExpoWebGLRenderingContext) => {
@@ -113,6 +118,7 @@ export default function HomeScreen() {
 			},
 		});
 		engineRef.current = engine;
+		engine.applyStartWorldPreference();
 	}, []);
 
 	useEffect(() => {
