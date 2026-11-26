@@ -1,6 +1,7 @@
 import {
 	Color,
 	DoubleSide,
+	MathUtils,
 	Mesh,
 	PlaneGeometry,
 	ShaderMaterial,
@@ -46,6 +47,12 @@ void main() {
 // worlds run at pace 0.25 while the F is held; this keeps the ripples visible there
 const TEMPO = 3;
 
+// Match gameEngine PerspectiveCamera (fov 100, z=20); plane sits at z=-30.
+const PLANE_Z = -30;
+const VIEW_DIST = 20 - PLANE_Z;
+const PLANE_SIZE =
+	2 * Math.tan(MathUtils.degToRad(50)) * VIEW_DIST * 1.1;
+
 export default class CausticsWorld implements World {
 	readonly object: Object3D;
 	readonly background = new Color(0x001018);
@@ -53,7 +60,7 @@ export default class CausticsWorld implements World {
 	private readonly material: ShaderMaterial;
 
 	constructor() {
-		this.geometry = new PlaneGeometry(90, 70);
+		this.geometry = new PlaneGeometry(PLANE_SIZE, PLANE_SIZE);
 		this.material = new ShaderMaterial({
 			vertexShader,
 			fragmentShader,
@@ -67,7 +74,7 @@ export default class CausticsWorld implements World {
 			},
 		});
 		const mesh = new Mesh(this.geometry, this.material);
-		mesh.position.set(0, 0, -30);
+		mesh.position.set(0, 0, PLANE_Z);
 		mesh.renderOrder = -1;
 		this.object = mesh;
 	}
