@@ -71,6 +71,7 @@ export default function HomeScreen() {
 				scoringRef.current = false;
 				touchingRef.current = false;
 				pointer.current.set(OFF_SCREEN, OFF_SCREEN);
+				// resetRun also snaps the GL world to the stored starting-world preference
 				engineRef.current?.resetRun();
 			};
 		}, [applyStartWorld]),

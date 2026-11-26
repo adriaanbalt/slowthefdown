@@ -95,18 +95,21 @@ export function createGameEngine(gl: ExpoWebGLRenderingContext, input: GameEngin
 		},
 	);
 
+	const preferenceWorld = (): WorldId => input.startWorld() ?? "particles";
+
 	const applyStartWorldPreference = () => {
 		classic.syncWorldSchedule();
 		focus.syncWorldSchedule();
-		const world =
-			input.mode() === "focus" ? focus.currentWorld() : classic.currentWorld();
-		if (world !== worlds.target) worlds.transitionTo(world);
+		// Snap immediately: transitionTo only fades when the GL loop is active, and it
+		// no-ops when ids match even if an older world is still on screen.
+		worlds.show(preferenceWorld());
 	};
 
 	return {
 		resetRun() {
 			classic.reset();
 			focus.reset();
+			applyStartWorldPreference();
 		},
 		applyStartWorldPreference,
 		onInterrupted() {
